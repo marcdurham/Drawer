@@ -25,8 +25,8 @@ namespace WinCad
         private void mainPicture_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            foreach (var image in images)
-                g.DrawImage(image, new Point(5, 5));
+            for (int i = 0; i < images.Count; i++)
+                g.DrawImage(images[i], imagePoints[i]);
 
             mainStatus.Text = $"Image Count: {images.Count}";
         }
@@ -41,6 +41,7 @@ namespace WinCad
             if (drawMode == DrawModes.ImportingPicture)
             {
                 images.Add(Bitmap.FromFile(@"X:\Leads\L-1000 TO L-2000\L-1008 Schliebus, Judy\PR-1064 Schliebus\Garage.TIF"));
+                imagePoints.Add(new Point(e.X, e.Y));
                 mainStatus.Text = "Image added";
                 mainPicture.Invalidate();
                 drawMode = DrawModes.Ready;

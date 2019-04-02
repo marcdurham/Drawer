@@ -34,7 +34,7 @@
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.importPictureButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -44,7 +44,7 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawButton,
-            this.toolStripButton1});
+            this.importPictureButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -84,15 +84,15 @@
             this.mainStatus.Size = new System.Drawing.Size(39, 17);
             this.mainStatus.Text = "Ready";
             // 
-            // toolStripButton1
+            // importPictureButton
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(87, 22);
-            this.toolStripButton1.Text = "Import Picture";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.importPictureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.importPictureButton.Image = ((System.Drawing.Image)(resources.GetObject("importPictureButton.Image")));
+            this.importPictureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.importPictureButton.Name = "importPictureButton";
+            this.importPictureButton.Size = new System.Drawing.Size(87, 22);
+            this.importPictureButton.Text = "Import Picture";
+            this.importPictureButton.Click += new System.EventHandler(this.importPictureButton_Click);
             // 
             // DrawTester
             // 
@@ -121,7 +121,7 @@
         private System.Windows.Forms.PictureBox mainPicture;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel mainStatus;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton importPictureButton;
     }
 }
 

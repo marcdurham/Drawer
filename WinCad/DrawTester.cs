@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinCad
@@ -19,7 +14,7 @@ namespace WinCad
             InitializeComponent();
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void importPictureButton_Click(object sender, EventArgs e)
         {
             images.Add(Bitmap.FromFile(@"X:\Leads\L-1000 TO L-2000\L-1008 Schliebus, Judy\PR-1064 Schliebus\Garage.TIF"));
             mainStatus.Text = "Image added";

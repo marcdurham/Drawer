@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace WinCad
 {
-    public partial class Form1 : Form
+    public partial class DrawTester : Form
     {
-        public Form1()
+        public DrawTester()
         {
             InitializeComponent();
         }

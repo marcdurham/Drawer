@@ -112,12 +112,18 @@ namespace WinCad
             foreach (var layer in Canvas.Layers)
                 foreach (var poly in layer.Polylines)
                 {
+                    int radius = 5;
                     foreach (var vertex in poly.Vertices)
                     {
-                        if (Math.Abs(e.X - vertex.X) <= 5 
-                            &&  Math.Abs(e.Y - vertex.Y) <= 5)
+                        if (Math.Abs(e.X - vertex.X) <= radius
+                            &&  Math.Abs(e.Y - vertex.Y) <= radius)
                         {
-                            var circle = new Circle() { Center = vertex, Radius = 5 };
+                            var circle = new Circle()
+                            {
+                                Center = vertex,
+                                Radius = radius
+                            };
+
                             Canvas.Highlights.Circles.Clear();
                             Canvas.Highlights.Circles.Add(circle);
                             mainPicture.Invalidate();

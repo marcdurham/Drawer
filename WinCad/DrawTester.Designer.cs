@@ -79,7 +79,6 @@
             this.mainPicture.Size = new System.Drawing.Size(800, 425);
             this.mainPicture.TabIndex = 1;
             this.mainPicture.TabStop = false;
-            this.mainPicture.Click += new System.EventHandler(this.mainPicture_Click);
             this.mainPicture.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPicture_Paint);
             this.mainPicture.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mainPicture_MouseClick);
             // 

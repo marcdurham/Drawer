@@ -48,11 +48,6 @@ namespace WinCad
                         g.DrawLine(Pens.Green, p.Points[i - 1], p.Points[i]);
         }
 
-        private void mainPicture_Click(object sender, EventArgs e)
-        {
-           
-        }
-
         private void mainPicture_MouseClick(object sender, MouseEventArgs e)
         {
             try

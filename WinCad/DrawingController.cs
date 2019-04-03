@@ -39,77 +39,110 @@ namespace WinCad
         {
             if (cancel)
             {
-                session.CurrentPolyline = null;
-                session.Mode = DrawModes.Ready;
-                view.Status = "Ready";
+                CancelMode();
+                return;
             }
-            else if (session.Mode == DrawModes.DrawingPolylineFirstVertex)
+
+            switch(session.Mode)
             {
-                session.CurrentPolyline = new Polyline();
-                session.CurrentPolyline.Vertices.Add(point);
-                session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
-                session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
-                view.Status = "Click to add vertices to the polyline:";
+                case DrawModes.DrawingPolylineFirstVertex:
+                    StartDrawingPolylineAt(point);
+                    break;
+                case DrawModes.DrawingPolylineSecondaryVertices:
+                    AddPolylineVertexAt(point);
+                    break;
+                case DrawModes.ImportingPictureFirstCorner:
+                    StartImportingPictureAt(point);
+                    break;
+                case DrawModes.ImportingPictureSecondCorner:
+                    FinishImportingPictureAt(point);
+                    break;
+                case DrawModes.DrawingRectangleFirstCorner:
+                    StartDrawingRectangleAt(point);
+                    break;
+                case DrawModes.DrawingRectangleSecondCorner:
+                    FinishDrawingRectangleAt(point);
+                    break;
+                default:
+                    view.Status = "Ready";
+                    break;
             }
-            else if (session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
-            {
-                session.CurrentPolyline.Vertices.Add(point);
-            }
-            else if (session.Mode == DrawModes.ImportingPictureFirstCorner)
-            {
-                session.FirstCorner = point;
-                session.Mode = DrawModes.ImportingPictureSecondCorner;
-                view.Status = "Click second corner:";
-            }
-            else if (session.Mode == DrawModes.ImportingPictureSecondCorner)
-            {
-                session.SecondCorner = point;
-                var image = new InsertedImage(
-                    image: Bitmap.FromFile(session.OpenFileName),
-                    rectangle: new Rectangle(
-                        session.FirstCorner.X,
-                        session.FirstCorner.Y,
+        }
+
+        private void FinishDrawingRectangleAt(Point point)
+        {
+            session.SecondCorner = point;
+            var box = new Box(
+                    firstCorner: session.FirstCorner,
+                    size: new Size(
                         Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
                         Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
 
-                session.Canvas.CurrentLayer.InsertedImages.Add(image);
+            box.Color = Color.Green;
 
-                session.Mode = DrawModes.Ready;
-                view.Status = "Ready";
-                session.FirstCorner = Point.Empty;
-                session.SecondCorner = Point.Empty;
-                session.Canvas.Highlights.Boxes.Clear();
-            }
-            else if (session.Mode == DrawModes.DrawingRectangleFirstCorner)
-            {
-                session.FirstCorner = point;
-                session.Mode = DrawModes.DrawingRectangleSecondCorner;
-                view.Status = "Click second corner:";
-            }
-            else if (session.Mode == DrawModes.DrawingRectangleSecondCorner)
-            {
-                session.SecondCorner = point;
-                var box = new Box(
-                        firstCorner: session.FirstCorner,
-                        size: new Size(
-                            Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                            Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+            session.Canvas.CurrentLayer.Boxes.Add(box);
 
-                box.Color = Color.Green;
+            session.Canvas.Highlights.Boxes.Clear();
 
-                session.Canvas.CurrentLayer.Boxes.Add(box);
+            session.Mode = DrawModes.Ready;
+            view.Status = "Ready";
+            session.FirstCorner = Point.Empty;
+            session.SecondCorner = Point.Empty;
+        }
 
-                session.Canvas.Highlights.Boxes.Clear();
+        private void StartDrawingRectangleAt(Point point)
+        {
+            session.FirstCorner = point;
+            session.Mode = DrawModes.DrawingRectangleSecondCorner;
+            view.Status = "Click second corner:";
+        }
 
-                session.Mode = DrawModes.Ready;
-                view.Status = "Ready";
-                session.FirstCorner = Point.Empty;
-                session.SecondCorner = Point.Empty;
-            }
-            else
-            {
-                view.Status = "Clicked";
-            }
+        private void AddPolylineVertexAt(Point point)
+        {
+            session.CurrentPolyline.Vertices.Add(point);
+        }
+
+        private void FinishImportingPictureAt(Point point)
+        {
+            session.SecondCorner = point;
+            var image = new InsertedImage(
+                image: Bitmap.FromFile(session.OpenFileName),
+                rectangle: new Rectangle(
+                    session.FirstCorner.X,
+                    session.FirstCorner.Y,
+                    Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
+                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+
+            session.Canvas.CurrentLayer.InsertedImages.Add(image);
+
+            session.Mode = DrawModes.Ready;
+            view.Status = "Ready";
+            session.FirstCorner = Point.Empty;
+            session.SecondCorner = Point.Empty;
+            session.Canvas.Highlights.Boxes.Clear();
+        }
+
+        private void StartImportingPictureAt(Point point)
+        {
+            session.FirstCorner = point;
+            session.Mode = DrawModes.ImportingPictureSecondCorner;
+            view.Status = "Click second corner:";
+        }
+
+        private void StartDrawingPolylineAt(Point point)
+        {
+            session.CurrentPolyline = new Polyline();
+            session.CurrentPolyline.Vertices.Add(point);
+            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
+            session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
+            view.Status = "Click to add vertices to the polyline:";
+        }
+
+        private void CancelMode()
+        {
+            session.CurrentPolyline = null;
+            session.Mode = DrawModes.Ready;
+            view.Status = "Ready";
         }
     }
 }

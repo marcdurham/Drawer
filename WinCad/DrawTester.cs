@@ -120,7 +120,6 @@ namespace WinCad
             if (controller.session.Mode == DrawModes.DrawingRectangleSecondCorner
                 || controller.session.Mode == DrawModes.ImportingPictureSecondCorner)
             {
-                Status = "Click second corner...";
                 var size = new Size(controller.session.FirstCorner);
                 size.Height = Math.Abs(controller.session.FirstCorner.Y - e.Location.Y);
                 size.Width = Math.Abs(controller.session.FirstCorner.X - e.Location.X);
@@ -129,7 +128,6 @@ namespace WinCad
                 var newRectangle = RectangleFrom(newBox);
                 Canvas.Highlights.Boxes.Clear();
                 Canvas.Highlights.Boxes.Add(newBox);
-                controller.session.CurrentRectangle = Rectangle.Empty;
             }
 
             bool nearSomething = false;

@@ -8,6 +8,7 @@
         DrawingRectangleFirstCorner,
         DrawingRectangleSecondCorner,
         StartDrawing,
-        DrawingPolyline
+        DrawingPolylineFirstVertex,
+        DrawingPolylineSecondaryVertices
     }
 }

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Canvas.cs" />
+    <Compile Include="DrawingController.cs" />
     <Compile Include="DrawingSession.cs" />
     <Compile Include="DrawModes.cs" />
     <Compile Include="DrawTester.cs">
@@ -55,6 +56,7 @@
     <Compile Include="DrawTester.Designer.cs">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
+    <Compile Include="IDrawingView.cs" />
     <Compile Include="InsertedImage.cs" />
     <Compile Include="Polyline.cs" />
     <Compile Include="Program.cs" />

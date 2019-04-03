@@ -28,12 +28,7 @@ namespace WinCad
         private void drawPolylineButton_Click(object sender, EventArgs e)
         {
             controller.DrawPolyline();
-            //var g = mainPicture.CreateGraphics();
-            //g.DrawRectangle(Pens.Black, new Rectangle(new Point(20, 20), new Size(10, 10)));
-            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
-            var gg = mainPicture.CreateGraphics();
-           
-            mainPicture.Image = image;
+            DrawLayers();
         }
 
         private void importPictureButton_Click(object sender, EventArgs e)
@@ -51,9 +46,6 @@ namespace WinCad
         private void mainPicture_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-
-            //foreach (var layer in Canvas.Layers)
-            //    DrawObjectsOn(g, layer);
 
             DrawObjectsOn(g, Canvas.Highlights);
 
@@ -91,12 +83,27 @@ namespace WinCad
             try
             {
                 controller.ClickAt(new Point(e.X, e.Y), e.Button != MouseButtons.Left);
-                mainPicture.Invalidate();
+
+                DrawLayers();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error Clicking On Picture");
             }
+        }
+
+        private void DrawLayers()
+        {
+            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
+
+            var graphics = Graphics.FromImage(image);
+
+            foreach (var layer in Canvas.Layers)
+                DrawObjectsOn(graphics, layer);
+
+            mainPicture.Image = image;
+
+            mainPicture.Invalidate();
         }
 
         private void mainPicture_MouseMove(object sender, MouseEventArgs e)

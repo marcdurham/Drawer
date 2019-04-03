@@ -52,6 +52,7 @@
     <Compile Include="DrawTester.Designer.cs">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
+    <Compile Include="Polyline.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DrawTester.resx">

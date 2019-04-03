@@ -11,7 +11,9 @@ namespace WinCad
         ImportingPictureFirstCorner,
         ImportingPictureSecondCorner,
         DrawingRectangleFirstCorner,
-        DrawingRectangleSecondCorner
+        DrawingRectangleSecondCorner,
+        StartDrawing,
+        DrawingPolyline
     }
 
     public partial class DrawTester : Form
@@ -20,13 +22,21 @@ namespace WinCad
         List<Point> imagePoints = new List<Point>();
         List<Rectangle> imageRectangles = new List<Rectangle>();
         List<Rectangle> rectangles = new List<Rectangle>();
+        List<Polyline> polylines = new List<Polyline>();
         DrawModes drawMode = DrawModes.Ready;
         Point firstCorner = Point.Empty;
         Point secondCorner = Point.Empty;
+        Polyline currentPolyline = null;
 
         public DrawTester()
         {
             InitializeComponent();
+        }
+
+        private void drawButton_Click(object sender, EventArgs e)
+        {
+            drawMode = DrawModes.StartDrawing;
+            mainStatus.Text = "Start drawing polyline:";
         }
 
         private void importPictureButton_Click(object sender, EventArgs e)
@@ -50,6 +60,18 @@ namespace WinCad
 
             foreach (var r in rectangles)
                 g.DrawRectangle(Pens.Blue, r);
+
+            foreach (var p in polylines)
+            {
+                if (p.Points.Count > 1)
+                {
+                    for (int i = 1; i < p.Points.Count; i++)
+                    {
+                        g.DrawLine(Pens.Green, p.Points[i - 1], p.Points[i]);
+                       
+                    }
+                }
+            }
         }
 
         private void mainPicture_Click(object sender, EventArgs e)
@@ -71,8 +93,23 @@ namespace WinCad
 
 
         void canvasClick(Point point)
-        { 
-            if (drawMode == DrawModes.ImportingPictureFirstCorner)
+        {
+
+            if (drawMode == DrawModes.StartDrawing)
+            {
+                currentPolyline = new Polyline();
+                currentPolyline.Points.Add(point);
+                polylines.Add(currentPolyline);
+                drawMode = DrawModes.DrawingPolyline;
+                mainStatus.Text = "Click to add points to the polyline:";
+            }
+            else if (drawMode == DrawModes.DrawingPolyline)
+            {
+                currentPolyline.Points.Add(point);
+                mainPicture.Invalidate();
+
+            }
+            else if (drawMode == DrawModes.ImportingPictureFirstCorner)
             {
                 firstCorner= point;
                 drawMode = DrawModes.ImportingPictureSecondCorner;

@@ -59,6 +59,7 @@
             this.drawButton.Name = "drawButton";
             this.drawButton.Size = new System.Drawing.Size(38, 22);
             this.drawButton.Text = "Draw";
+            this.drawButton.Click += new System.EventHandler(this.drawButton_Click);
             // 
             // importPictureButton
             // 

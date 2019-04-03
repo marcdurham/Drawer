@@ -2,9 +2,14 @@
 
 namespace WinCad
 {
-    public class Circle
+    public class Circle : Entity
     {
-        public Point Center { get; set; } = Point.Empty;
+        public Circle()
+        {
+            Color = Color.Turquoise;
+        }
+
+        public Point Center { get; set; }
         public int Radius { get; set; }
     }
 }

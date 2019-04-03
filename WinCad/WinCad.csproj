@@ -58,6 +58,7 @@
     <Compile Include="DrawTester.Designer.cs">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity.cs" />
     <Compile Include="IDrawingView.cs" />
     <Compile Include="InsertedImage.cs" />
     <Compile Include="Layer.cs" />

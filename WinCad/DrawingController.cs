@@ -78,6 +78,7 @@ namespace WinCad
                 view.Status = "Ready";
                 session.FirstCorner = Point.Empty;
                 session.SecondCorner = Point.Empty;
+                session.Canvas.Highlights.Boxes.Clear();
             }
             else if (session.Mode == DrawModes.DrawingRectangleFirstCorner)
             {
@@ -88,11 +89,15 @@ namespace WinCad
             else if (session.Mode == DrawModes.DrawingRectangleSecondCorner)
             {
                 session.SecondCorner = point;
-                session.Canvas.CurrentLayer.Boxes.Add(new Rectangle(
-                    session.FirstCorner.X,
-                    session.FirstCorner.Y,
-                    Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+                var box = new Box(
+                        firstCorner: session.FirstCorner,
+                        size: new Size(
+                            Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
+                            Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+
+                box.Color = Color.Green;
+
+                session.Canvas.CurrentLayer.Boxes.Add(box);
 
                 session.Canvas.Highlights.Boxes.Clear();
 

@@ -56,13 +56,13 @@ namespace WinCad
             foreach (var image in layer.InsertedImages)
                 g.DrawImage(image.Image, image.Rectangle);
 
-            foreach (var r in layer.Boxes)
-                g.DrawRectangle(Pens.Green, r);
+            foreach (var box in layer.Boxes)
+                g.DrawRectangle(new Pen(box.Color), RectangleFrom(box));
 
-            foreach (var p in layer.Polylines)
-                if (p.Vertices.Count > 1)
-                    for (int i = 1; i < p.Vertices.Count; i++)
-                        g.DrawLine(Pens.Green, p.Vertices[i - 1], p.Vertices[i]);
+            foreach (var pline in layer.Polylines)
+                if (pline.Vertices.Count > 1)
+                    for (int i = 1; i < pline.Vertices.Count; i++)
+                        g.DrawLine(new Pen(pline.Color), pline.Vertices[i - 1], pline.Vertices[i]);
 
             foreach (var circle in layer.Circles)
             {
@@ -72,8 +72,13 @@ namespace WinCad
 
                 int side = circle.Radius * 2;
 
-                g.DrawEllipse(Pens.Red, corner.X, corner.Y, side, side);
+                g.DrawEllipse(new Pen(circle.Color), corner.X, corner.Y, side, side);
             }
+        }
+
+        static Rectangle RectangleFrom(Box box)
+        {
+            return new Rectangle(box.FirstCorner, box.Size);
         }
 
         private void mainPicture_MouseClick(object sender, MouseEventArgs e)
@@ -119,10 +124,12 @@ namespace WinCad
                 var size = new Size(controller.session.FirstCorner);
                 size.Height = Math.Abs(controller.session.FirstCorner.Y - e.Location.Y);
                 size.Width = Math.Abs(controller.session.FirstCorner.X - e.Location.X);
-                var newRectangle = new Rectangle(controller.session.FirstCorner, size);
+                var newBox = new Box(controller.session.FirstCorner, size);
+                newBox.Color = Color.Blue;
+                var newRectangle = RectangleFrom(newBox);
                 Canvas.Highlights.Boxes.Clear();
-                Canvas.Highlights.Boxes.Add(newRectangle);
-                controller.session.CurrentRectangle = newRectangle;
+                Canvas.Highlights.Boxes.Add(newBox);
+                controller.session.CurrentRectangle = Rectangle.Empty;
             }
 
             bool nearSomething = false;
@@ -138,7 +145,8 @@ namespace WinCad
                             var circle = new Circle()
                             {
                                 Center = vertex,
-                                Radius = radius
+                                Radius = radius,
+                                Color = Color.Blue
                             };
 
                             Canvas.Highlights.Circles.Clear();

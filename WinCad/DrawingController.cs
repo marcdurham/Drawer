@@ -139,6 +139,7 @@ namespace WinCad
 
         private void CancelMode()
         {
+            session.Canvas.Highlights.Polylines.Clear();
             session.CurrentPolyline = null;
             session.Mode = DrawModes.Ready;
             view.Status = "Ready";

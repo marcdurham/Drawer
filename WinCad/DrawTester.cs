@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -49,8 +50,8 @@ namespace WinCad
 
             DrawObjectsOn(g, Canvas.Highlights);
 
-            if (controller.session.CurrentPolyline != null)
-                g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
+            //if (controller.session.CurrentPolyline != null)
+             //   g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
         }
 
         private static void DrawObjectsOn(Graphics g, Layer layer)
@@ -113,10 +114,19 @@ namespace WinCad
 
         private void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
-            if (controller.session.CurrentPolyline?.Vertices?.Count > 0)
+            if (controller.session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
             {
                 Canvas.NewLineStart = controller.session.CurrentPolyline.Vertices.Last();
                 Canvas.NewLineEnd = e.Location;
+
+                var rubberband = new Polyline()
+                {
+                    Color = Color.Blue,
+                    Vertices = new List<Point> { Canvas.NewLineStart, Canvas.NewLineEnd }
+                };
+
+                Canvas.Highlights.Polylines.Clear();
+                Canvas.Highlights.Polylines.Add(rubberband);
             }
 
             if (controller.session.Mode == DrawModes.DrawingRectangleSecondCorner

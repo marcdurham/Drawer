@@ -33,7 +33,7 @@ namespace WinCad
             InitializeComponent();
         }
 
-        private void drawButton_Click(object sender, EventArgs e)
+        private void drawPolylineButton_Click(object sender, EventArgs e)
         {
             drawMode = DrawModes.StartDrawing;
             mainStatus.Text = "Start drawing polyline:";

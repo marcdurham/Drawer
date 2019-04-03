@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DrawTester));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.drawButton = new System.Windows.Forms.ToolStripButton();
+            this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
             this.importPictureButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -44,7 +44,7 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.drawButton,
+            this.drawPolylineButton,
             this.drawRectangle,
             this.importPictureButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -53,13 +53,13 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // drawButton
+            // drawPolylineButton
             // 
-            this.drawButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.drawButton.Name = "drawButton";
-            this.drawButton.Size = new System.Drawing.Size(38, 22);
-            this.drawButton.Text = "Draw";
-            this.drawButton.Click += new System.EventHandler(this.drawButton_Click);
+            this.drawPolylineButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.drawPolylineButton.Name = "drawPolylineButton";
+            this.drawPolylineButton.Size = new System.Drawing.Size(53, 22);
+            this.drawPolylineButton.Text = "Polyline";
+            this.drawPolylineButton.Click += new System.EventHandler(this.drawPolylineButton_Click);
             // 
             // importPictureButton
             // 
@@ -133,7 +133,7 @@
         #endregion
 
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton drawButton;
+        private System.Windows.Forms.ToolStripButton drawPolylineButton;
         private System.Windows.Forms.PictureBox mainPicture;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel mainStatus;

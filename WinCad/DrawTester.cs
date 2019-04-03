@@ -88,7 +88,7 @@ namespace WinCad
                     Math.Abs( firstCorner.X - secondCorner.X),
                     Math.Abs(firstCorner.Y - secondCorner.Y)));
 
-                images.Add(Bitmap.FromFile(@"X:\Store\Garage.TIF"));
+                images.Add(Bitmap.FromFile(@"C:\Store\Garage.TIF"));
 
                 mainPicture.Invalidate();
 

@@ -19,7 +19,6 @@ namespace WinCad
     public partial class DrawTester : Form
     {
         List<Image> images = new List<Image>();
-        List<Point> imagePoints = new List<Point>();
         List<Rectangle> imageRectangles = new List<Rectangle>();
         List<Rectangle> rectangles = new List<Rectangle>();
         List<Polyline> polylines = new List<Polyline>();
@@ -95,18 +94,18 @@ namespace WinCad
         void canvasClick(Point point, MouseButtons button)
         {
 
-            if (drawMode == DrawModes.StartDrawing)
+            if (button != MouseButtons.Left)
+            {
+                drawMode = DrawModes.Ready;
+                mainStatus.Text = "Ready";
+            }
+            else if (drawMode == DrawModes.StartDrawing)
             {
                 currentPolyline = new Polyline();
                 currentPolyline.Points.Add(point);
                 polylines.Add(currentPolyline);
                 drawMode = DrawModes.DrawingPolyline;
                 mainStatus.Text = "Click to add points to the polyline:";
-            }
-            else if (drawMode == DrawModes.DrawingPolyline && button != MouseButtons.Left)
-            {
-                drawMode = DrawModes.Ready;
-                mainStatus.Text = "Ready";
             }
             else if (drawMode == DrawModes.DrawingPolyline)
             {
@@ -116,7 +115,7 @@ namespace WinCad
             }
             else if (drawMode == DrawModes.ImportingPictureFirstCorner)
             {
-                firstCorner= point;
+                firstCorner = point;
                 drawMode = DrawModes.ImportingPictureSecondCorner;
                 mainStatus.Text = "Click second corner:";
             }
@@ -124,9 +123,9 @@ namespace WinCad
             {
                 secondCorner = point;
                 imageRectangles.Add(new Rectangle(
-                    firstCorner.X, 
+                    firstCorner.X,
                     firstCorner.Y,
-                    Math.Abs( firstCorner.X - secondCorner.X),
+                    Math.Abs(firstCorner.X - secondCorner.X),
                     Math.Abs(firstCorner.Y - secondCorner.Y)));
 
                 images.Add(Bitmap.FromFile(@"C:\Store\Garage.TIF"));

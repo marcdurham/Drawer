@@ -9,8 +9,6 @@ namespace WinCad
     {
         readonly DrawingController controller;
         
-        DrawingSession session = new DrawingSession();
-
         public DrawTester()
         {
             InitializeComponent();
@@ -112,6 +110,19 @@ namespace WinCad
             {
                 Canvas.NewLineStart = controller.session.CurrentPolyline.Vertices.Last();
                 Canvas.NewLineEnd = e.Location;
+            }
+
+            if (controller.session.Mode == DrawModes.DrawingRectangleSecondCorner
+                || controller.session.Mode == DrawModes.ImportingPictureSecondCorner)
+            {
+                Status = "Click second corner...";
+                var size = new Size(controller.session.FirstCorner);
+                size.Height = Math.Abs(controller.session.FirstCorner.Y - e.Location.Y);
+                size.Width = Math.Abs(controller.session.FirstCorner.X - e.Location.X);
+                var newRectangle = new Rectangle(controller.session.FirstCorner, size);
+                Canvas.Highlights.Rectangles.Clear();
+                Canvas.Highlights.Rectangles.Add(newRectangle);
+                controller.session.CurrentRectangle = newRectangle;
             }
 
             bool nearSomething = false;

@@ -50,7 +50,7 @@ namespace WinCad
             foreach (var layer in Canvas.Layers)
                 DrawObjectsOn(g, layer);
 
-            DrawObjectsOn(g, Canvas.TemporaryLayer);
+            DrawObjectsOn(g, Canvas.Highlights);
 
             if (controller.session.CurrentPolyline != null)
                 g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
@@ -118,8 +118,8 @@ namespace WinCad
                             &&  Math.Abs(e.Y - vertex.Y) <= 5)
                         {
                             var circle = new Circle() { Center = vertex, Radius = 5 };
-                            Canvas.TemporaryLayer.Circles.Clear();
-                            Canvas.TemporaryLayer.Circles.Add(circle);
+                            Canvas.Highlights.Circles.Clear();
+                            Canvas.Highlights.Circles.Add(circle);
                             mainPicture.Invalidate();
                             nearSomething = true;
                         }
@@ -128,7 +128,7 @@ namespace WinCad
 
             if (!nearSomething)
             {
-                Canvas.TemporaryLayer.Circles.Clear();
+                Canvas.Highlights.Circles.Clear();
 
                 mainPicture.Invalidate();
             }

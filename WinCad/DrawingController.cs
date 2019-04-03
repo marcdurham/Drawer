@@ -21,8 +21,9 @@ namespace WinCad
             view.Status = "Click first point of polyline:";
         }
 
-        internal void ImportPicture()
+        internal void ImportPicture(string fileName)
         {
+            session.OpenFileName = fileName;
             session.Mode = DrawModes.ImportingPictureFirstCorner;
             view.Status = "Click first corner:";
         }
@@ -46,7 +47,7 @@ namespace WinCad
             {
                 session.CurrentPolyline = new Polyline();
                 session.CurrentPolyline.Vertices.Add(point);
-                session.Canvas.Polylines.Add(session.CurrentPolyline);
+                session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
                 session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
                 view.Status = "Click to add vertices to the polyline:";
             }
@@ -64,14 +65,14 @@ namespace WinCad
             {
                 session.SecondCorner = point;
                 var image = new InsertedImage(
-                    image: Bitmap.FromFile(@"C:\Store\Garage.TIF"),
+                    image: Bitmap.FromFile(session.OpenFileName),
                     rectangle: new Rectangle(
-                    session.FirstCorner.X,
-                    session.FirstCorner.Y,
-                    Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+                        session.FirstCorner.X,
+                        session.FirstCorner.Y,
+                        Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
+                        Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
 
-                session.Canvas.InsertedImages.Add(image);
+                session.Canvas.CurrentLayer.InsertedImages.Add(image);
 
                 session.Mode = DrawModes.Ready;
                 view.Status = "Ready";
@@ -87,7 +88,7 @@ namespace WinCad
             else if (session.Mode == DrawModes.DrawingRectangleSecondCorner)
             {
                 session.SecondCorner = point;
-                session.Canvas.Rectangles.Add(new Rectangle(
+                session.Canvas.CurrentLayer.Rectangles.Add(new Rectangle(
                     session.FirstCorner.X,
                     session.FirstCorner.Y,
                     Math.Abs(session.FirstCorner.X - session.SecondCorner.X),

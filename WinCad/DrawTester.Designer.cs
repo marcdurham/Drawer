@@ -36,6 +36,7 @@
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -111,6 +112,10 @@
             this.mainStatus.Size = new System.Drawing.Size(39, 17);
             this.mainStatus.Text = "Ready";
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "Image Files|*.jpg;*.tif;*.tif;*.bmp;*.png";
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -140,6 +145,7 @@
         private System.Windows.Forms.ToolStripStatusLabel mainStatus;
         private System.Windows.Forms.ToolStripButton importPictureButton;
         private System.Windows.Forms.ToolStripButton drawRectangle;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
 

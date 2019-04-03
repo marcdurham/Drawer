@@ -33,7 +33,9 @@ namespace WinCad
 
         private void importPictureButton_Click(object sender, EventArgs e)
         {
-            controller.ImportPicture();
+            var result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+                controller.ImportPicture(openFileDialog.FileName);
         }
 
         private void drawRectangle_Click(object sender, EventArgs e)
@@ -45,30 +47,38 @@ namespace WinCad
         {
             Graphics g = e.Graphics;
 
-            foreach (var image in Canvas.InsertedImages)
+            foreach (var layer in Canvas.Layers)
+                DrawObjectsOn(g, layer);
+
+            DrawObjectsOn(g, Canvas.TemporaryLayer);
+
+            if (controller.session.CurrentPolyline != null)
+                g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
+        }
+
+        private static void DrawObjectsOn(Graphics g, Layer layer)
+        {
+            foreach (var image in layer.InsertedImages)
                 g.DrawImage(image.Image, image.Rectangle);
 
-            foreach (var r in Canvas.Rectangles)
+            foreach (var r in layer.Rectangles)
                 g.DrawRectangle(Pens.Blue, r);
 
-            foreach (var p in Canvas.Polylines)
+            foreach (var p in layer.Polylines)
                 if (p.Vertices.Count > 1)
                     for (int i = 1; i < p.Vertices.Count; i++)
                         g.DrawLine(Pens.Green, p.Vertices[i - 1], p.Vertices[i]);
 
-            foreach (var circle in Canvas.Circles)
+            foreach (var circle in layer.Circles)
             {
                 var corner = new Point(
-                    circle.Center.X - circle.Radius, 
+                    circle.Center.X - circle.Radius,
                     circle.Center.Y - circle.Radius);
 
                 int side = circle.Radius * 2;
 
                 g.DrawEllipse(Pens.Red, corner.X, corner.Y, side, side);
             }
-
-            if (controller.session.CurrentPolyline != null)
-                g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
         }
 
         private void mainPicture_MouseClick(object sender, MouseEventArgs e)
@@ -99,25 +109,28 @@ namespace WinCad
             }
 
             bool nearSomething = false;
-            foreach (var poly in Canvas.Polylines)
-            {
-                foreach (var vertex in poly.Vertices)
+            foreach (var layer in Canvas.Layers)
+                foreach (var poly in layer.Polylines)
                 {
-                    if (Math.Abs(e.X - vertex.X) <= 5 
-                        &&  Math.Abs(e.Y - vertex.Y) <= 5)
+                    foreach (var vertex in poly.Vertices)
                     {
-                        var circle = new Circle() { Center = vertex, Radius = 5 };
-                        Canvas.Circles.Clear();
-                        Canvas.Circles.Add(circle);
-                        mainPicture.Invalidate();
-                        nearSomething = true;
+                        if (Math.Abs(e.X - vertex.X) <= 5 
+                            &&  Math.Abs(e.Y - vertex.Y) <= 5)
+                        {
+                            var circle = new Circle() { Center = vertex, Radius = 5 };
+                            layer.Circles.Clear();
+                            layer.Circles.Add(circle);
+                            mainPicture.Invalidate();
+                            nearSomething = true;
+                        }
                     }
                 }
-            }
 
             if (!nearSomething)
             {
-                Canvas.Circles.Clear();
+                foreach (var layer in Canvas.Layers)
+                    layer.Circles.Clear();
+
                 mainPicture.Invalidate();
             }
         }

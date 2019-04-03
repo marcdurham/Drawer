@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="IDrawingView.cs" />
     <Compile Include="InsertedImage.cs" />
+    <Compile Include="Layer.cs" />
     <Compile Include="Polyline.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

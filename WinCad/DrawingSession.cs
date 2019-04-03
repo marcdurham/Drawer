@@ -9,5 +9,6 @@ namespace WinCad
         public Point SecondCorner { get; set; } = Point.Empty;
         public Polyline CurrentPolyline { get; set; } = null;
         public Canvas Canvas { get; set; } = new Canvas();
+        public string OpenFileName { get; internal set; }
     }
 }

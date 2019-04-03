@@ -7,6 +7,6 @@ namespace WinCad
     {
         public List<Rectangle> Rectangles { get; set; } = new List<Rectangle>();
         public List<Polyline> Polylines { get; set; } = new List<Polyline>();
-        public List<InsertedImage> InsertedImage { get; set; } = new List<InsertedImage>();
+        public List<InsertedImage> InsertedImages { get; set; } = new List<InsertedImage>();
     }
 }

@@ -18,14 +18,11 @@ namespace WinCad
 
     public partial class DrawTester : Form
     {
-        List<Image> images = new List<Image>();
-        List<Rectangle> imageRectangles = new List<Rectangle>();
-        List<Rectangle> rectangles = new List<Rectangle>();
-        List<Polyline> polylines = new List<Polyline>();
         DrawModes drawMode = DrawModes.Ready;
         Point firstCorner = Point.Empty;
         Point secondCorner = Point.Empty;
         Polyline currentPolyline = null;
+        Canvas canvas = new Canvas();
 
         public DrawTester()
         {
@@ -54,23 +51,16 @@ namespace WinCad
         {
             Graphics g = e.Graphics;
 
-            for (int i = 0; i < images.Count; i++)
-                g.DrawImage(images[i], imageRectangles[i]);
+            foreach (var image in canvas.InsertedImages)
+                g.DrawImage(image.Image, image.Rectangle);
 
-            foreach (var r in rectangles)
+            foreach (var r in canvas.Rectangles)
                 g.DrawRectangle(Pens.Blue, r);
 
-            foreach (var p in polylines)
-            {
+            foreach (var p in canvas.Polylines)
                 if (p.Points.Count > 1)
-                {
                     for (int i = 1; i < p.Points.Count; i++)
-                    {
                         g.DrawLine(Pens.Green, p.Points[i - 1], p.Points[i]);
-                       
-                    }
-                }
-            }
         }
 
         private void mainPicture_Click(object sender, EventArgs e)
@@ -93,7 +83,6 @@ namespace WinCad
 
         void canvasClick(Point point, MouseButtons button)
         {
-
             if (button != MouseButtons.Left)
             {
                 drawMode = DrawModes.Ready;
@@ -103,7 +92,7 @@ namespace WinCad
             {
                 currentPolyline = new Polyline();
                 currentPolyline.Points.Add(point);
-                polylines.Add(currentPolyline);
+                canvas.Polylines.Add(currentPolyline);
                 drawMode = DrawModes.DrawingPolyline;
                 mainStatus.Text = "Click to add points to the polyline:";
             }
@@ -122,13 +111,15 @@ namespace WinCad
             else if (drawMode == DrawModes.ImportingPictureSecondCorner)
             {
                 secondCorner = point;
-                imageRectangles.Add(new Rectangle(
+                var image = new InsertedImage(
+                    image: Bitmap.FromFile(@"C:\Store\Garage.TIF"),
+                    rectangle: new Rectangle(
                     firstCorner.X,
                     firstCorner.Y,
                     Math.Abs(firstCorner.X - secondCorner.X),
                     Math.Abs(firstCorner.Y - secondCorner.Y)));
 
-                images.Add(Bitmap.FromFile(@"C:\Store\Garage.TIF"));
+                canvas.InsertedImages.Add(image);
 
                 mainPicture.Invalidate();
 
@@ -146,7 +137,7 @@ namespace WinCad
             else if (drawMode == DrawModes.DrawingRectangleSecondCorner)
             {
                 secondCorner = point;
-                rectangles.Add(new Rectangle(
+                canvas.Rectangles.Add(new Rectangle(
                     firstCorner.X,
                     firstCorner.Y,
                     Math.Abs(firstCorner.X - secondCorner.X),

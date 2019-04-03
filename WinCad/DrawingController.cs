@@ -107,11 +107,10 @@ namespace WinCad
             session.SecondCorner = point;
             var image = new InsertedImage(
                 image: Bitmap.FromFile(session.OpenFileName),
-                rectangle: new Rectangle(
-                    session.FirstCorner.X,
-                    session.FirstCorner.Y,
-                    Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+                box: new Box(
+                    firstCorner: new Point(session.FirstCorner.X, session.FirstCorner.Y),
+                    size: new Size(Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
+                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y))));
 
             session.Canvas.CurrentLayer.InsertedImages.Add(image);
 

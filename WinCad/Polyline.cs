@@ -11,5 +11,10 @@ namespace WinCad
         }
 
         public List<Point> Vertices = new List<Point>();
+
+        public override List<Point> Points()
+        {
+            return Vertices;
+        }
     }
 }

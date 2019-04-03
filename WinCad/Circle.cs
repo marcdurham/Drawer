@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace WinCad
 {
@@ -11,5 +12,10 @@ namespace WinCad
 
         public Point Center { get; set; }
         public int Radius { get; set; }
+
+        public override List<Point> Points()
+        {
+            return new List<Point>() { Center };
+        }
     }
 }

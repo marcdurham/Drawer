@@ -56,7 +56,7 @@ namespace WinCad
         private static void DrawObjectsOn(Graphics g, Layer layer)
         {
             foreach (var image in layer.InsertedImages)
-                g.DrawImage(image.Image, image.Rectangle);
+                g.DrawImage(image.Image, RectangleFrom(image.Box));
 
             foreach (var box in layer.Boxes)
                 g.DrawRectangle(new Pen(box.Color), RectangleFrom(box));
@@ -146,31 +146,18 @@ namespace WinCad
             bool nearSomething = false;
             foreach (var layer in Canvas.Layers)
             {
-                foreach (var poly in layer.Polylines)
+                foreach (var entity in layer.Entities())
                 {
-                    int radius = 5;
-                    foreach (var vertex in poly.Vertices)
+                    foreach (var p in entity.Points())
                     {
-                        if (Math.Abs(e.X - vertex.X) <= radius
-                            && Math.Abs(e.Y - vertex.Y) <= radius)
+                        if (AreNear(p, e.Location))
                         {
-                            circle.Center = vertex;
+                            circle.Center = p;
 
                             Canvas.Highlights.Circles.Clear();
                             Canvas.Highlights.Circles.Add(circle);
                             nearSomething = true;
                         }
-                    }
-                }
-                foreach (var box in layer.Boxes)
-                {
-                    if (AreNear(box.FirstCorner, e.Location))
-                    {
-                        circle.Center = box.FirstCorner;
-
-                        Canvas.Highlights.Circles.Clear();
-                        Canvas.Highlights.Circles.Add(circle);
-                        nearSomething = true;
                     }
                 }
             }

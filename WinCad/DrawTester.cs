@@ -56,7 +56,14 @@ namespace WinCad
                         g.DrawLine(Pens.Green, p.Vertices[i - 1], p.Vertices[i]);
 
             foreach (var circle in Canvas.Circles)
-                g.DrawEllipse(Pens.Red, circle.Center.X, circle.Center.Y, 5, 5);
+            {
+                var corner = new Point(
+                    circle.Center.X - circle.Radius, 
+                    circle.Center.Y - circle.Radius);
+
+                int side = circle.Radius * 2;
+                g.DrawEllipse(Pens.Red, corner.X, corner.Y, side, side);
+            }
         }
 
         private void mainPicture_MouseClick(object sender, MouseEventArgs e)
@@ -83,11 +90,13 @@ namespace WinCad
             {
                 foreach (var vertex in poly.Vertices)
                 {
-
-                    if (e.X == vertex.X && e.Y == vertex.Y)
+                    if (Math.Abs(e.X - vertex.X) <= 5 
+                        &&  Math.Abs(e.Y - vertex.Y) <= 5)
                     {
-                        var circle = new Circle() { Center = vertex, Radius = 10 };
+                        var circle = new Circle() { Center = vertex, Radius = 5 };
+                        Canvas.Circles.Clear();
                         Canvas.Circles.Add(circle);
+                        mainPicture.Invalidate();
                     }
                 }
             }

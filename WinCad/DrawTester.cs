@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace WinCad
@@ -62,8 +63,12 @@ namespace WinCad
                     circle.Center.Y - circle.Radius);
 
                 int side = circle.Radius * 2;
+
                 g.DrawEllipse(Pens.Red, corner.X, corner.Y, side, side);
             }
+
+            if (controller.session.CurrentPolyline != null)
+                g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
         }
 
         private void mainPicture_MouseClick(object sender, MouseEventArgs e)
@@ -86,6 +91,14 @@ namespace WinCad
 
         private void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
+            if (controller.session.CurrentPolyline?.Vertices?.Count > 0)
+            {
+                Canvas.NewLineStart = controller.session.CurrentPolyline.Vertices.Last();
+                Canvas.NewLineEnd = e.Location;
+                mainPicture.Invalidate();
+            }
+
+            bool nearSomething = false;
             foreach (var poly in Canvas.Polylines)
             {
                 foreach (var vertex in poly.Vertices)
@@ -97,8 +110,15 @@ namespace WinCad
                         Canvas.Circles.Clear();
                         Canvas.Circles.Add(circle);
                         mainPicture.Invalidate();
+                        nearSomething = true;
                     }
                 }
+            }
+
+            if (!nearSomething)
+            {
+                Canvas.Circles.Clear();
+                mainPicture.Invalidate();
             }
         }
     }

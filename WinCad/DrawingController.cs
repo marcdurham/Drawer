@@ -38,6 +38,7 @@ namespace WinCad
         {
             if (cancel)
             {
+                session.CurrentPolyline = null;
                 session.Mode = DrawModes.Ready;
                 view.Status = "Ready";
             }

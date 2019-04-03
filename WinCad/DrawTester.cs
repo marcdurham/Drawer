@@ -118,8 +118,8 @@ namespace WinCad
                             &&  Math.Abs(e.Y - vertex.Y) <= 5)
                         {
                             var circle = new Circle() { Center = vertex, Radius = 5 };
-                            layer.Circles.Clear();
-                            layer.Circles.Add(circle);
+                            Canvas.TemporaryLayer.Circles.Clear();
+                            Canvas.TemporaryLayer.Circles.Add(circle);
                             mainPicture.Invalidate();
                             nearSomething = true;
                         }
@@ -128,8 +128,7 @@ namespace WinCad
 
             if (!nearSomething)
             {
-                foreach (var layer in Canvas.Layers)
-                    layer.Circles.Clear();
+                Canvas.TemporaryLayer.Circles.Clear();
 
                 mainPicture.Invalidate();
             }

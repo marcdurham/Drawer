@@ -7,6 +7,8 @@ namespace WinCad
 {
     public partial class DrawTester : Form, IDrawingView
     {
+        readonly int NearDistance = 5;
+        readonly int HighlightRadius = 5;
         readonly DrawingController controller;
         
         public DrawTester()
@@ -135,22 +137,24 @@ namespace WinCad
                 Canvas.Highlights.Boxes.Add(box);
             }
 
+            var circle = new Circle()
+            {
+                Radius = HighlightRadius,
+                Color = Color.Blue
+            };
+
             bool nearSomething = false;
             foreach (var layer in Canvas.Layers)
+            {
                 foreach (var poly in layer.Polylines)
                 {
                     int radius = 5;
                     foreach (var vertex in poly.Vertices)
                     {
                         if (Math.Abs(e.X - vertex.X) <= radius
-                            &&  Math.Abs(e.Y - vertex.Y) <= radius)
+                            && Math.Abs(e.Y - vertex.Y) <= radius)
                         {
-                            var circle = new Circle()
-                            {
-                                Center = vertex,
-                                Radius = radius,
-                                Color = Color.Blue
-                            };
+                            circle.Center = vertex;
 
                             Canvas.Highlights.Circles.Clear();
                             Canvas.Highlights.Circles.Add(circle);
@@ -158,11 +162,29 @@ namespace WinCad
                         }
                     }
                 }
+                foreach (var box in layer.Boxes)
+                {
+                    if (AreNear(box.FirstCorner, e.Location))
+                    {
+                        circle.Center = box.FirstCorner;
+
+                        Canvas.Highlights.Circles.Clear();
+                        Canvas.Highlights.Circles.Add(circle);
+                        nearSomething = true;
+                    }
+                }
+            }
 
             if (!nearSomething)
                 Canvas.Highlights.Circles.Clear();
 
             mainPicture.Invalidate();
+        }
+
+        bool AreNear(Point a, Point b)
+        {
+            return Math.Abs(a.X - b.X) <= NearDistance
+                && Math.Abs(a.Y - b.Y) <= NearDistance;
         }
     }
 }

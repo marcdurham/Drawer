@@ -56,7 +56,7 @@ namespace WinCad
             foreach (var image in layer.InsertedImages)
                 g.DrawImage(image.Image, image.Rectangle);
 
-            foreach (var r in layer.Rectangles)
+            foreach (var r in layer.Boxes)
                 g.DrawRectangle(Pens.Green, r);
 
             foreach (var p in layer.Polylines)
@@ -120,8 +120,8 @@ namespace WinCad
                 size.Height = Math.Abs(controller.session.FirstCorner.Y - e.Location.Y);
                 size.Width = Math.Abs(controller.session.FirstCorner.X - e.Location.X);
                 var newRectangle = new Rectangle(controller.session.FirstCorner, size);
-                Canvas.Highlights.Rectangles.Clear();
-                Canvas.Highlights.Rectangles.Add(newRectangle);
+                Canvas.Highlights.Boxes.Clear();
+                Canvas.Highlights.Boxes.Add(newRectangle);
                 controller.session.CurrentRectangle = newRectangle;
             }
 

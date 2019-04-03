@@ -88,13 +88,13 @@ namespace WinCad
             else if (session.Mode == DrawModes.DrawingRectangleSecondCorner)
             {
                 session.SecondCorner = point;
-                session.Canvas.CurrentLayer.Rectangles.Add(new Rectangle(
+                session.Canvas.CurrentLayer.Boxes.Add(new Rectangle(
                     session.FirstCorner.X,
                     session.FirstCorner.Y,
                     Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
                     Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
 
-                session.Canvas.Highlights.Rectangles.Clear();
+                session.Canvas.Highlights.Boxes.Clear();
 
                 session.Mode = DrawModes.Ready;
                 view.Status = "Ready";

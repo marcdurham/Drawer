@@ -35,6 +35,7 @@
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.drawRectangle = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -44,6 +45,7 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawButton,
+            this.drawRectangle,
             this.importPictureButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -96,6 +98,17 @@
             this.mainStatus.Size = new System.Drawing.Size(39, 17);
             this.mainStatus.Text = "Ready";
             // 
+            // drawRectangle
+            // 
+            this.drawRectangle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.drawRectangle.Image = ((System.Drawing.Image)(resources.GetObject("drawRectangle.Image")));
+            this.drawRectangle.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.drawRectangle.Name = "drawRectangle";
+            this.drawRectangle.Size = new System.Drawing.Size(63, 22);
+            this.drawRectangle.Text = "Rectangle";
+            this.drawRectangle.ToolTipText = "Draw Rectangle";
+            this.drawRectangle.Click += new System.EventHandler(this.drawRectangle_Click);
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -124,6 +137,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel mainStatus;
         private System.Windows.Forms.ToolStripButton importPictureButton;
+        private System.Windows.Forms.ToolStripButton drawRectangle;
     }
 }
 

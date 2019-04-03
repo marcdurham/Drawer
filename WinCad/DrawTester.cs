@@ -28,6 +28,12 @@ namespace WinCad
         private void drawPolylineButton_Click(object sender, EventArgs e)
         {
             controller.DrawPolyline();
+            //var g = mainPicture.CreateGraphics();
+            //g.DrawRectangle(Pens.Black, new Rectangle(new Point(20, 20), new Size(10, 10)));
+            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
+            var gg = mainPicture.CreateGraphics();
+           
+            mainPicture.Image = image;
         }
 
         private void importPictureButton_Click(object sender, EventArgs e)
@@ -46,8 +52,8 @@ namespace WinCad
         {
             Graphics g = e.Graphics;
 
-            foreach (var layer in Canvas.Layers)
-                DrawObjectsOn(g, layer);
+            //foreach (var layer in Canvas.Layers)
+            //    DrawObjectsOn(g, layer);
 
             DrawObjectsOn(g, Canvas.Highlights);
 
@@ -99,7 +105,6 @@ namespace WinCad
             {
                 Canvas.NewLineStart = controller.session.CurrentPolyline.Vertices.Last();
                 Canvas.NewLineEnd = e.Location;
-                mainPicture.Invalidate();
             }
 
             bool nearSomething = false;
@@ -120,18 +125,15 @@ namespace WinCad
 
                             Canvas.Highlights.Circles.Clear();
                             Canvas.Highlights.Circles.Add(circle);
-                            mainPicture.Invalidate();
                             nearSomething = true;
                         }
                     }
                 }
 
             if (!nearSomething)
-            {
                 Canvas.Highlights.Circles.Clear();
 
-                mainPicture.Invalidate();
-            }
+            mainPicture.Invalidate();
         }
     }
 }

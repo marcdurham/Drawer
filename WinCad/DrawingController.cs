@@ -94,6 +94,8 @@ namespace WinCad
                     Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
                     Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
 
+                session.Canvas.Highlights.Rectangles.Clear();
+
                 session.Mode = DrawModes.Ready;
                 view.Status = "Ready";
                 session.FirstCorner = Point.Empty;

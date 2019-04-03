@@ -57,7 +57,7 @@ namespace WinCad
                 g.DrawImage(image.Image, image.Rectangle);
 
             foreach (var r in layer.Rectangles)
-                g.DrawRectangle(Pens.Blue, r);
+                g.DrawRectangle(Pens.Green, r);
 
             foreach (var p in layer.Polylines)
                 if (p.Vertices.Count > 1)

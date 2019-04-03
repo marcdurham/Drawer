@@ -5,7 +5,6 @@ using System.Windows.Forms;
 
 namespace WinCad
 {
-
     public partial class DrawTester : Form, IDrawingView
     {
         readonly DrawingController controller;
@@ -92,11 +91,6 @@ namespace WinCad
             {
                 MessageBox.Show(ex.ToString(), "Error Clicking On Picture");
             }
-        }
-
-        private void mainPicture_Move(object sender, EventArgs e)
-        {
-           
         }
 
         private void mainPicture_MouseMove(object sender, MouseEventArgs e)

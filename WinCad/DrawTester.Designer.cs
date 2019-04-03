@@ -94,7 +94,6 @@
             this.mainPicture.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPicture_Paint);
             this.mainPicture.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mainPicture_MouseClick);
             this.mainPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPicture_MouseMove);
-            this.mainPicture.Move += new System.EventHandler(this.mainPicture_Move);
             // 
             // statusStrip1
             // 

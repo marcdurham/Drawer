@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Canvas.cs" />
+    <Compile Include="DrawingSession.cs" />
     <Compile Include="DrawModes.cs" />
     <Compile Include="DrawTester.cs">
       <SubType>Form</SubType>

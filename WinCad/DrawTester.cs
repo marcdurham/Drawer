@@ -83,7 +83,7 @@ namespace WinCad
         {
             try
             {
-                canvasClick(new Point(e.X, e.Y));
+                canvasClick(new Point(e.X, e.Y), e.Button);
             }
             catch(Exception ex)
             {
@@ -92,7 +92,7 @@ namespace WinCad
         }
 
 
-        void canvasClick(Point point)
+        void canvasClick(Point point, MouseButtons button)
         {
 
             if (drawMode == DrawModes.StartDrawing)
@@ -102,6 +102,11 @@ namespace WinCad
                 polylines.Add(currentPolyline);
                 drawMode = DrawModes.DrawingPolyline;
                 mainStatus.Text = "Click to add points to the polyline:";
+            }
+            else if (drawMode == DrawModes.DrawingPolyline && button != MouseButtons.Left)
+            {
+                drawMode = DrawModes.Ready;
+                mainStatus.Text = "Ready";
             }
             else if (drawMode == DrawModes.DrawingPolyline)
             {

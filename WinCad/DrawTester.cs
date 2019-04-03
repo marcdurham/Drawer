@@ -44,13 +44,12 @@ namespace WinCad
         private void mainPicture_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+
             for (int i = 0; i < images.Count; i++)
                 g.DrawImage(images[i], imageRectangles[i]);
 
-            var pen = Pens.Blue;
-           // pen.Width = 3.0f;
             foreach (var r in rectangles)
-                g.DrawRectangle(pen, r);
+                g.DrawRectangle(Pens.Blue, r);
         }
 
         private void mainPicture_Click(object sender, EventArgs e)

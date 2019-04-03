@@ -5,6 +5,6 @@ namespace WinCad
 {
     public class Polyline
     {
-        public List<Point> Points = new List<Point>();
+        public List<Point> Vertices = new List<Point>();
     }
 }

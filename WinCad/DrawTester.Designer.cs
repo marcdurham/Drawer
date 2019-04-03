@@ -31,11 +31,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DrawTester));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
+            this.drawRectangle = new System.Windows.Forms.ToolStripButton();
             this.importPictureButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.drawRectangle = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -61,6 +61,17 @@
             this.drawPolylineButton.Text = "Polyline";
             this.drawPolylineButton.Click += new System.EventHandler(this.drawPolylineButton_Click);
             // 
+            // drawRectangle
+            // 
+            this.drawRectangle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.drawRectangle.Image = ((System.Drawing.Image)(resources.GetObject("drawRectangle.Image")));
+            this.drawRectangle.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.drawRectangle.Name = "drawRectangle";
+            this.drawRectangle.Size = new System.Drawing.Size(63, 22);
+            this.drawRectangle.Text = "Rectangle";
+            this.drawRectangle.ToolTipText = "Draw Rectangle";
+            this.drawRectangle.Click += new System.EventHandler(this.drawRectangle_Click);
+            // 
             // importPictureButton
             // 
             this.importPictureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -81,6 +92,8 @@
             this.mainPicture.TabStop = false;
             this.mainPicture.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPicture_Paint);
             this.mainPicture.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mainPicture_MouseClick);
+            this.mainPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPicture_MouseMove);
+            this.mainPicture.Move += new System.EventHandler(this.mainPicture_Move);
             // 
             // statusStrip1
             // 
@@ -97,17 +110,6 @@
             this.mainStatus.Name = "mainStatus";
             this.mainStatus.Size = new System.Drawing.Size(39, 17);
             this.mainStatus.Text = "Ready";
-            // 
-            // drawRectangle
-            // 
-            this.drawRectangle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.drawRectangle.Image = ((System.Drawing.Image)(resources.GetObject("drawRectangle.Image")));
-            this.drawRectangle.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.drawRectangle.Name = "drawRectangle";
-            this.drawRectangle.Size = new System.Drawing.Size(63, 22);
-            this.drawRectangle.Text = "Rectangle";
-            this.drawRectangle.ToolTipText = "Draw Rectangle";
-            this.drawRectangle.Click += new System.EventHandler(this.drawRectangle_Click);
             // 
             // DrawTester
             // 

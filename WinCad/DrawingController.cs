@@ -44,14 +44,14 @@ namespace WinCad
             else if (session.Mode == DrawModes.DrawingPolylineFirstVertex)
             {
                 session.CurrentPolyline = new Polyline();
-                session.CurrentPolyline.Points.Add(point);
+                session.CurrentPolyline.Vertices.Add(point);
                 session.Canvas.Polylines.Add(session.CurrentPolyline);
                 session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
                 view.Status = "Click to add vertices to the polyline:";
             }
             else if (session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
             {
-                session.CurrentPolyline.Points.Add(point);
+                session.CurrentPolyline.Vertices.Add(point);
             }
             else if (session.Mode == DrawModes.ImportingPictureFirstCorner)
             {

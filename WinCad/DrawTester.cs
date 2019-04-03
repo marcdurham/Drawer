@@ -51,9 +51,12 @@ namespace WinCad
                 g.DrawRectangle(Pens.Blue, r);
 
             foreach (var p in Canvas.Polylines)
-                if (p.Points.Count > 1)
-                    for (int i = 1; i < p.Points.Count; i++)
-                        g.DrawLine(Pens.Green, p.Points[i - 1], p.Points[i]);
+                if (p.Vertices.Count > 1)
+                    for (int i = 1; i < p.Vertices.Count; i++)
+                        g.DrawLine(Pens.Green, p.Vertices[i - 1], p.Vertices[i]);
+
+            foreach (var circle in Canvas.Circles)
+                g.DrawEllipse(Pens.Red, circle.Center.X, circle.Center.Y, 5, 5);
         }
 
         private void mainPicture_MouseClick(object sender, MouseEventArgs e)
@@ -66,6 +69,27 @@ namespace WinCad
             catch(Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error Clicking On Picture");
+            }
+        }
+
+        private void mainPicture_Move(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void mainPicture_MouseMove(object sender, MouseEventArgs e)
+        {
+            foreach (var poly in Canvas.Polylines)
+            {
+                foreach (var vertex in poly.Vertices)
+                {
+
+                    if (e.X == vertex.X && e.Y == vertex.Y)
+                    {
+                        var circle = new Circle() { Center = vertex, Radius = 10 };
+                        Canvas.Circles.Add(circle);
+                    }
+                }
             }
         }
     }

@@ -124,7 +124,7 @@
     <value>Drawing Rectangle: Click first corner:</value>
   </data>
   <data name="ImportPictureStatus" xml:space="preserve">
-    <value>Importing Picture: Click first corner:</value>
+    <value>Importing ImageClick first corner:</value>
   </data>
   <data name="ReadyStatus" xml:space="preserve">
     <value>Ready</value>
@@ -136,6 +136,6 @@
     <value>Drawing Rectangle: Click second corner:</value>
   </data>
   <data name="StartImportingPictureStatus" xml:space="preserve">
-    <value>Importing Picture: Click second corner:</value>
+    <value>Importing Image: Click second corner:</value>
   </data>
 </root>

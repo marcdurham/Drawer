@@ -79,7 +79,7 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing Picture: Click first corner:.
+        ///   Looks up a localized string similar to Importing ImageClick first corner:.
         /// </summary>
         internal static string ImportPictureStatus {
             get {
@@ -115,7 +115,7 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing Picture: Click second corner:.
+        ///   Looks up a localized string similar to Importing Image: Click second corner:.
         /// </summary>
         internal static string StartImportingPictureStatus {
             get {

@@ -32,7 +32,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
             this.drawRectangle = new System.Windows.Forms.ToolStripButton();
-            this.importPictureButton = new System.Windows.Forms.ToolStripButton();
+            this.insertImageButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -48,7 +48,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawPolylineButton,
             this.drawRectangle,
-            this.importPictureButton,
+            this.insertImageButton,
             this.scaleImageButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -75,15 +75,15 @@
             this.drawRectangle.ToolTipText = "Draw Rectangle";
             this.drawRectangle.Click += new System.EventHandler(this.drawRectangle_Click);
             // 
-            // importPictureButton
+            // insertImageButton
             // 
-            this.importPictureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.importPictureButton.Image = ((System.Drawing.Image)(resources.GetObject("importPictureButton.Image")));
-            this.importPictureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.importPictureButton.Name = "importPictureButton";
-            this.importPictureButton.Size = new System.Drawing.Size(87, 22);
-            this.importPictureButton.Text = "Import Picture";
-            this.importPictureButton.Click += new System.EventHandler(this.importPictureButton_Click);
+            this.insertImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.insertImageButton.Image = ((System.Drawing.Image)(resources.GetObject("insertImageButton.Image")));
+            this.insertImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.insertImageButton.Name = "insertImageButton";
+            this.insertImageButton.Size = new System.Drawing.Size(76, 22);
+            this.insertImageButton.Text = "Insert Image";
+            this.insertImageButton.Click += new System.EventHandler(this.importPictureButton_Click);
             // 
             // mainPicture
             // 
@@ -153,7 +153,7 @@
         private System.Windows.Forms.PictureBox mainPicture;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel mainStatus;
-        private System.Windows.Forms.ToolStripButton importPictureButton;
+        private System.Windows.Forms.ToolStripButton insertImageButton;
         private System.Windows.Forms.ToolStripButton drawRectangle;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolStripButton scaleImageButton;

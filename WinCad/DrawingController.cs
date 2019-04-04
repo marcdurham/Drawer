@@ -81,38 +81,55 @@ namespace WinCad
             if (session.Mode == DrawModes.DrawingPolylineExtraVertices
                 || session.Mode == DrawModes.DrawingPolylineSecondVertex)
             {
-                session.Canvas.NewLineStart = session
-                    .CurrentPolyline?
-                    .Vertices
-                    .Last() ?? session.FirstCorner;
-
-                session.Canvas.NewLineEnd = location;
-
-                var rubberband = new Polyline(
-                    session.Canvas.NewLineStart, 
-                    session.Canvas.NewLineEnd)
-                {
-                    Color = Color.Blue,
-                };
-
-                session.Canvas.Highlights.Polylines.Clear();
-                session.Canvas.Highlights.Polylines.Add(rubberband);
+                ShowNextPolylineSegment(location);
             }
 
             if (session.Mode == DrawModes.DrawingRectangleSecondCorner
                 || session.Mode == DrawModes.ImportingPictureSecondCorner)
             {
-                var size = SizeFrom(session.FirstCorner, location);
-
-                var box = new Box(session.FirstCorner, size)
-                {
-                    Color = Color.Blue
-                };
-
-                session.Canvas.Highlights.Boxes.Clear();
-                session.Canvas.Highlights.Boxes.Add(box);
+                ShowNewRectangle(location);
             }
 
+            HoverOverPointsAt(location);
+
+            view.InvalidateImage();
+        }
+
+        void ShowNextPolylineSegment(Point location)
+        {
+            session.Canvas.NewLineStart = session
+                .CurrentPolyline?
+                .Vertices
+                .Last() ?? session.FirstCorner;
+
+            session.Canvas.NewLineEnd = location;
+
+            var rubberband = new Polyline(
+                session.Canvas.NewLineStart,
+                session.Canvas.NewLineEnd)
+            {
+                Color = Color.Blue,
+            };
+
+            session.Canvas.Highlights.Polylines.Clear();
+            session.Canvas.Highlights.Polylines.Add(rubberband);
+        }
+
+        void ShowNewRectangle(Point location)
+        {
+            var size = SizeFrom(session.FirstCorner, location);
+
+            var box = new Box(session.FirstCorner, size)
+            {
+                Color = Color.Blue
+            };
+
+            session.Canvas.Highlights.Boxes.Clear();
+            session.Canvas.Highlights.Boxes.Add(box);
+        }
+
+        void HoverOverPointsAt(Point location)
+        {
             var circle = new Circle()
             {
                 Radius = HighlightRadius,
@@ -140,8 +157,6 @@ namespace WinCad
 
             if (!nearSomething)
                 session.Canvas.Highlights.Circles.Clear();
-
-            view.InvalidateImage();
         }
 
         void StartDrawingRectangleAt(Point point)

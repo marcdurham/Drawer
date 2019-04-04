@@ -8,8 +8,9 @@ namespace WinCad
 {
     public partial class DrawTester : Form, IDrawingView
     {
-        readonly int NearDistance = 5;
-        readonly int HighlightRadius = 5;
+        static readonly int NearDistance = 5;
+        static readonly int HighlightRadius = 5;
+
         readonly DrawingController controller;
         
         public DrawTester()
@@ -19,12 +20,12 @@ namespace WinCad
             controller = new DrawingController(this);
         }
     
+        public Canvas Canvas { get; set; }
+
         public string Status
         {
             set { mainStatus.Text = value; }
         }
-
-        public Canvas Canvas { get; set; }
 
         void drawPolylineButton_Click(object sender, EventArgs e)
         {
@@ -76,11 +77,6 @@ namespace WinCad
             }
         }
 
-        static Rectangle RectangleFrom(Box box)
-        {
-            return new Rectangle(box.FirstCorner, box.Size);
-        }
-
         void mainPicture_MouseClick(object sender, MouseEventArgs e)
         {
             try
@@ -93,20 +89,6 @@ namespace WinCad
             {
                 MessageBox.Show(ex.ToString(), "Error Clicking On Picture");
             }
-        }
-
-        void RenderLayers()
-        {
-            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
-
-            var graphics = Graphics.FromImage(image);
-
-            foreach (var layer in Canvas.Layers)
-                RenderEntities(graphics, layer);
-
-            mainPicture.Image = image;
-
-            mainPicture.Invalidate();
         }
 
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
@@ -175,10 +157,30 @@ namespace WinCad
             mainPicture.Invalidate();
         }
 
-        bool AreNear(Point a, Point b)
+        static Rectangle RectangleFrom(Box box)
+        {
+            return new Rectangle(box.FirstCorner, box.Size);
+        }
+
+        static bool AreNear(Point a, Point b)
         {
             return Math.Abs(a.X - b.X) <= NearDistance
                 && Math.Abs(a.Y - b.Y) <= NearDistance;
+        }
+
+
+        void RenderLayers()
+        {
+            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
+
+            var graphics = Graphics.FromImage(image);
+
+            foreach (var layer in Canvas.Layers)
+                RenderEntities(graphics, layer);
+
+            mainPicture.Image = image;
+
+            mainPicture.Invalidate();
         }
     }
 }

@@ -4,18 +4,18 @@ namespace WinCad
 {
     public class EntityRenderEngine
     {
-        public void Render(Graphics g, Layer layer)
+        public void Render(Graphics graphics, Layer layer)
         {
             foreach (var image in layer.InsertedImages)
-                g.DrawImage(image.Image, RectangleFrom(image.Box));
+                graphics.DrawImage(image.Image, RectangleFrom(image.Box));
 
             foreach (var box in layer.Boxes)
-                g.DrawRectangle(new Pen(box.Color), RectangleFrom(box));
+                graphics.DrawRectangle(new Pen(box.Color), RectangleFrom(box));
 
             foreach (var pline in layer.Polylines)
                 if (pline.Vertices.Count > 1)
                     for (int i = 1; i < pline.Vertices.Count; i++)
-                        g.DrawLine(
+                        graphics.DrawLine(
                             new Pen(pline.Color),
                             pline.Vertices[i - 1], pline.Vertices[i]);
 
@@ -28,7 +28,12 @@ namespace WinCad
 
                 int side = circle.Radius * 2;
 
-                g.DrawEllipse(new Pen(circle.Color), corner.X, corner.Y, side, side);
+                graphics.DrawEllipse(
+                    new Pen(circle.Color), 
+                    corner.X, 
+                    corner.Y, 
+                    side, 
+                    side);
             }
         }
 

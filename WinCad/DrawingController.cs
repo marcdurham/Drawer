@@ -102,11 +102,10 @@ namespace WinCad
                 .Vertices
                 .Last() ?? session.FirstCorner;
 
-            Point orthoPoint = OrthoPointFrom(session.Canvas.NewLineStart, point);
             int angle = Angle(session.Canvas.NewLineStart, point);
             view.SecondStatus = $"{session.Canvas.NewLineStart.X}, {session.Canvas.NewLineStart.Y} -> {point.X}, {point.Y} = {angle}deg";
 
-            session.Canvas.NewLineEnd = orthoPoint;
+            session.Canvas.NewLineEnd = OrthoPointFrom(session.Canvas.NewLineStart, point);
 
             var rubberband = new Polyline(
                 session.Canvas.NewLineStart,

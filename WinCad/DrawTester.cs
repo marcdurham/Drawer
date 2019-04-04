@@ -91,7 +91,9 @@ namespace WinCad
             foreach (var pline in layer.Polylines)
                 if (pline.Vertices.Count > 1)
                     for (int i = 1; i < pline.Vertices.Count; i++)
-                        g.DrawLine(new Pen(pline.Color), pline.Vertices[i - 1], pline.Vertices[i]);
+                        g.DrawLine(
+                            new Pen(pline.Color), 
+                            pline.Vertices[i - 1], pline.Vertices[i]);
 
             foreach (var circle in layer.Circles)
             {

@@ -37,6 +37,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.scaleImageButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -47,7 +48,8 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawPolylineButton,
             this.drawRectangle,
-            this.importPictureButton});
+            this.importPictureButton,
+            this.scaleImageButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -115,6 +117,15 @@
             // 
             this.openFileDialog.Filter = "Image Files|*.jpg;*.tif;*.tif;*.bmp;*.png";
             // 
+            // scaleImageButton
+            // 
+            this.scaleImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.scaleImageButton.Image = ((System.Drawing.Image)(resources.GetObject("scaleImageButton.Image")));
+            this.scaleImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.scaleImageButton.Name = "scaleImageButton";
+            this.scaleImageButton.Size = new System.Drawing.Size(74, 22);
+            this.scaleImageButton.Text = "Scale Image";
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -145,6 +156,7 @@
         private System.Windows.Forms.ToolStripButton importPictureButton;
         private System.Windows.Forms.ToolStripButton drawRectangle;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.ToolStripButton scaleImageButton;
     }
 }
 

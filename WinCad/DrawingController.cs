@@ -81,7 +81,7 @@ namespace WinCad
             if (session.Mode == DrawModes.DrawingPolylineExtraVertices
                 || session.Mode == DrawModes.DrawingPolylineSecondVertex)
             {
-                ShowNextPolylineSegment(location);
+                ShowNewPolylineSegment(location);
             }
 
             if (session.Mode == DrawModes.DrawingRectangleSecondCorner
@@ -95,7 +95,7 @@ namespace WinCad
             view.InvalidateImage();
         }
 
-        void ShowNextPolylineSegment(Point location)
+        void ShowNewPolylineSegment(Point location)
         {
             session.Canvas.NewLineStart = session
                 .CurrentPolyline?

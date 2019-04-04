@@ -93,10 +93,15 @@ namespace WinCad
 
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
+            HoverAt(e.Location);
+        }
+
+        void HoverAt(Point location)
+        {
             if (controller.session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
             {
                 Canvas.NewLineStart = controller.session.CurrentPolyline.Vertices.Last();
-                Canvas.NewLineEnd = e.Location;
+                Canvas.NewLineEnd = location;
 
                 var rubberband = new Polyline()
                 {
@@ -113,8 +118,8 @@ namespace WinCad
             {
                 var size = new Size(controller.session.FirstCorner)
                 {
-                    Height = Math.Abs(controller.session.FirstCorner.Y - e.Location.Y),
-                    Width = Math.Abs(controller.session.FirstCorner.X - e.Location.X)
+                    Height = Math.Abs(controller.session.FirstCorner.Y - location.Y),
+                    Width = Math.Abs(controller.session.FirstCorner.X - location.X)
                 };
 
                 var box = new Box(controller.session.FirstCorner, size)
@@ -139,7 +144,7 @@ namespace WinCad
                 {
                     foreach (var p in entity.Points())
                     {
-                        if (AreNear(p, e.Location))
+                        if (AreNear(p, location))
                         {
                             circle.Center = p;
 

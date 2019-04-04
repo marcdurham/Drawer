@@ -39,6 +39,7 @@
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.orthoButton = new System.Windows.Forms.ToolStripButton();
+            this.secondStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -111,7 +112,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mainStatus});
+            this.mainStatus,
+            this.secondStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 428);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 22);
@@ -137,6 +139,11 @@
             this.orthoButton.Size = new System.Drawing.Size(42, 22);
             this.orthoButton.Text = "Ortho";
             this.orthoButton.Click += new System.EventHandler(this.orthoButton_Click);
+            // 
+            // secondStatus
+            // 
+            this.secondStatus.Name = "secondStatus";
+            this.secondStatus.Size = new System.Drawing.Size(0, 17);
             // 
             // DrawTester
             // 
@@ -170,6 +177,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolStripButton scaleImageButton;
         private System.Windows.Forms.ToolStripButton orthoButton;
+        private System.Windows.Forms.ToolStripStatusLabel secondStatus;
     }
 }
 

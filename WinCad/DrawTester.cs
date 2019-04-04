@@ -24,6 +24,16 @@ namespace WinCad
             set { mainStatus.Text = value; }
         }
 
+        public string SecondStatus
+        {
+            set { secondStatus.Text = value; }
+        }
+
+        public bool OrthoIsOn
+        {
+            get { return orthoButton.Checked; }
+        }
+
         public void InvalidateImage()
         {
             mainPicture.Invalidate();

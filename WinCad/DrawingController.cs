@@ -95,14 +95,18 @@ namespace WinCad
             view.InvalidateImage();
         }
 
-        void ShowNewPolylineSegment(Point location)
+        void ShowNewPolylineSegment(Point point)
         {
             session.Canvas.NewLineStart = session
                 .CurrentPolyline?
                 .Vertices
                 .Last() ?? session.FirstCorner;
 
-            session.Canvas.NewLineEnd = location;
+            Point orthoPoint = OrthoPointFrom(session.Canvas.NewLineStart, point);
+            int angle = Angle(session.Canvas.NewLineStart, point);
+            view.SecondStatus = $"{session.Canvas.NewLineStart.X}, {session.Canvas.NewLineStart.Y} -> {point.X}, {point.Y} = {angle}deg";
+
+            session.Canvas.NewLineEnd = orthoPoint;
 
             var rubberband = new Polyline(
                 session.Canvas.NewLineStart,
@@ -113,6 +117,20 @@ namespace WinCad
 
             session.Canvas.Highlights.Polylines.Clear();
             session.Canvas.Highlights.Polylines.Add(rubberband);
+        }
+
+        Point OrthoPointFrom(Point previousPoint, Point point)
+        {
+            if (!view.OrthoIsOn)
+                return point;
+
+            int angle = Angle(previousPoint, point);
+
+            if (Math.Abs(angle) >= 0 && Math.Abs(angle) < 45
+                || Math.Abs(angle) <= 180 && Math.Abs(angle) > 135)
+                return new Point(point.X, previousPoint.Y);
+            else
+                return new Point(previousPoint.X, point.Y);
         }
 
         void ShowNewRectangle(Point location)
@@ -193,7 +211,10 @@ namespace WinCad
 
         void AddSecondPolylineVertexAt(Point point)
         {
-            session.CurrentPolyline = new Polyline(session.FirstCorner, point);
+            session.CurrentPolyline = new Polyline(
+                session.FirstCorner, 
+                OrthoPointFrom(session.FirstCorner, point));
+
             session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
             session.Mode = DrawModes.DrawingPolylineExtraVertices;
             view.Status = Properties.Resources.DrawPolylineStatus;
@@ -202,7 +223,7 @@ namespace WinCad
 
         void AddExtraPolylineVertexAt(Point point)
         {
-            session.CurrentPolyline.Vertices.Add(point);
+            session.CurrentPolyline.Vertices.Add(OrthoPointFrom(session.Canvas.NewLineStart, point));
             view.Status = Properties.Resources.DrawPolylineStatus;
             view.RenderLayers();
         }
@@ -254,6 +275,11 @@ namespace WinCad
         static Size SizeFrom(Point a, Point b)
         {
             return new Size(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+        }
+
+        static int Angle(Point a, Point b)
+        {
+            return (int) (Math.Atan2(b.Y - a.Y, b.X - a.X) * 180 / Math.PI);
         }
     }
 }

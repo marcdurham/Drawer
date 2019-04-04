@@ -44,7 +44,6 @@ namespace WinCad
         void drawPolylineButton_Click(object sender, EventArgs e)
         {
             controller.DrawPolyline();
-            RenderLayers();
         }
 
         void importPictureButton_Click(object sender, EventArgs e)
@@ -61,9 +60,24 @@ namespace WinCad
 
         void mainPicture_Paint(object sender, PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
+            RenderEntities(e.Graphics, Canvas.Highlights);
+        }
 
-            RenderEntities(g, Canvas.Highlights);
+        void mainPicture_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                controller.ClickAt(new Point(e.X, e.Y), e.Button != MouseButtons.Left);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error Clicking On Picture");
+            }
+        }
+
+        void mainPicture_MouseMove(object sender, MouseEventArgs e)
+        {
+            controller.HoverAt(e.Location);
         }
 
         static void RenderEntities(Graphics g, Layer layer)
@@ -90,25 +104,6 @@ namespace WinCad
 
                 g.DrawEllipse(new Pen(circle.Color), corner.X, corner.Y, side, side);
             }
-        }
-
-        void mainPicture_MouseClick(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                controller.ClickAt(new Point(e.X, e.Y), e.Button != MouseButtons.Left);
-
-                RenderLayers();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Error Clicking On Picture");
-            }
-        }
-
-        void mainPicture_MouseMove(object sender, MouseEventArgs e)
-        {
-            controller.HoverAt(e.Location);
         }
 
         static Rectangle RectangleFrom(Box box)

@@ -24,6 +24,7 @@ namespace WinCad
         {
             session.Mode = DrawModes.DrawingPolylineFirstVertex;
             view.Status = "Click first point of polyline:";
+            view.RenderLayers();
         }
 
         internal void ImportPicture(string fileName)
@@ -71,6 +72,8 @@ namespace WinCad
                     view.Status = "Ready";
                     break;
             }
+
+            view.RenderLayers();
         }
 
         internal void HoverAt(Point location)
@@ -213,6 +216,7 @@ namespace WinCad
             session.CurrentPolyline = null;
             session.Mode = DrawModes.Ready;
             view.Status = "Ready";
+            view.RenderLayers();
         }
 
         static bool AreNear(Point a, Point b)

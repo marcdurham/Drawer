@@ -7,12 +7,14 @@ namespace WinCad
     public partial class DrawTester : Form, IDrawingView
     {
         readonly DrawingController controller;
+        readonly EntityRenderEngine engine;
         
         public DrawTester()
         {
             InitializeComponent();
 
             controller = new DrawingController(this);
+            engine = new EntityRenderEngine();
         }
     
         public Canvas Canvas { get; set; }
@@ -34,7 +36,7 @@ namespace WinCad
             var graphics = Graphics.FromImage(image);
 
             foreach (var layer in Canvas.Layers)
-                RenderEntities(graphics, layer);
+                engine.Render(graphics, layer);
 
             mainPicture.Image = image;
 
@@ -60,7 +62,7 @@ namespace WinCad
 
         void mainPicture_Paint(object sender, PaintEventArgs e)
         {
-            RenderEntities(e.Graphics, Canvas.Highlights);
+            engine.Render(e.Graphics, Canvas.Highlights);
         }
 
         void mainPicture_MouseClick(object sender, MouseEventArgs e)
@@ -80,40 +82,7 @@ namespace WinCad
             controller.HoverAt(e.Location);
         }
 
-        static void RenderEntities(Graphics g, Layer layer)
-        {
-            foreach (var image in layer.InsertedImages)
-                g.DrawImage(image.Image, RectangleFrom(image.Box));
-
-            foreach (var box in layer.Boxes)
-                g.DrawRectangle(new Pen(box.Color), RectangleFrom(box));
-
-            foreach (var pline in layer.Polylines)
-                if (pline.Vertices.Count > 1)
-                    for (int i = 1; i < pline.Vertices.Count; i++)
-                        g.DrawLine(
-                            new Pen(pline.Color), 
-                            pline.Vertices[i - 1], pline.Vertices[i]);
-
-            foreach (var circle in layer.Circles)
-            {
-                // Draws circles from rectangles, convert from center & radius
-                var corner = new Point(
-                    circle.Center.X - circle.Radius,
-                    circle.Center.Y - circle.Radius);
-
-                int side = circle.Radius * 2;
-
-                g.DrawEllipse(new Pen(circle.Color), corner.X, corner.Y, side, side);
-            }
-        }
-
-        static Rectangle RectangleFrom(Box box)
-        {
-            return new Rectangle(box.FirstCorner, box.Size);
-        }
-
-        private void orthoButton_Click(object sender, EventArgs e)
+        void orthoButton_Click(object sender, EventArgs e)
         {
             orthoButton.Checked = !orthoButton.Checked;
         }

@@ -33,11 +33,12 @@
             this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
             this.drawRectangle = new System.Windows.Forms.ToolStripButton();
             this.insertImageButton = new System.Windows.Forms.ToolStripButton();
+            this.scaleImageButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.scaleImageButton = new System.Windows.Forms.ToolStripButton();
+            this.orthoButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -49,7 +50,8 @@
             this.drawPolylineButton,
             this.drawRectangle,
             this.insertImageButton,
-            this.scaleImageButton});
+            this.scaleImageButton,
+            this.orthoButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -85,6 +87,15 @@
             this.insertImageButton.Text = "Insert Image";
             this.insertImageButton.Click += new System.EventHandler(this.importPictureButton_Click);
             // 
+            // scaleImageButton
+            // 
+            this.scaleImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.scaleImageButton.Image = ((System.Drawing.Image)(resources.GetObject("scaleImageButton.Image")));
+            this.scaleImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.scaleImageButton.Name = "scaleImageButton";
+            this.scaleImageButton.Size = new System.Drawing.Size(74, 22);
+            this.scaleImageButton.Text = "Scale Image";
+            // 
             // mainPicture
             // 
             this.mainPicture.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -117,14 +128,15 @@
             // 
             this.openFileDialog.Filter = "Image Files|*.jpg;*.tif;*.tif;*.bmp;*.png";
             // 
-            // scaleImageButton
+            // orthoButton
             // 
-            this.scaleImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.scaleImageButton.Image = ((System.Drawing.Image)(resources.GetObject("scaleImageButton.Image")));
-            this.scaleImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.scaleImageButton.Name = "scaleImageButton";
-            this.scaleImageButton.Size = new System.Drawing.Size(74, 22);
-            this.scaleImageButton.Text = "Scale Image";
+            this.orthoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.orthoButton.Image = ((System.Drawing.Image)(resources.GetObject("orthoButton.Image")));
+            this.orthoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.orthoButton.Name = "orthoButton";
+            this.orthoButton.Size = new System.Drawing.Size(42, 22);
+            this.orthoButton.Text = "Ortho";
+            this.orthoButton.Click += new System.EventHandler(this.orthoButton_Click);
             // 
             // DrawTester
             // 
@@ -157,6 +169,7 @@
         private System.Windows.Forms.ToolStripButton drawRectangle;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolStripButton scaleImageButton;
+        private System.Windows.Forms.ToolStripButton orthoButton;
     }
 }
 

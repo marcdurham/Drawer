@@ -95,7 +95,7 @@ namespace WinCad
 
             foreach (var circle in layer.Circles)
             {
-                // Circles drawn from rectangle, convert from center & radius
+                // Draws circles from rectangles, convert from center & radius
                 var corner = new Point(
                     circle.Center.X - circle.Radius,
                     circle.Center.Y - circle.Radius);
@@ -109,6 +109,11 @@ namespace WinCad
         static Rectangle RectangleFrom(Box box)
         {
             return new Rectangle(box.FirstCorner, box.Size);
+        }
+
+        private void orthoButton_Click(object sender, EventArgs e)
+        {
+            orthoButton.Checked = !orthoButton.Checked;
         }
     }
 }

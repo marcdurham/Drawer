@@ -9,6 +9,7 @@
         DrawingRectangleSecondCorner,
         StartDrawing,
         DrawingPolylineFirstVertex,
-        DrawingPolylineSecondaryVertices
+        DrawingPolylineExtraVertices,
+        DrawingPolylineSecondVertex
     }
 }

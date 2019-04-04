@@ -53,8 +53,11 @@ namespace WinCad
                 case DrawModes.DrawingPolylineFirstVertex:
                     StartDrawingPolylineAt(point);
                     break;
-                case DrawModes.DrawingPolylineSecondaryVertices:
-                    AddPolylineVertexAt(point);
+                case DrawModes.DrawingPolylineSecondVertex:
+                    AddSecondPolylineVertexAt(point);
+                    break;
+                case DrawModes.DrawingPolylineExtraVertices:
+                    AddExtraPolylineVertexAt(point);
                     break;
                 case DrawModes.ImportingPictureFirstCorner:
                     StartImportingPictureAt(point);
@@ -76,19 +79,17 @@ namespace WinCad
 
         internal void HoverAt(Point location)
         {
-            if (session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
+            if (session.Mode == DrawModes.DrawingPolylineExtraVertices
+                || session.Mode == DrawModes.DrawingPolylineSecondVertex)
             {
-                session.Canvas.NewLineStart = session.CurrentPolyline.Vertices.Last();
+                session.Canvas.NewLineStart = session.CurrentPolyline?.Vertices.Last() ?? session.FirstCorner;
                 session.Canvas.NewLineEnd = location;
 
-                var rubberband = new Polyline()
+                var rubberband = new Polyline(
+                    session.Canvas.NewLineStart, 
+                    session.Canvas.NewLineEnd)
                 {
                     Color = Color.Blue,
-                    Vertices = new List<Point>
-                    {
-                        session.Canvas.NewLineStart,
-                        session.Canvas.NewLineEnd
-                    }
                 };
 
                 session.Canvas.Highlights.Polylines.Clear();
@@ -167,16 +168,24 @@ namespace WinCad
 
         void StartDrawingPolylineAt(Point point)
         {
-            session.CurrentPolyline = new Polyline();
-            session.CurrentPolyline.Vertices.Add(point);
-            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
-            session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
+            session.FirstCorner = point;
+            session.Mode = DrawModes.DrawingPolylineSecondVertex;
             view.Status = Properties.Resources.StartDrawingPolylineStatus;
         }
 
-        void AddPolylineVertexAt(Point point)
+        void AddSecondPolylineVertexAt(Point point)
+        {
+            session.CurrentPolyline = new Polyline(session.FirstCorner, point);
+            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
+            session.Mode = DrawModes.DrawingPolylineExtraVertices;
+            view.Status = Properties.Resources.DrawPolylineStatus;
+            view.RenderLayers();
+        }
+
+        void AddExtraPolylineVertexAt(Point point)
         {
             session.CurrentPolyline.Vertices.Add(point);
+            view.Status = Properties.Resources.DrawPolylineStatus;
             view.RenderLayers();
         }
 

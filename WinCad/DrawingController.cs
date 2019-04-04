@@ -140,6 +140,13 @@ namespace WinCad
             view.InvalidateImage();
         }
 
+        void StartDrawingRectangleAt(Point point)
+        {
+            session.FirstCorner = point;
+            session.Mode = DrawModes.DrawingRectangleSecondCorner;
+            view.Status = Properties.Resources.StartDrawingRectangleStatus;
+        }
+
         void FinishDrawingRectangleAt(Point point)
         {
             session.SecondCorner = point;
@@ -158,17 +165,26 @@ namespace WinCad
             view.RenderLayers();
         }
 
-        void StartDrawingRectangleAt(Point point)
+        void StartDrawingPolylineAt(Point point)
         {
-            session.FirstCorner = point;
-            session.Mode = DrawModes.DrawingRectangleSecondCorner;
-            view.Status = Properties.Resources.StartDrawingRectangleStatus;
+            session.CurrentPolyline = new Polyline();
+            session.CurrentPolyline.Vertices.Add(point);
+            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
+            session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
+            view.Status = Properties.Resources.StartDrawingPolylineStatus;
         }
 
         void AddPolylineVertexAt(Point point)
         {
             session.CurrentPolyline.Vertices.Add(point);
             view.RenderLayers();
+        }
+
+        void StartImportingPictureAt(Point point)
+        {
+            session.FirstCorner = point;
+            session.Mode = DrawModes.ImportingPictureSecondCorner;
+            view.Status = Properties.Resources.StartImportingPictureStatus;
         }
 
         void FinishImportingPictureAt(Point point)
@@ -185,22 +201,6 @@ namespace WinCad
             CancelMode();
 
             view.RenderLayers();
-        }
-
-        void StartImportingPictureAt(Point point)
-        {
-            session.FirstCorner = point;
-            session.Mode = DrawModes.ImportingPictureSecondCorner;
-            view.Status = Properties.Resources.StartImportingPictureStatus;
-        }
-
-        void StartDrawingPolylineAt(Point point)
-        {
-            session.CurrentPolyline = new Polyline();
-            session.CurrentPolyline.Vertices.Add(point);
-            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
-            session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
-            view.Status = Properties.Resources.StartDrawingPolylineStatus;
         }
 
         void CancelMode()

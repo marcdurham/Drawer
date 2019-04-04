@@ -4,5 +4,7 @@
     {
         string Status { set; }
         Canvas Canvas { get; set; }
+        void InvalidateImage();
+        void RenderLayers();
     }
 }

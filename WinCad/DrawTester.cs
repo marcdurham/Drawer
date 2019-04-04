@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace WinCad
 {
     public partial class DrawTester : Form, IDrawingView
     {
-        static readonly int NearDistance = 5;
-        static readonly int HighlightRadius = 5;
-
         readonly DrawingController controller;
         
         public DrawTester()
@@ -25,6 +20,25 @@ namespace WinCad
         public string Status
         {
             set { mainStatus.Text = value; }
+        }
+
+        public void InvalidateImage()
+        {
+            mainPicture.Invalidate();
+        }
+
+        public void RenderLayers()
+        {
+            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
+
+            var graphics = Graphics.FromImage(image);
+
+            foreach (var layer in Canvas.Layers)
+                RenderEntities(graphics, layer);
+
+            mainPicture.Image = image;
+
+            mainPicture.Invalidate();
         }
 
         void drawPolylineButton_Click(object sender, EventArgs e)
@@ -93,99 +107,12 @@ namespace WinCad
 
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
-            HoverAt(e.Location);
-        }
-
-        void HoverAt(Point location)
-        {
-            if (controller.session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
-            {
-                Canvas.NewLineStart = controller.session.CurrentPolyline.Vertices.Last();
-                Canvas.NewLineEnd = location;
-
-                var rubberband = new Polyline()
-                {
-                    Color = Color.Blue,
-                    Vertices = new List<Point> { Canvas.NewLineStart, Canvas.NewLineEnd }
-                };
-
-                Canvas.Highlights.Polylines.Clear();
-                Canvas.Highlights.Polylines.Add(rubberband);
-            }
-
-            if (controller.session.Mode == DrawModes.DrawingRectangleSecondCorner
-                || controller.session.Mode == DrawModes.ImportingPictureSecondCorner)
-            {
-                var size = new Size(controller.session.FirstCorner)
-                {
-                    Height = Math.Abs(controller.session.FirstCorner.Y - location.Y),
-                    Width = Math.Abs(controller.session.FirstCorner.X - location.X)
-                };
-
-                var box = new Box(controller.session.FirstCorner, size)
-                {
-                    Color = Color.Blue
-                };
-
-                Canvas.Highlights.Boxes.Clear();
-                Canvas.Highlights.Boxes.Add(box);
-            }
-
-            var circle = new Circle()
-            {
-                Radius = HighlightRadius,
-                Color = Color.Blue
-            };
-
-            bool nearSomething = false;
-            foreach (var layer in Canvas.Layers)
-            {
-                foreach (var entity in layer.Entities())
-                {
-                    foreach (var p in entity.Points())
-                    {
-                        if (AreNear(p, location))
-                        {
-                            circle.Center = p;
-
-                            Canvas.Highlights.Circles.Clear();
-                            Canvas.Highlights.Circles.Add(circle);
-                            nearSomething = true;
-                        }
-                    }
-                }
-            }
-
-            if (!nearSomething)
-                Canvas.Highlights.Circles.Clear();
-
-            mainPicture.Invalidate();
+            controller.HoverAt(e.Location);
         }
 
         static Rectangle RectangleFrom(Box box)
         {
             return new Rectangle(box.FirstCorner, box.Size);
-        }
-
-        static bool AreNear(Point a, Point b)
-        {
-            return Math.Abs(a.X - b.X) <= NearDistance
-                && Math.Abs(a.Y - b.Y) <= NearDistance;
-        }
-
-
-        void RenderLayers()
-        {
-            var image = new Bitmap(mainPicture.Width, mainPicture.Height);
-
-            var graphics = Graphics.FromImage(image);
-
-            foreach (var layer in Canvas.Layers)
-                RenderEntities(graphics, layer);
-
-            mainPicture.Image = image;
-
-            mainPicture.Invalidate();
         }
     }
 }

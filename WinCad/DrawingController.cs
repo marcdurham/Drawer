@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace WinCad
 {
     public class DrawingController
     {
+        static readonly int NearDistance = 5;
+        static readonly int HighlightRadius = 5;
+
         readonly IDrawingView view;
 
         public DrawingController(IDrawingView view)
@@ -33,7 +38,6 @@ namespace WinCad
             session.Mode = DrawModes.DrawingRectangleFirstCorner;
             view.Status = "Click first corner:";
         }
-
 
         internal void ClickAt(Point point, bool cancel)
         {
@@ -69,7 +73,73 @@ namespace WinCad
             }
         }
 
-        private void FinishDrawingRectangleAt(Point point)
+        internal void HoverAt(Point location)
+        {
+            if (session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
+            {
+                session.Canvas.NewLineStart = session.CurrentPolyline.Vertices.Last();
+                session.Canvas.NewLineEnd = location;
+
+                var rubberband = new Polyline()
+                {
+                    Color = Color.Blue,
+                    Vertices = new List<Point> { session.Canvas.NewLineStart, session.Canvas.NewLineEnd }
+                };
+
+                session.Canvas.Highlights.Polylines.Clear();
+                session.Canvas.Highlights.Polylines.Add(rubberband);
+            }
+
+            if (session.Mode == DrawModes.DrawingRectangleSecondCorner
+                || session.Mode == DrawModes.ImportingPictureSecondCorner)
+            {
+                var size = new Size(session.FirstCorner)
+                {
+                    Height = Math.Abs(session.FirstCorner.Y - location.Y),
+                    Width = Math.Abs(session.FirstCorner.X - location.X)
+                };
+
+                var box = new Box(session.FirstCorner, size)
+                {
+                    Color = Color.Blue
+                };
+
+                session.Canvas.Highlights.Boxes.Clear();
+                session.Canvas.Highlights.Boxes.Add(box);
+            }
+
+            var circle = new Circle()
+            {
+                Radius = HighlightRadius,
+                Color = Color.Blue
+            };
+
+            bool nearSomething = false;
+            foreach (var layer in session.Canvas.Layers)
+            {
+                foreach (var entity in layer.Entities())
+                {
+                    foreach (var p in entity.Points())
+                    {
+                        if (AreNear(p, location))
+                        {
+                            circle.Center = p;
+
+                            session.Canvas.Highlights.Circles.Clear();
+                            session.Canvas.Highlights.Circles.Add(circle);
+                            nearSomething = true;
+                        }
+                    }
+                }
+            }
+
+            if (!nearSomething)
+                session.Canvas.Highlights.Circles.Clear();
+
+            view.InvalidateImage();
+        }
+
+        void FinishDrawingRectangleAt(Point point)
         {
             session.SecondCorner = point;
             var box = new Box(
@@ -90,19 +160,19 @@ namespace WinCad
             session.SecondCorner = Point.Empty;
         }
 
-        private void StartDrawingRectangleAt(Point point)
+        void StartDrawingRectangleAt(Point point)
         {
             session.FirstCorner = point;
             session.Mode = DrawModes.DrawingRectangleSecondCorner;
             view.Status = "Click second corner:";
         }
 
-        private void AddPolylineVertexAt(Point point)
+        void AddPolylineVertexAt(Point point)
         {
             session.CurrentPolyline.Vertices.Add(point);
         }
 
-        private void FinishImportingPictureAt(Point point)
+        void FinishImportingPictureAt(Point point)
         {
             session.SecondCorner = point;
             var image = new InsertedImage(
@@ -121,14 +191,14 @@ namespace WinCad
             session.Canvas.Highlights.Boxes.Clear();
         }
 
-        private void StartImportingPictureAt(Point point)
+        void StartImportingPictureAt(Point point)
         {
             session.FirstCorner = point;
             session.Mode = DrawModes.ImportingPictureSecondCorner;
             view.Status = "Click second corner:";
         }
 
-        private void StartDrawingPolylineAt(Point point)
+        void StartDrawingPolylineAt(Point point)
         {
             session.CurrentPolyline = new Polyline();
             session.CurrentPolyline.Vertices.Add(point);
@@ -137,12 +207,19 @@ namespace WinCad
             view.Status = "Click to add vertices to the polyline:";
         }
 
-        private void CancelMode()
+        void CancelMode()
         {
             session.Canvas.Highlights.Polylines.Clear();
             session.CurrentPolyline = null;
             session.Mode = DrawModes.Ready;
             view.Status = "Ready";
         }
+
+        static bool AreNear(Point a, Point b)
+        {
+            return Math.Abs(a.X - b.X) <= NearDistance
+                && Math.Abs(a.Y - b.Y) <= NearDistance;
+        }
+
     }
 }

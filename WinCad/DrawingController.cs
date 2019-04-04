@@ -84,7 +84,11 @@ namespace WinCad
                 var rubberband = new Polyline()
                 {
                     Color = Color.Blue,
-                    Vertices = new List<Point> { session.Canvas.NewLineStart, session.Canvas.NewLineEnd }
+                    Vertices = new List<Point>
+                    {
+                        session.Canvas.NewLineStart,
+                        session.Canvas.NewLineEnd
+                    }
                 };
 
                 session.Canvas.Highlights.Polylines.Clear();
@@ -94,11 +98,7 @@ namespace WinCad
             if (session.Mode == DrawModes.DrawingRectangleSecondCorner
                 || session.Mode == DrawModes.ImportingPictureSecondCorner)
             {
-                var size = new Size(session.FirstCorner)
-                {
-                    Height = Math.Abs(session.FirstCorner.Y - location.Y),
-                    Width = Math.Abs(session.FirstCorner.X - location.X)
-                };
+                var size = SizeFrom(session.FirstCorner, location);
 
                 var box = new Box(session.FirstCorner, size)
                 {
@@ -144,10 +144,8 @@ namespace WinCad
         {
             session.SecondCorner = point;
             var box = new Box(
-                    firstCorner: session.FirstCorner,
-                    size: new Size(
-                        Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                        Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+                firstCorner: session.FirstCorner,
+                size: SizeFrom(session.FirstCorner, session.SecondCorner));
 
             box.Color = Color.Green;
 
@@ -180,8 +178,7 @@ namespace WinCad
                 image: Bitmap.FromFile(session.OpenFileName),
                 box: new Box(
                     firstCorner: new Point(session.FirstCorner.X, session.FirstCorner.Y),
-                    size: new Size(Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y))));
+                    size: SizeFrom(session.FirstCorner, session.SecondCorner)));
 
             session.Canvas.CurrentLayer.InsertedImages.Add(image);
 
@@ -223,5 +220,9 @@ namespace WinCad
                 && Math.Abs(a.Y - b.Y) <= NearDistance;
         }
 
+        static Size SizeFrom(Point a, Point b)
+        {
+            return new Size(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+        }
     }
 }

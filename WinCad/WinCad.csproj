@@ -46,12 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Box.cs" />
+    <Compile Include="Canvas.cs" />
+    <Compile Include="Circle.cs" />
+    <Compile Include="DrawingController.cs" />
+    <Compile Include="DrawingSession.cs" />
+    <Compile Include="DrawModes.cs" />
     <Compile Include="DrawTester.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DrawTester.Designer.cs">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity.cs" />
+    <Compile Include="IDrawingView.cs" />
+    <Compile Include="InsertedImage.cs" />
+    <Compile Include="Layer.cs" />
+    <Compile Include="Polyline.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DrawTester.resx">

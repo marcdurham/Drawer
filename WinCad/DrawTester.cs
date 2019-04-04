@@ -26,32 +26,32 @@ namespace WinCad
 
         public Canvas Canvas { get; set; }
 
-        private void drawPolylineButton_Click(object sender, EventArgs e)
+        void drawPolylineButton_Click(object sender, EventArgs e)
         {
             controller.DrawPolyline();
-            DrawLayers();
+            RenderLayers();
         }
 
-        private void importPictureButton_Click(object sender, EventArgs e)
+        void importPictureButton_Click(object sender, EventArgs e)
         {
             var result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK)
                 controller.ImportPicture(openFileDialog.FileName);
         }
 
-        private void drawRectangle_Click(object sender, EventArgs e)
+        void drawRectangle_Click(object sender, EventArgs e)
         {
             controller.DrawRectangle();
         }
 
-        private void mainPicture_Paint(object sender, PaintEventArgs e)
+        void mainPicture_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
-            DrawObjectsOn(g, Canvas.Highlights);
+            RenderEntities(g, Canvas.Highlights);
         }
 
-        private static void DrawObjectsOn(Graphics g, Layer layer)
+        static void RenderEntities(Graphics g, Layer layer)
         {
             foreach (var image in layer.InsertedImages)
                 g.DrawImage(image.Image, RectangleFrom(image.Box));
@@ -81,13 +81,13 @@ namespace WinCad
             return new Rectangle(box.FirstCorner, box.Size);
         }
 
-        private void mainPicture_MouseClick(object sender, MouseEventArgs e)
+        void mainPicture_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
                 controller.ClickAt(new Point(e.X, e.Y), e.Button != MouseButtons.Left);
 
-                DrawLayers();
+                RenderLayers();
             }
             catch (Exception ex)
             {
@@ -95,21 +95,21 @@ namespace WinCad
             }
         }
 
-        private void DrawLayers()
+        void RenderLayers()
         {
             var image = new Bitmap(mainPicture.Width, mainPicture.Height);
 
             var graphics = Graphics.FromImage(image);
 
             foreach (var layer in Canvas.Layers)
-                DrawObjectsOn(graphics, layer);
+                RenderEntities(graphics, layer);
 
             mainPicture.Image = image;
 
             mainPicture.Invalidate();
         }
 
-        private void mainPicture_MouseMove(object sender, MouseEventArgs e)
+        void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
             if (controller.session.Mode == DrawModes.DrawingPolylineSecondaryVertices)
             {

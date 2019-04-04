@@ -49,9 +49,6 @@ namespace WinCad
             Graphics g = e.Graphics;
 
             DrawObjectsOn(g, Canvas.Highlights);
-
-            //if (controller.session.CurrentPolyline != null)
-             //   g.DrawLine(Pens.Blue, Canvas.NewLineStart, Canvas.NewLineEnd);
         }
 
         private static void DrawObjectsOn(Graphics g, Layer layer)

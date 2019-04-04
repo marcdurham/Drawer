@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 
 namespace WinCad
 {
     public class DrawingController
     {
+        static readonly int NearDistance = 5;
+        static readonly int HighlightRadius = 5;
+
         readonly IDrawingView view;
 
         public DrawingController(IDrawingView view)
@@ -18,22 +22,22 @@ namespace WinCad
         internal void DrawPolyline()
         {
             session.Mode = DrawModes.DrawingPolylineFirstVertex;
-            view.Status = "Click first point of polyline:";
+            view.Status = Properties.Resources.DrawPolylineStatus;
+            view.RenderLayers();
         }
 
         internal void ImportPicture(string fileName)
         {
             session.OpenFileName = fileName;
             session.Mode = DrawModes.ImportingPictureFirstCorner;
-            view.Status = "Click first corner:";
+            view.Status = Properties.Resources.ImportPictureStatus;
         }
 
         internal void DrawRectangle()
         {
             session.Mode = DrawModes.DrawingRectangleFirstCorner;
-            view.Status = "Click first corner:";
+            view.Status = Properties.Resources.DrawRectangleStatus;
         }
-
 
         internal void ClickAt(Point point, bool cancel)
         {
@@ -48,8 +52,11 @@ namespace WinCad
                 case DrawModes.DrawingPolylineFirstVertex:
                     StartDrawingPolylineAt(point);
                     break;
-                case DrawModes.DrawingPolylineSecondaryVertices:
-                    AddPolylineVertexAt(point);
+                case DrawModes.DrawingPolylineSecondVertex:
+                    AddSecondPolylineVertexAt(point);
+                    break;
+                case DrawModes.DrawingPolylineExtraVertices:
+                    AddExtraPolylineVertexAt(point);
                     break;
                 case DrawModes.ImportingPictureFirstCorner:
                     StartImportingPictureAt(point);
@@ -64,19 +71,124 @@ namespace WinCad
                     FinishDrawingRectangleAt(point);
                     break;
                 default:
-                    view.Status = "Ready";
+                    CancelMode();
                     break;
             }
         }
 
-        private void FinishDrawingRectangleAt(Point point)
+        internal void HoverAt(Point location)
+        {
+            if (session.Mode == DrawModes.DrawingPolylineExtraVertices
+                || session.Mode == DrawModes.DrawingPolylineSecondVertex)
+            {
+                ShowNewPolylineSegment(location);
+            }
+
+            if (session.Mode == DrawModes.DrawingRectangleSecondCorner
+                || session.Mode == DrawModes.ImportingPictureSecondCorner)
+            {
+                ShowNewRectangle(location);
+            }
+
+            HoverOverPointsAt(location);
+
+            view.InvalidateImage();
+        }
+
+        void ShowNewPolylineSegment(Point point)
+        {
+            session.Canvas.NewLineStart = session
+                .CurrentPolyline?
+                .Vertices
+                .Last() ?? session.FirstCorner;
+
+            int angle = Angle(session.Canvas.NewLineStart, point);
+            view.SecondStatus = $"{session.Canvas.NewLineStart.X}, {session.Canvas.NewLineStart.Y} -> {point.X}, {point.Y} = {angle}deg";
+
+            session.Canvas.NewLineEnd = OrthoPointFrom(session.Canvas.NewLineStart, point);
+
+            var rubberband = new Polyline(
+                session.Canvas.NewLineStart,
+                session.Canvas.NewLineEnd)
+            {
+                Color = Color.Blue,
+            };
+
+            session.Canvas.Highlights.Polylines.Clear();
+            session.Canvas.Highlights.Polylines.Add(rubberband);
+        }
+
+        Point OrthoPointFrom(Point previousPoint, Point point)
+        {
+            if (!view.OrthoIsOn)
+                return point;
+
+            int angle = Angle(previousPoint, point);
+
+            if (Math.Abs(angle) >= 0 && Math.Abs(angle) < 45
+                || Math.Abs(angle) <= 180 && Math.Abs(angle) > 135)
+                return new Point(point.X, previousPoint.Y);
+            else
+                return new Point(previousPoint.X, point.Y);
+        }
+
+        void ShowNewRectangle(Point location)
+        {
+            var size = SizeFrom(session.FirstCorner, location);
+
+            var box = new Box(session.FirstCorner, size)
+            {
+                Color = Color.Blue
+            };
+
+            session.Canvas.Highlights.Boxes.Clear();
+            session.Canvas.Highlights.Boxes.Add(box);
+        }
+
+        void HoverOverPointsAt(Point location)
+        {
+            var circle = new Circle()
+            {
+                Radius = HighlightRadius,
+                Color = Color.Blue
+            };
+
+            bool nearSomething = false;
+            foreach (var layer in session.Canvas.Layers)
+            {
+                foreach (var entity in layer.Entities())
+                {
+                    foreach (var p in entity.Points())
+                    {
+                        if (AreNear(p, location))
+                        {
+                            circle.Center = p;
+
+                            session.Canvas.Highlights.Circles.Clear();
+                            session.Canvas.Highlights.Circles.Add(circle);
+                            nearSomething = true;
+                        }
+                    }
+                }
+            }
+
+            if (!nearSomething)
+                session.Canvas.Highlights.Circles.Clear();
+        }
+
+        void StartDrawingRectangleAt(Point point)
+        {
+            session.FirstCorner = point;
+            session.Mode = DrawModes.DrawingRectangleSecondCorner;
+            view.Status = Properties.Resources.StartDrawingRectangleStatus;
+        }
+
+        void FinishDrawingRectangleAt(Point point)
         {
             session.SecondCorner = point;
             var box = new Box(
-                    firstCorner: session.FirstCorner,
-                    size: new Size(
-                        Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                        Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y)));
+                firstCorner: session.FirstCorner,
+                size: SizeFrom(session.FirstCorner, session.SecondCorner));
 
             box.Color = Color.Green;
 
@@ -84,65 +196,90 @@ namespace WinCad
 
             session.Canvas.Highlights.Boxes.Clear();
 
-            session.Mode = DrawModes.Ready;
-            view.Status = "Ready";
-            session.FirstCorner = Point.Empty;
-            session.SecondCorner = Point.Empty;
+            CancelMode();
+
+            view.RenderLayers();
         }
 
-        private void StartDrawingRectangleAt(Point point)
+        void StartDrawingPolylineAt(Point point)
         {
             session.FirstCorner = point;
-            session.Mode = DrawModes.DrawingRectangleSecondCorner;
-            view.Status = "Click second corner:";
+            session.Mode = DrawModes.DrawingPolylineSecondVertex;
+            view.Status = Properties.Resources.StartDrawingPolylineStatus;
         }
 
-        private void AddPolylineVertexAt(Point point)
+        void AddSecondPolylineVertexAt(Point point)
         {
-            session.CurrentPolyline.Vertices.Add(point);
+            session.CurrentPolyline = new Polyline(
+                session.FirstCorner, 
+                session.Canvas.NewLineEnd);
+
+            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
+            session.Mode = DrawModes.DrawingPolylineExtraVertices;
+            view.Status = Properties.Resources.DrawPolylineStatus;
+            view.RenderLayers();
         }
 
-        private void FinishImportingPictureAt(Point point)
+        void AddExtraPolylineVertexAt(Point point)
+        {
+            session.CurrentPolyline.Vertices.Add(session.Canvas.NewLineEnd);
+
+            view.Status = Properties.Resources.DrawPolylineStatus;
+            view.RenderLayers();
+        }
+
+        void StartImportingPictureAt(Point point)
+        {
+            session.FirstCorner = point;
+            session.Mode = DrawModes.ImportingPictureSecondCorner;
+            view.Status = Properties.Resources.StartImportingPictureStatus;
+        }
+
+        void FinishImportingPictureAt(Point point)
         {
             session.SecondCorner = point;
             var image = new InsertedImage(
                 image: Bitmap.FromFile(session.OpenFileName),
                 box: new Box(
-                    firstCorner: new Point(session.FirstCorner.X, session.FirstCorner.Y),
-                    size: new Size(Math.Abs(session.FirstCorner.X - session.SecondCorner.X),
-                    Math.Abs(session.FirstCorner.Y - session.SecondCorner.Y))));
+                    firstCorner: new Point(
+                        session.FirstCorner.X, 
+                        session.FirstCorner.Y),
+                    size: SizeFrom(
+                        session.FirstCorner, 
+                        session.SecondCorner)));
 
             session.Canvas.CurrentLayer.InsertedImages.Add(image);
 
-            session.Mode = DrawModes.Ready;
-            view.Status = "Ready";
-            session.FirstCorner = Point.Empty;
-            session.SecondCorner = Point.Empty;
-            session.Canvas.Highlights.Boxes.Clear();
+            CancelMode();
+
+            view.RenderLayers();
         }
 
-        private void StartImportingPictureAt(Point point)
-        {
-            session.FirstCorner = point;
-            session.Mode = DrawModes.ImportingPictureSecondCorner;
-            view.Status = "Click second corner:";
-        }
-
-        private void StartDrawingPolylineAt(Point point)
-        {
-            session.CurrentPolyline = new Polyline();
-            session.CurrentPolyline.Vertices.Add(point);
-            session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
-            session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
-            view.Status = "Click to add vertices to the polyline:";
-        }
-
-        private void CancelMode()
+        void CancelMode()
         {
             session.Canvas.Highlights.Polylines.Clear();
+            session.Canvas.Highlights.Boxes.Clear();
             session.CurrentPolyline = null;
+            session.FirstCorner = Point.Empty;
+            session.SecondCorner = Point.Empty;
             session.Mode = DrawModes.Ready;
-            view.Status = "Ready";
+            view.Status = Properties.Resources.ReadyStatus;
+        }
+
+        static bool AreNear(Point a, Point b)
+        {
+            return Math.Abs(a.X - b.X) <= NearDistance
+                && Math.Abs(a.Y - b.Y) <= NearDistance;
+        }
+
+        static Size SizeFrom(Point a, Point b)
+        {
+            return new Size(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+        }
+
+        static int Angle(Point a, Point b)
+        {
+            return (int) (Math.Atan2(b.Y - a.Y, b.X - a.X) * 180 / Math.PI);
         }
     }
 }

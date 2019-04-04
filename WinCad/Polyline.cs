@@ -5,12 +5,15 @@ namespace WinCad
 {
     public class Polyline : Entity
     {
-        public Polyline()
+        public Polyline(Point first, Point second)
         {
             Color = Color.Green;
+
+            Vertices.Add(first);
+            Vertices.Add(second);
         }
 
-        public List<Point> Vertices = new List<Point>();
+        public List<Point> Vertices { get; } = new List<Point>();
 
         public override List<Point> Points()
         {

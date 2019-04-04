@@ -32,11 +32,14 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
             this.drawRectangle = new System.Windows.Forms.ToolStripButton();
-            this.importPictureButton = new System.Windows.Forms.ToolStripButton();
+            this.insertImageButton = new System.Windows.Forms.ToolStripButton();
+            this.scaleImageButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.orthoButton = new System.Windows.Forms.ToolStripButton();
+            this.secondStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -47,7 +50,9 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawPolylineButton,
             this.drawRectangle,
-            this.importPictureButton});
+            this.insertImageButton,
+            this.scaleImageButton,
+            this.orthoButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -73,15 +78,24 @@
             this.drawRectangle.ToolTipText = "Draw Rectangle";
             this.drawRectangle.Click += new System.EventHandler(this.drawRectangle_Click);
             // 
-            // importPictureButton
+            // insertImageButton
             // 
-            this.importPictureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.importPictureButton.Image = ((System.Drawing.Image)(resources.GetObject("importPictureButton.Image")));
-            this.importPictureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.importPictureButton.Name = "importPictureButton";
-            this.importPictureButton.Size = new System.Drawing.Size(87, 22);
-            this.importPictureButton.Text = "Import Picture";
-            this.importPictureButton.Click += new System.EventHandler(this.importPictureButton_Click);
+            this.insertImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.insertImageButton.Image = ((System.Drawing.Image)(resources.GetObject("insertImageButton.Image")));
+            this.insertImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.insertImageButton.Name = "insertImageButton";
+            this.insertImageButton.Size = new System.Drawing.Size(76, 22);
+            this.insertImageButton.Text = "Insert Image";
+            this.insertImageButton.Click += new System.EventHandler(this.importPictureButton_Click);
+            // 
+            // scaleImageButton
+            // 
+            this.scaleImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.scaleImageButton.Image = ((System.Drawing.Image)(resources.GetObject("scaleImageButton.Image")));
+            this.scaleImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.scaleImageButton.Name = "scaleImageButton";
+            this.scaleImageButton.Size = new System.Drawing.Size(74, 22);
+            this.scaleImageButton.Text = "Scale Image";
             // 
             // mainPicture
             // 
@@ -98,7 +112,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mainStatus});
+            this.mainStatus,
+            this.secondStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 428);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 22);
@@ -114,6 +129,21 @@
             // openFileDialog
             // 
             this.openFileDialog.Filter = "Image Files|*.jpg;*.tif;*.tif;*.bmp;*.png";
+            // 
+            // orthoButton
+            // 
+            this.orthoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.orthoButton.Image = ((System.Drawing.Image)(resources.GetObject("orthoButton.Image")));
+            this.orthoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.orthoButton.Name = "orthoButton";
+            this.orthoButton.Size = new System.Drawing.Size(42, 22);
+            this.orthoButton.Text = "Ortho";
+            this.orthoButton.Click += new System.EventHandler(this.orthoButton_Click);
+            // 
+            // secondStatus
+            // 
+            this.secondStatus.Name = "secondStatus";
+            this.secondStatus.Size = new System.Drawing.Size(0, 17);
             // 
             // DrawTester
             // 
@@ -142,9 +172,12 @@
         private System.Windows.Forms.PictureBox mainPicture;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel mainStatus;
-        private System.Windows.Forms.ToolStripButton importPictureButton;
+        private System.Windows.Forms.ToolStripButton insertImageButton;
         private System.Windows.Forms.ToolStripButton drawRectangle;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.ToolStripButton scaleImageButton;
+        private System.Windows.Forms.ToolStripButton orthoButton;
+        private System.Windows.Forms.ToolStripStatusLabel secondStatus;
     }
 }
 

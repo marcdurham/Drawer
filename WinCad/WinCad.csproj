@@ -59,6 +59,7 @@
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
     <Compile Include="Entity.cs" />
+    <Compile Include="EntityRenderEngine.cs" />
     <Compile Include="IDrawingView.cs" />
     <Compile Include="InsertedImage.cs" />
     <Compile Include="Layer.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

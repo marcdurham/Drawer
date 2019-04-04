@@ -23,7 +23,7 @@ namespace WinCad
         internal void DrawPolyline()
         {
             session.Mode = DrawModes.DrawingPolylineFirstVertex;
-            view.Status = "Drawing Polyline: Click first point:";
+            view.Status = Properties.Resources.DrawPolylineStatus;
             view.RenderLayers();
         }
 
@@ -31,13 +31,13 @@ namespace WinCad
         {
             session.OpenFileName = fileName;
             session.Mode = DrawModes.ImportingPictureFirstCorner;
-            view.Status = "Importing Picture: Click first corner:";
+            view.Status = Properties.Resources.ImportPictureStatus;
         }
 
         internal void DrawRectangle()
         {
             session.Mode = DrawModes.DrawingRectangleFirstCorner;
-            view.Status = "Drawing Rectangle: Click first corner:";
+            view.Status = Properties.Resources.DrawRectangleStatus;
         }
 
         internal void ClickAt(Point point, bool cancel)
@@ -69,7 +69,7 @@ namespace WinCad
                     FinishDrawingRectangleAt(point);
                     break;
                 default:
-                    view.Status = "Ready";
+                    CancelMode();
                     break;
             }
         }
@@ -164,7 +164,7 @@ namespace WinCad
         {
             session.FirstCorner = point;
             session.Mode = DrawModes.DrawingRectangleSecondCorner;
-            view.Status = "Drawing Rectangle: Click second corner:";
+            view.Status = Properties.Resources.StartDrawingRectangleStatus;
         }
 
         void AddPolylineVertexAt(Point point)
@@ -194,7 +194,7 @@ namespace WinCad
         {
             session.FirstCorner = point;
             session.Mode = DrawModes.ImportingPictureSecondCorner;
-            view.Status = "Importing Picture: Click second corner:";
+            view.Status = Properties.Resources.StartImportingPictureStatus;
         }
 
         void StartDrawingPolylineAt(Point point)
@@ -203,7 +203,7 @@ namespace WinCad
             session.CurrentPolyline.Vertices.Add(point);
             session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
             session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
-            view.Status = "Drawing Polyline: Click next vertex:";
+            view.Status = Properties.Resources.StartDrawingPolylineStatus;
         }
 
         void CancelMode()
@@ -214,7 +214,7 @@ namespace WinCad
             session.FirstCorner = Point.Empty;
             session.SecondCorner = Point.Empty;
             session.Mode = DrawModes.Ready;
-            view.Status = "Ready";
+            view.Status = Properties.Resources.ReadyStatus;
         }
 
         static bool AreNear(Point a, Point b)

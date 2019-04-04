@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DrawPolylineStatus" xml:space="preserve">
-    <value>Drawing Polyline: Click first point:</value>
+    <value>Drawing Polyline: Click next point:</value>
   </data>
   <data name="DrawRectangleStatus" xml:space="preserve">
     <value>Drawing Rectangle: Click first corner:</value>
@@ -130,7 +130,7 @@
     <value>Ready</value>
   </data>
   <data name="StartDrawingPolylineStatus" xml:space="preserve">
-    <value>Drawing Polyline: Click next vertex:</value>
+    <value>Drawing Polyline: Click first vertex:</value>
   </data>
   <data name="StartDrawingRectangleStatus" xml:space="preserve">
     <value>Drawing Rectangle: Click second corner:</value>

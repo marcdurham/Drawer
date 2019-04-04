@@ -61,7 +61,7 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drawing Polyline: Click first point:.
+        ///   Looks up a localized string similar to Drawing Polyline: Click next point:.
         /// </summary>
         internal static string DrawPolylineStatus {
             get {
@@ -97,7 +97,7 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drawing Polyline: Click next vertex:.
+        ///   Looks up a localized string similar to Drawing Polyline: Click first vertex:.
         /// </summary>
         internal static string StartDrawingPolylineStatus {
             get {

@@ -81,6 +81,7 @@ namespace WinCad
 
             foreach (var circle in layer.Circles)
             {
+                // Circles drawn from rectangle, convert from center & radius
                 var corner = new Point(
                     circle.Center.X - circle.Radius,
                     circle.Center.Y - circle.Radius);

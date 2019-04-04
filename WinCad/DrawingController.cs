@@ -23,7 +23,7 @@ namespace WinCad
         internal void DrawPolyline()
         {
             session.Mode = DrawModes.DrawingPolylineFirstVertex;
-            view.Status = "Click first point of polyline:";
+            view.Status = "Drawing Polyline: Click first point:";
             view.RenderLayers();
         }
 
@@ -31,13 +31,13 @@ namespace WinCad
         {
             session.OpenFileName = fileName;
             session.Mode = DrawModes.ImportingPictureFirstCorner;
-            view.Status = "Click first corner:";
+            view.Status = "Importing Picture: Click first corner:";
         }
 
         internal void DrawRectangle()
         {
             session.Mode = DrawModes.DrawingRectangleFirstCorner;
-            view.Status = "Click first corner:";
+            view.Status = "Drawing Rectangle: Click first corner:";
         }
 
         internal void ClickAt(Point point, bool cancel)
@@ -164,7 +164,7 @@ namespace WinCad
         {
             session.FirstCorner = point;
             session.Mode = DrawModes.DrawingRectangleSecondCorner;
-            view.Status = "Click second corner:";
+            view.Status = "Drawing Rectangle: Click second corner:";
         }
 
         void AddPolylineVertexAt(Point point)
@@ -194,7 +194,7 @@ namespace WinCad
         {
             session.FirstCorner = point;
             session.Mode = DrawModes.ImportingPictureSecondCorner;
-            view.Status = "Click second corner:";
+            view.Status = "Importing Picture: Click second corner:";
         }
 
         void StartDrawingPolylineAt(Point point)
@@ -203,7 +203,7 @@ namespace WinCad
             session.CurrentPolyline.Vertices.Add(point);
             session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
             session.Mode = DrawModes.DrawingPolylineSecondaryVertices;
-            view.Status = "Click to add vertices to the polyline:";
+            view.Status = "Drawing Polyline: Click next vertex:";
         }
 
         void CancelMode()

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -82,7 +81,11 @@ namespace WinCad
             if (session.Mode == DrawModes.DrawingPolylineExtraVertices
                 || session.Mode == DrawModes.DrawingPolylineSecondVertex)
             {
-                session.Canvas.NewLineStart = session.CurrentPolyline?.Vertices.Last() ?? session.FirstCorner;
+                session.Canvas.NewLineStart = session
+                    .CurrentPolyline?
+                    .Vertices
+                    .Last() ?? session.FirstCorner;
+
                 session.Canvas.NewLineEnd = location;
 
                 var rubberband = new Polyline(
@@ -202,8 +205,12 @@ namespace WinCad
             var image = new InsertedImage(
                 image: Bitmap.FromFile(session.OpenFileName),
                 box: new Box(
-                    firstCorner: new Point(session.FirstCorner.X, session.FirstCorner.Y),
-                    size: SizeFrom(session.FirstCorner, session.SecondCorner)));
+                    firstCorner: new Point(
+                        session.FirstCorner.X, 
+                        session.FirstCorner.Y),
+                    size: SizeFrom(
+                        session.FirstCorner, 
+                        session.SecondCorner)));
 
             session.Canvas.CurrentLayer.InsertedImages.Add(image);
 

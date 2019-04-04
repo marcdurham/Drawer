@@ -72,8 +72,6 @@ namespace WinCad
                     view.Status = "Ready";
                     break;
             }
-
-            view.RenderLayers();
         }
 
         internal void HoverAt(Point location)
@@ -157,10 +155,9 @@ namespace WinCad
 
             session.Canvas.Highlights.Boxes.Clear();
 
-            session.Mode = DrawModes.Ready;
-            view.Status = "Ready";
-            session.FirstCorner = Point.Empty;
-            session.SecondCorner = Point.Empty;
+            CancelMode();
+
+            view.RenderLayers();
         }
 
         void StartDrawingRectangleAt(Point point)
@@ -173,6 +170,7 @@ namespace WinCad
         void AddPolylineVertexAt(Point point)
         {
             session.CurrentPolyline.Vertices.Add(point);
+            view.RenderLayers();
         }
 
         void FinishImportingPictureAt(Point point)
@@ -187,11 +185,9 @@ namespace WinCad
 
             session.Canvas.CurrentLayer.InsertedImages.Add(image);
 
-            session.Mode = DrawModes.Ready;
-            view.Status = "Ready";
-            session.FirstCorner = Point.Empty;
-            session.SecondCorner = Point.Empty;
-            session.Canvas.Highlights.Boxes.Clear();
+            CancelMode();
+
+            view.RenderLayers();
         }
 
         void StartImportingPictureAt(Point point)
@@ -213,10 +209,12 @@ namespace WinCad
         void CancelMode()
         {
             session.Canvas.Highlights.Polylines.Clear();
+            session.Canvas.Highlights.Boxes.Clear();
             session.CurrentPolyline = null;
+            session.FirstCorner = Point.Empty;
+            session.SecondCorner = Point.Empty;
             session.Mode = DrawModes.Ready;
             view.Status = "Ready";
-            view.RenderLayers();
         }
 
         static bool AreNear(Point a, Point b)

@@ -213,7 +213,7 @@ namespace WinCad
         {
             session.CurrentPolyline = new Polyline(
                 session.FirstCorner, 
-                OrthoPointFrom(session.FirstCorner, point));
+                OrthoPointFrom(session.Canvas.NewLineStart, point));
 
             session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
             session.Mode = DrawModes.DrawingPolylineExtraVertices;
@@ -223,7 +223,9 @@ namespace WinCad
 
         void AddExtraPolylineVertexAt(Point point)
         {
-            session.CurrentPolyline.Vertices.Add(OrthoPointFrom(session.Canvas.NewLineStart, point));
+            session.CurrentPolyline.Vertices.Add(
+                OrthoPointFrom(session.Canvas.NewLineStart, point));
+
             view.Status = Properties.Resources.DrawPolylineStatus;
             view.RenderLayers();
         }

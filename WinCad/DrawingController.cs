@@ -70,6 +70,9 @@ namespace WinCad
                 case DrawModes.DrawingRectangleSecondCorner:
                     FinishDrawingRectangleAt(point);
                     break;
+                case DrawModes.StartInsertingBlock:
+                    InsertBlockAt(point);
+                    break;
                 default:
                     CancelMode();
                     break;
@@ -93,6 +96,12 @@ namespace WinCad
             HoverOverPointsAt(location);
 
             view.InvalidateImage();
+        }
+
+        internal void InsertBlock()
+        {
+            session.Mode = DrawModes.StartInsertingBlock;
+            view.Status = "Inserting block: Click insertion point:";
         }
 
         void ShowNewPolylineSegment(Point point)
@@ -195,6 +204,29 @@ namespace WinCad
             session.Canvas.CurrentLayer.Boxes.Add(box);
 
             session.Canvas.Highlights.Boxes.Clear();
+
+            CancelMode();
+
+            view.RenderLayers();
+        }
+
+        void InsertBlockAt(Point point)
+        {
+            // Use a box for testing, but insert a whole canvas, all layers...
+            var box = new Box(
+              firstCorner: new Point(point.X - 4, point.Y -4),
+              size: new Size(8, 8));
+
+            box.Color = Color.Red;
+
+            session.Canvas.CurrentLayer.Boxes.Add(box);
+            session.Canvas.CurrentLayer.Circles.Add(
+                new Circle()
+                {
+                    Center = point,
+                    Radius = 6,
+                    Color = Color.Red
+                });
 
             CancelMode();
 

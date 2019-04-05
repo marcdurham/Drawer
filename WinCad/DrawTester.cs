@@ -96,5 +96,10 @@ namespace WinCad
         {
             orthoButton.Checked = !orthoButton.Checked;
         }
+
+        private void insertBlock_Click(object sender, EventArgs e)
+        {
+            controller.InsertBlock();
+        }
     }
 }

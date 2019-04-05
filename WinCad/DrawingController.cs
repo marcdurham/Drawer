@@ -43,7 +43,14 @@ namespace WinCad
         {
             if (cancel)
             {
-                CancelMode();
+                if (session.Mode == DrawModes.DrawingPolylineExtraVertices)
+                {
+                    session.Mode = DrawModes.DrawingPolylineFirstVertex;
+                    session.CurrentPolyline = null;
+                    session.Canvas.Highlights.Polylines.Clear();
+                }
+                else
+                    CancelMode();
                 return;
             }
 
@@ -205,7 +212,7 @@ namespace WinCad
 
             session.Canvas.Highlights.Boxes.Clear();
 
-            CancelMode();
+            session.Mode = DrawModes.DrawingRectangleFirstCorner;
 
             view.RenderLayers();
         }
@@ -227,8 +234,6 @@ namespace WinCad
                     Radius = 6,
                     Color = Color.Red
                 });
-
-            CancelMode();
 
             view.RenderLayers();
         }

@@ -145,7 +145,7 @@ namespace WinCad
             session.Canvas.Highlights.Boxes.Add(box);
         }
 
-        void HoverOverPointsAt(Point location)
+        void HoverOverPointsAt(Point cursor)
         {
             var circle = new Circle()
             {
@@ -158,11 +158,11 @@ namespace WinCad
             {
                 foreach (var entity in layer.Entities())
                 {
-                    foreach (var p in entity.Points())
+                    foreach (var point in entity.Points())
                     {
-                        if (AreNear(p, location))
+                        if (AreNear(point, cursor))
                         {
-                            circle.Center = p;
+                            circle.Center = point;
 
                             session.Canvas.Highlights.Circles.Clear();
                             session.Canvas.Highlights.Circles.Add(circle);

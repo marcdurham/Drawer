@@ -65,6 +65,8 @@ namespace WinCad
 
         internal void ClickAt(Point point, bool cancel)
         {
+            view.SecondStatus = string.Empty;
+
             if (cancel)
             {
                 if (session.Mode == DrawModes.DrawingPolylineExtraVertices)

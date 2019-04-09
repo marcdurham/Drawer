@@ -72,6 +72,7 @@ namespace WinCad
 
         void mainPicture_Paint(object sender, PaintEventArgs e)
         {
+            engine.Render(e.Graphics, Canvas.Selections);
             engine.Render(e.Graphics, Canvas.Highlights);
         }
 

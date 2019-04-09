@@ -86,6 +86,9 @@ namespace WinCad
                 case DrawModes.StartInsertingBlock:
                     InsertBlockAt(point);
                     break;
+                case DrawModes.SelectEntity:
+                    SelectEntityAt(point);
+                    break;
                 default:
                     CancelMode();
                     break;
@@ -242,6 +245,35 @@ namespace WinCad
                 });
 
             view.RenderLayers();
+        }
+
+        void SelectEntityAt(Point point)
+        {
+            bool entityWasFound = false;
+            foreach (var entity in session.Canvas.Entities())
+            {
+                foreach (var vertex in entity.Points())
+                {
+                    if (AreNear(vertex, point))
+                    {
+                        entityWasFound = true;
+                        session.Canvas.Selections.Circles.Add(
+                            new Circle()
+                            {
+                                Center = vertex,
+                                Color = Color.Magenta,
+                                Radius = 5,
+                            });
+
+                        view.RenderLayers();
+                    }
+                }
+            }
+
+            if (entityWasFound)
+                view.SecondStatus = "You got one";
+            else
+                view.SecondStatus = "Keep trying";
         }
 
         void StartDrawingPolylineAt(Point point)

@@ -58,6 +58,8 @@ namespace WinCad
             foreach (var entity in trash)
                 session.Canvas.Delete(entity);
 
+            ShowSelections();
+
             view.RenderLayers();
         }
 
@@ -79,7 +81,8 @@ namespace WinCad
             switch(session.Mode)
             {
                 case DrawModes.DrawingPolylineFirstVertex:
-                    StartDrawingPolylineAt(point);
+                    // TODO: This is the only method here that does not call RenderLayers()
+                    StartDrawingPolylineAt(point); 
                     break;
                 case DrawModes.DrawingPolylineSecondVertex:
                     AddSecondPolylineVertexAt(point);
@@ -109,8 +112,6 @@ namespace WinCad
                     CancelMode();
                     break;
             }
-
-            HighlightSelections();
         }
 
         internal void HoverAt(Point location)
@@ -129,7 +130,7 @@ namespace WinCad
 
             HoverOverPointsAt(location);
 
-            view.InvalidateImage();
+            view.RefreshImage();
         }
 
         internal void InsertBlock()
@@ -138,9 +139,11 @@ namespace WinCad
             view.Status = "Inserting block: Click insertion point:";
         }
 
-        internal void HighlightSelections()
+        internal void ShowSelections()
         {
             int radius = 5;
+            session.Canvas.Selections.Circles.Clear();
+
             foreach (var layer in session.Canvas.Layers)
                 foreach (var entity in layer.Entities())
                     if (entity.IsSelected)
@@ -295,6 +298,8 @@ namespace WinCad
                     }
                 }
             }
+
+            ShowSelections();
 
             view.RenderLayers();
         }

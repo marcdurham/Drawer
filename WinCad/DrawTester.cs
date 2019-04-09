@@ -34,7 +34,7 @@ namespace WinCad
             get { return orthoButton.Checked; }
         }
 
-        public void InvalidateImage()
+        public void RefreshImage()
         {
             mainPicture.Invalidate();
         }

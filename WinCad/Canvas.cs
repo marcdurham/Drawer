@@ -27,5 +27,11 @@ namespace WinCad
                 all.AddRange(layer.Entities());
             return all;
         }
+
+        public void Delete(Entity entity)
+        {
+            foreach (var layer in Layers)
+                layer.Delete(entity);
+        }
     }
 }

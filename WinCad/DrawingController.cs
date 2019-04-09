@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -43,6 +44,21 @@ namespace WinCad
         {
             session.Mode = DrawModes.SelectEntity;
             view.Status = Properties.Resources.SelectEntityStatus;
+        }
+
+        internal void DeleteSelectedEntities()
+        {
+            var trash = new List<Entity>();
+            foreach (var entity in session.Canvas.Entities())
+            {
+                if (entity.IsSelected)
+                    trash.Add(entity);
+            }
+
+            foreach (var entity in trash)
+                session.Canvas.Delete(entity);
+
+            view.RenderLayers();
         }
 
         internal void ClickAt(Point point, bool cancel)

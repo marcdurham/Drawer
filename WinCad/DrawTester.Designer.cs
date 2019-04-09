@@ -42,6 +42,7 @@
             this.secondStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.selectEntityButtonh = new System.Windows.Forms.ToolStripButton();
+            this.deleteButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -56,7 +57,8 @@
             this.insertBlock,
             this.drawRectangle,
             this.drawPolylineButton,
-            this.orthoButton});
+            this.orthoButton,
+            this.deleteButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -170,6 +172,17 @@
             this.selectEntityButtonh.ToolTipText = "Click to select entites";
             this.selectEntityButtonh.Click += new System.EventHandler(this.selectEntityButtonh_Click);
             // 
+            // deleteButton
+            // 
+            this.deleteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.deleteButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteButton.Image")));
+            this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(44, 22);
+            this.deleteButton.Text = "Delete";
+            this.deleteButton.ToolTipText = "Delete selected entities";
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -205,6 +218,7 @@
         private System.Windows.Forms.ToolStripStatusLabel secondStatus;
         private System.Windows.Forms.ToolStripButton insertBlock;
         private System.Windows.Forms.ToolStripButton selectEntityButtonh;
+        private System.Windows.Forms.ToolStripButton deleteButton;
     }
 }
 

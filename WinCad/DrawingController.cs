@@ -65,13 +65,12 @@ namespace WinCad
 
         internal void ClickAt(Point point, bool cancel)
         {
-            view.SecondStatus = string.Empty;
-
-            if (cancel)
+            if (cancel) // TODO: detect mode switching
             {
                 if (session.Mode == DrawModes.DrawingPolylineExtraVertices)
                 {
                     session.Mode = DrawModes.DrawingPolylineFirstVertex;
+                    view.SecondStatus = string.Empty;
                     session.CurrentPolyline = null;
                     session.Canvas.Highlights.Polylines.Clear();
                 }
@@ -369,6 +368,7 @@ namespace WinCad
             session.SecondCorner = Point.Empty;
             session.Mode = DrawModes.Ready;
             view.Status = Properties.Resources.ReadyStatus;
+            view.SecondStatus = string.Empty;
         }
 
         static bool AreNear(Point a, Point b)

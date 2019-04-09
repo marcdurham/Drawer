@@ -97,6 +97,15 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select Entity: Click to select:.
+        /// </summary>
+        internal static string SelectEntityStatus {
+            get {
+                return ResourceManager.GetString("SelectEntityStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drawing Polyline: Click first vertex:.
         /// </summary>
         internal static string StartDrawingPolylineStatus {

@@ -39,6 +39,12 @@ namespace WinCad
             view.Status = Properties.Resources.DrawRectangleStatus;
         }
 
+        internal void SelectEntity()
+        {
+            session.Mode = DrawModes.SelectEntity;
+            view.Status = Properties.Resources.SelectEntityStatus;
+        }
+
         internal void ClickAt(Point point, bool cancel)
         {
             if (cancel)

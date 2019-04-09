@@ -41,6 +41,7 @@
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.secondStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.selectEntityButtonh = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -49,6 +50,7 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectEntityButtonh,
             this.insertImageButton,
             this.scaleImageButton,
             this.insertBlock,
@@ -157,6 +159,17 @@
             // 
             this.openFileDialog.Filter = "Image Files|*.jpg;*.tif;*.tif;*.bmp;*.png";
             // 
+            // selectEntityButtonh
+            // 
+            this.selectEntityButtonh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.selectEntityButtonh.Image = ((System.Drawing.Image)(resources.GetObject("selectEntityButtonh.Image")));
+            this.selectEntityButtonh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.selectEntityButtonh.Name = "selectEntityButtonh";
+            this.selectEntityButtonh.Size = new System.Drawing.Size(42, 22);
+            this.selectEntityButtonh.Text = "Select";
+            this.selectEntityButtonh.ToolTipText = "Click to select entites";
+            this.selectEntityButtonh.Click += new System.EventHandler(this.selectEntityButtonh_Click);
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -191,6 +204,7 @@
         private System.Windows.Forms.ToolStripButton orthoButton;
         private System.Windows.Forms.ToolStripStatusLabel secondStatus;
         private System.Windows.Forms.ToolStripButton insertBlock;
+        private System.Windows.Forms.ToolStripButton selectEntityButtonh;
     }
 }
 

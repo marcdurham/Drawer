@@ -129,6 +129,9 @@
   <data name="ReadyStatus" xml:space="preserve">
     <value>Ready</value>
   </data>
+  <data name="SelectEntityStatus" xml:space="preserve">
+    <value>Select Entity: Click to select:</value>
+  </data>
   <data name="StartDrawingPolylineStatus" xml:space="preserve">
     <value>Drawing Polyline: Click first vertex:</value>
   </data>

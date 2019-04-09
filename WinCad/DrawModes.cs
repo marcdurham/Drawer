@@ -11,6 +11,7 @@
         DrawingPolylineFirstVertex,
         DrawingPolylineExtraVertices,
         DrawingPolylineSecondVertex,
-        StartInsertingBlock
+        StartInsertingBlock,
+        SelectEntity
     }
 }

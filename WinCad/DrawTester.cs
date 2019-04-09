@@ -101,5 +101,10 @@ namespace WinCad
         {
             controller.InsertBlock();
         }
+
+        private void selectEntityButtonh_Click(object sender, EventArgs e)
+        {
+            controller.SelectEntity();
+        }
     }
 }

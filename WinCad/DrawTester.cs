@@ -74,8 +74,6 @@ namespace WinCad
         {
             engine.Render(e.Graphics, Canvas.Selections);
             engine.Render(e.Graphics, Canvas.Highlights);
-            foreach (var layer in Canvas.Layers)
-                engine.RenderSelections(e.Graphics, layer);
         }
 
         void mainPicture_MouseClick(object sender, MouseEventArgs e)

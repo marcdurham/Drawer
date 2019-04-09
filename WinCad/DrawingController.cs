@@ -93,6 +93,8 @@ namespace WinCad
                     CancelMode();
                     break;
             }
+
+            HighlightSelections();
         }
 
         internal void HoverAt(Point location)
@@ -118,6 +120,24 @@ namespace WinCad
         {
             session.Mode = DrawModes.StartInsertingBlock;
             view.Status = "Inserting block: Click insertion point:";
+        }
+
+        internal void HighlightSelections()
+        {
+            int radius = 5;
+            foreach (var layer in session.Canvas.Layers)
+                foreach (var entity in layer.Entities())
+                    if (entity.IsSelected)
+                        foreach (var point in entity.Points())
+                        {
+                            session.Canvas.Selections.Circles.Add(
+                                new Circle()
+                                {
+                                    Center = point,
+                                    Color = Color.Magenta,
+                                    Radius = radius,
+                                });
+                        }
         }
 
         void ShowNewPolylineSegment(Point point)

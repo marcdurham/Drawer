@@ -36,29 +36,6 @@ namespace WinCad
             }
         }
 
-        public void RenderSelections(Graphics graphics, Layer layer)
-        {
-            int radius = 5;
-            foreach (var entity in layer.Entities())
-                if (entity.IsSelected)
-                    foreach (var point in entity.Points())
-                    {
-                        // Draws circles from rectangles, convert from center & radius
-                        var corner = new Point(
-                            point.X - radius,
-                            point.Y - radius);
-
-                        int side = radius * 2;
-
-                        graphics.DrawEllipse(
-                            new Pen(Color.Magenta),
-                            corner.X,
-                            corner.Y,
-                            side,
-                            side);
-                    }
-        }
-
         static Rectangle RectangleFrom(Box box)
         {
             return new Rectangle(box.FirstCorner, box.Size);

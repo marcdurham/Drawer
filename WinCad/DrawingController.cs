@@ -257,13 +257,25 @@ namespace WinCad
                     if (AreNear(vertex, point))
                     {
                         entityWasFound = true;
-                        session.Canvas.Selections.Circles.Add(
-                            new Circle()
+                        if (!entity.IsSelected)
+                        {
+                            entity.IsSelected = true;
+                            foreach (var p in entity.Points())
                             {
-                                Center = vertex,
-                                Color = Color.Magenta,
-                                Radius = 5,
-                            });
+                                session.Canvas.Selections.Circles.Add(
+                                    new Circle()
+                                    {
+                                        Center = p,
+                                        Color = Color.Magenta,
+                                        Radius = 5,
+                                    });
+                            }
+                        }
+                        else
+                        {
+                            entity.IsSelected = false;
+                            session.Canvas.Selections.Circles.Clear();
+                        }
 
                         view.RenderLayers();
                     }

@@ -292,10 +292,11 @@ namespace WinCad
                     if (AreNear(vertex, point))
                     {
                         entity.IsSelected = !entity.IsSelected;
-                        view.RenderLayers();
                     }
                 }
             }
+
+            view.RenderLayers();
         }
 
         void StartDrawingPolylineAt(Point point)

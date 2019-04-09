@@ -285,43 +285,17 @@ namespace WinCad
 
         void SelectEntityAt(Point point)
         {
-            bool entityWasFound = false;
             foreach (var entity in session.Canvas.Entities())
             {
                 foreach (var vertex in entity.Points())
                 {
                     if (AreNear(vertex, point))
                     {
-                        entityWasFound = true;
-                        if (!entity.IsSelected)
-                        {
-                            entity.IsSelected = true;
-                            foreach (var p in entity.Points())
-                            {
-                                session.Canvas.Selections.Circles.Add(
-                                    new Circle()
-                                    {
-                                        Center = p,
-                                        Color = Color.Magenta,
-                                        Radius = 5,
-                                    });
-                            }
-                        }
-                        else
-                        {
-                            entity.IsSelected = false;
-                            session.Canvas.Selections.Circles.Clear();
-                        }
-
+                        entity.IsSelected = !entity.IsSelected;
                         view.RenderLayers();
                     }
                 }
             }
-
-            if (entityWasFound)
-                view.SecondStatus = "You got one";
-            else
-                view.SecondStatus = "Keep trying";
         }
 
         void StartDrawingPolylineAt(Point point)

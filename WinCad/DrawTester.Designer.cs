@@ -461,7 +461,9 @@
             // 
             // openFileDialog1
             // 
+            this.openFileDialog1.DefaultExt = "dxf";
             this.openFileDialog1.FileName = "*.dxf";
+            this.openFileDialog1.Filter = "AutoCAD DXF Files|*.dxf|All Files|*.*";
             // 
             // DrawTester
             // 

@@ -120,24 +120,38 @@ namespace WinCad
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var result = saveFileDialog1.ShowDialog();
-            if (result == DialogResult.OK)
+            AskUserToSaveAs();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(controller.session.FileName))
             {
-                SaveAs(saveFileDialog1.FileName);
+                AskUserToSaveAs();
+            }
+            else
+            {
+                SaveAs(controller.session.FileName);
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog1.DefaultExt = ".dxf";
             var result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
+            {
                 OpenFile(openFileDialog1.FileName);
+                controller.session.FileName = openFileDialog1.FileName;
+            }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        void AskUserToSaveAs()
         {
-
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                SaveAs(saveFileDialog1.FileName);
+                controller.session.FileName = saveFileDialog1.FileName;
+            }
         }
 
         public void SaveAs(string file)
@@ -178,7 +192,6 @@ namespace WinCad
                 var pline = new Polyline();
                 foreach(var vertex in lwPline.Vertexes)
                 {
-                    
                     var p = new Point((int)vertex.Position.X, (int)vertex.Position.Y);
                     pline.Vertices.Add(p);
                     pline.Color = Color.FromArgb(lwPline.Color.R, lwPline.Color.G, lwPline.Color.B);

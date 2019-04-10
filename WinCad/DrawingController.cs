@@ -29,7 +29,7 @@ namespace WinCad
 
         internal void ImportPicture(string fileName)
         {
-            session.OpenFileName = fileName;
+            session.OpenInsertPictureFileName = fileName;
             session.Mode = DrawModes.ImportingPictureFirstCorner;
             view.Status = Properties.Resources.ImportPictureStatus;
         }
@@ -343,7 +343,7 @@ namespace WinCad
         {
             session.SecondCorner = point;
             var image = new InsertedImage(
-                image: Bitmap.FromFile(session.OpenFileName),
+                image: Bitmap.FromFile(session.OpenInsertPictureFileName),
                 box: new Box(
                     firstCorner: new Point(
                         session.FirstCorner.X, 

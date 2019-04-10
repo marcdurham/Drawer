@@ -127,49 +127,6 @@ namespace WinCad
             }
         }
 
-        public void SaveAs(string file)
-        {
-            // your dxf file name
-            //string file = "sample.dxf";
-
-            // by default it will create an AutoCad2000 DXF version
-            DxfDocument dxf = new DxfDocument();
-            
-            foreach (var layer in Canvas.Layers)
-                foreach (var pline in layer.Polylines)
-                {
-
-                    var vertexes = new List<Vector2>();
-                    foreach (var point in pline.Points())
-                    {
-                        var v = new Vector2(point.X, point.Y);
-                        vertexes.Add(v);
-                    }
-                    var p = new LwPolyline(vertexes);
-                    p.Thickness = pline.Width;
-                    p.Color = new AciColor(pline.Color.R, pline.Color.G, pline.Color.B);
-                    dxf.AddEntity(p);
-                }
-            
-            // an entity
-
-
-
-            Line entity = new Line(new Vector2(5, 5), new Vector2(10, 5));
-            // add your entities here
-            dxf.AddEntity(entity);
-            // save to file
-            dxf.Save(file);
-
-            ////bool isBinary;
-            // this check is optional but recommended before loading a DXF file
-            ///DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
-            // /netDxf is only compatible with AutoCad2000 and higher DXF version
-            ////if (dxfVersion < DxfVersion.AutoCad2000) return;
-            // load file
-            ////DxfDocument loaded = DxfDocument.Load(file);
-        }
-
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog1.DefaultExt = ".dxf";
@@ -178,14 +135,42 @@ namespace WinCad
                 OpenFile(openFileDialog1.FileName);
         }
 
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public void SaveAs(string file)
+        {
+            // by default it will create an AutoCad2000 DXF version
+            DxfDocument dxf = new DxfDocument();
+
+            foreach (var layer in Canvas.Layers)
+            {
+                foreach (var pline in layer.Polylines)
+                {
+                    var vertexes = new List<Vector2>();
+                    foreach (var point in pline.Points())
+                    {
+                        var v = new Vector2(point.X, point.Y);
+                        vertexes.Add(v);
+                    }
+
+                    var p = new LwPolyline(vertexes);
+                    p.Thickness = pline.Width;
+                    p.Color = new AciColor(pline.Color.R, pline.Color.G, pline.Color.B);
+                    dxf.AddEntity(p);
+                }
+            }
+
+            dxf.Save(file);
+        }
+
         private void OpenFile(string file)
         {
             bool isBinary;
-            //this check is optional but recommended before loading a DXF file
             DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
-            //netDxf is only compatible with AutoCad2000 and higher DXF version
             if (dxfVersion < DxfVersion.AutoCad2000) return;
-            // load file
             var loaded = DxfDocument.Load(file);
 
             foreach (var lwPline in loaded.LwPolylines)

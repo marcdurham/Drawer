@@ -128,7 +128,7 @@ namespace WinCad
             {
                 ShowNewRectangle(location);
             }
-
+ 
             HoverOverPointsAt(location);
 
             view.RefreshImage();

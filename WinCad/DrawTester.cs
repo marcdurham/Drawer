@@ -1,6 +1,10 @@
-﻿using System;
+﻿using netDxf;
+using netDxf.Entities;
+using netDxf.Header;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Point = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -111,6 +115,38 @@ namespace WinCad
         private void deleteButton_Click(object sender, EventArgs e)
         {
             controller.DeleteSelectedEntities();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                SaveAs(saveFileDialog1.FileName);
+            }
+        }
+
+        public void SaveAs(string file)
+        {
+            // your dxf file name
+            //string file = "sample.dxf";
+
+            // by default it will create an AutoCad2000 DXF version
+            DxfDocument dxf = new DxfDocument();
+            // an entity
+            Line entity = new Line(new Vector2(5, 5), new Vector2(10, 5));
+            // add your entities here
+            dxf.AddEntity(entity);
+            // save to file
+            dxf.Save(file);
+
+            ////bool isBinary;
+            // this check is optional but recommended before loading a DXF file
+            ///DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
+            // /netDxf is only compatible with AutoCad2000 and higher DXF version
+            ////if (dxfVersion < DxfVersion.AutoCad2000) return;
+            // load file
+            ////DxfDocument loaded = DxfDocument.Load(file);
         }
     }
 }

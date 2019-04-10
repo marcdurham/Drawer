@@ -20,5 +20,17 @@ namespace WinCad
 
             return list;
         }
+
+        public void Delete(Entity entity)
+        {
+            if (entity is Box && Boxes.Contains((Box)entity))
+                Boxes.Remove((Box)entity);
+            if (entity is Polyline && Polylines.Contains((Polyline)entity))
+                Polylines.Remove((Polyline)entity);
+            if (entity is InsertedImage && InsertedImages.Contains((InsertedImage)entity))
+                InsertedImages.Remove((InsertedImage)entity);
+            if (entity is Circle && Circles.Contains((Circle)entity))
+                Circles.Remove((Circle)entity);
+        }
     }
 }

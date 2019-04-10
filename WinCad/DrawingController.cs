@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -39,18 +40,50 @@ namespace WinCad
             view.Status = Properties.Resources.DrawRectangleStatus;
         }
 
+        internal void SelectEntity()
+        {
+            session.Mode = DrawModes.SelectEntity;
+            view.Status = Properties.Resources.SelectEntityStatus;
+        }
+
+        internal void DeleteSelectedEntities()
+        {
+            var trash = new List<Entity>();
+            foreach (var entity in session.Canvas.Entities())
+            {
+                if (entity.IsSelected)
+                    trash.Add(entity);
+            }
+
+            foreach (var entity in trash)
+                session.Canvas.Delete(entity);
+
+            ShowSelections();
+
+            view.RenderLayers();
+        }
+
         internal void ClickAt(Point point, bool cancel)
         {
-            if (cancel)
+            if (cancel) // TODO: detect mode switching
             {
-                CancelMode();
+                if (session.Mode == DrawModes.DrawingPolylineExtraVertices)
+                {
+                    session.Mode = DrawModes.DrawingPolylineFirstVertex;
+                    view.SecondStatus = string.Empty;
+                    session.CurrentPolyline = null;
+                    session.Canvas.Highlights.Polylines.Clear();
+                }
+                else
+                    CancelMode();
                 return;
             }
 
             switch(session.Mode)
             {
                 case DrawModes.DrawingPolylineFirstVertex:
-                    StartDrawingPolylineAt(point);
+                    // TODO: This is the only method here that does not call RenderLayers()
+                    StartDrawingPolylineAt(point); 
                     break;
                 case DrawModes.DrawingPolylineSecondVertex:
                     AddSecondPolylineVertexAt(point);
@@ -69,6 +102,12 @@ namespace WinCad
                     break;
                 case DrawModes.DrawingRectangleSecondCorner:
                     FinishDrawingRectangleAt(point);
+                    break;
+                case DrawModes.StartInsertingBlock:
+                    InsertBlockAt(point);
+                    break;
+                case DrawModes.SelectEntity:
+                    SelectEntityAt(point);
                     break;
                 default:
                     CancelMode();
@@ -92,7 +131,33 @@ namespace WinCad
 
             HoverOverPointsAt(location);
 
-            view.InvalidateImage();
+            view.RefreshImage();
+        }
+
+        internal void InsertBlock()
+        {
+            session.Mode = DrawModes.StartInsertingBlock;
+            view.Status = "Inserting block: Click insertion point:";
+        }
+
+        internal void ShowSelections()
+        {
+            int radius = 5;
+            session.Canvas.Selections.Circles.Clear();
+
+            foreach (var layer in session.Canvas.Layers)
+                foreach (var entity in layer.Entities())
+                    if (entity.IsSelected)
+                        foreach (var point in entity.Points())
+                        {
+                            session.Canvas.Selections.Circles.Add(
+                                new Circle()
+                                {
+                                    Center = point,
+                                    Color = Color.Magenta,
+                                    Radius = radius,
+                                });
+                        }
         }
 
         void ShowNewPolylineSegment(Point point)
@@ -145,7 +210,7 @@ namespace WinCad
             session.Canvas.Highlights.Boxes.Add(box);
         }
 
-        void HoverOverPointsAt(Point location)
+        void HoverOverPointsAt(Point cursor)
         {
             var circle = new Circle()
             {
@@ -158,11 +223,11 @@ namespace WinCad
             {
                 foreach (var entity in layer.Entities())
                 {
-                    foreach (var p in entity.Points())
+                    foreach (var point in entity.Points())
                     {
-                        if (AreNear(p, location))
+                        if (AreNear(point, cursor))
                         {
-                            circle.Center = p;
+                            circle.Center = point;
 
                             session.Canvas.Highlights.Circles.Clear();
                             session.Canvas.Highlights.Circles.Add(circle);
@@ -196,7 +261,46 @@ namespace WinCad
 
             session.Canvas.Highlights.Boxes.Clear();
 
-            CancelMode();
+            session.Mode = DrawModes.DrawingRectangleFirstCorner;
+
+            view.RenderLayers();
+        }
+
+        void InsertBlockAt(Point point)
+        {
+            // Use a box for testing, but insert a whole canvas, all layers...
+            var box = new Box(
+              firstCorner: new Point(point.X - 4, point.Y -4),
+              size: new Size(8, 8));
+
+            box.Color = Color.Red;
+
+            session.Canvas.CurrentLayer.Boxes.Add(box);
+            session.Canvas.CurrentLayer.Circles.Add(
+                new Circle()
+                {
+                    Center = point,
+                    Radius = 6,
+                    Color = Color.Red
+                });
+
+            view.RenderLayers();
+        }
+
+        void SelectEntityAt(Point point)
+        {
+            foreach (var entity in session.Canvas.Entities())
+            {
+                foreach (var vertex in entity.Points())
+                {
+                    if (AreNear(vertex, point))
+                    {
+                        entity.IsSelected = !entity.IsSelected;
+                    }
+                }
+            }
+
+            ShowSelections();
 
             view.RenderLayers();
         }
@@ -264,6 +368,7 @@ namespace WinCad
             session.SecondCorner = Point.Empty;
             session.Mode = DrawModes.Ready;
             view.Status = Properties.Resources.ReadyStatus;
+            view.SecondStatus = string.Empty;
         }
 
         static bool AreNear(Point a, Point b)

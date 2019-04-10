@@ -7,7 +7,7 @@
         Canvas Canvas { get; set; }
         bool OrthoIsOn { get; }
 
-        void InvalidateImage();
+        void RefreshImage();
         void RenderLayers();
     }
 }

@@ -34,7 +34,7 @@ namespace WinCad
             get { return orthoButton.Checked; }
         }
 
-        public void InvalidateImage()
+        public void RefreshImage()
         {
             mainPicture.Invalidate();
         }
@@ -72,6 +72,7 @@ namespace WinCad
 
         void mainPicture_Paint(object sender, PaintEventArgs e)
         {
+            engine.Render(e.Graphics, Canvas.Selections);
             engine.Render(e.Graphics, Canvas.Highlights);
         }
 
@@ -95,6 +96,21 @@ namespace WinCad
         void orthoButton_Click(object sender, EventArgs e)
         {
             orthoButton.Checked = !orthoButton.Checked;
+        }
+
+        private void insertBlock_Click(object sender, EventArgs e)
+        {
+            controller.InsertBlock();
+        }
+
+        private void selectEntityButtonh_Click(object sender, EventArgs e)
+        {
+            controller.SelectEntity();
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            controller.DeleteSelectedEntities();
         }
     }
 }

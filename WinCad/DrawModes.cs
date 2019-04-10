@@ -10,6 +10,8 @@
         StartDrawing,
         DrawingPolylineFirstVertex,
         DrawingPolylineExtraVertices,
-        DrawingPolylineSecondVertex
+        DrawingPolylineSecondVertex,
+        StartInsertingBlock,
+        SelectEntity
     }
 }

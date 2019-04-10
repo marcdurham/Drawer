@@ -146,6 +146,8 @@ namespace WinCad
                         vertexes.Add(v);
                     }
                     var p = new LwPolyline(vertexes);
+                    p.Thickness = pline.Width;
+                    p.Color = new AciColor(pline.Color.R, pline.Color.G, pline.Color.B);
                     dxf.AddEntity(p);
                 }
             
@@ -166,6 +168,42 @@ namespace WinCad
             ////if (dxfVersion < DxfVersion.AutoCad2000) return;
             // load file
             ////DxfDocument loaded = DxfDocument.Load(file);
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.DefaultExt = ".dxf";
+            var result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+                OpenFile(openFileDialog1.FileName);
+        }
+
+        private void OpenFile(string file)
+        {
+            bool isBinary;
+            //this check is optional but recommended before loading a DXF file
+            DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
+            //netDxf is only compatible with AutoCad2000 and higher DXF version
+            if (dxfVersion < DxfVersion.AutoCad2000) return;
+            // load file
+            var loaded = DxfDocument.Load(file);
+
+            foreach (var lwPline in loaded.LwPolylines)
+            {
+                var pline = new Polyline();
+                foreach(var vertex in lwPline.Vertexes)
+                {
+                    
+                    var p = new Point((int)vertex.Position.X, (int)vertex.Position.Y);
+                    pline.Vertices.Add(p);
+                    pline.Color = Color.FromArgb(lwPline.Color.R, lwPline.Color.G, lwPline.Color.B);
+                    pline.Width = (int)lwPline.Thickness;
+                }
+
+                Canvas.CurrentLayer.Polylines.Add(pline);
+            }
+
+            RenderLayers();
         }
     }
 }

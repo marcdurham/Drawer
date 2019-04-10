@@ -5,9 +5,13 @@ namespace WinCad
 {
     public class Polyline : Entity
     {
+        public Polyline()
+        {
+        }
+
         public Polyline(Point first, Point second)
         {
-            Color = Color.Green;
+            Color = Color.Red;
 
             Vertices.Add(first);
             Vertices.Add(second);

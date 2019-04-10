@@ -2,6 +2,7 @@
 using netDxf.Entities;
 using netDxf.Header;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
@@ -133,7 +134,25 @@ namespace WinCad
 
             // by default it will create an AutoCad2000 DXF version
             DxfDocument dxf = new DxfDocument();
+            
+            foreach (var layer in Canvas.Layers)
+                foreach (var pline in layer.Polylines)
+                {
+
+                    var vertexes = new List<Vector2>();
+                    foreach (var point in pline.Points())
+                    {
+                        var v = new Vector2(point.X, point.Y);
+                        vertexes.Add(v);
+                    }
+                    var p = new LwPolyline(vertexes);
+                    dxf.AddEntity(p);
+                }
+            
             // an entity
+
+
+
             Line entity = new Line(new Vector2(5, 5), new Vector2(10, 5));
             // add your entities here
             dxf.AddEntity(entity);

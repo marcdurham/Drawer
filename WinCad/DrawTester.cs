@@ -4,6 +4,8 @@ using netDxf.Header;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
 
@@ -145,8 +147,19 @@ namespace WinCad
             }
         }
 
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            controller.NewFile();
+        }
+
         void AskUserToSaveAs()
         {
+            saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(
+                controller.session.FileName);
+
+            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(
+                controller.session.FileName);
+
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 SaveAs(saveFileDialog1.FileName);
@@ -157,7 +170,7 @@ namespace WinCad
         public void SaveAs(string file)
         {
             // by default it will create an AutoCad2000 DXF version
-            DxfDocument dxf = new DxfDocument();
+            var dxf = new DxfDocument();
 
             foreach (var layer in Canvas.Layers)
             {
@@ -175,12 +188,44 @@ namespace WinCad
                     p.Color = new AciColor(pline.Color.R, pline.Color.G, pline.Color.B);
                     dxf.AddEntity(p);
                 }
+
+                foreach (var box in layer.Boxes)
+                {
+                    var vertexes = new List<Vector2>();
+                    foreach (var point in box.Points())
+                    {
+                        var v = new Vector2(point.X, point.Y);
+                        vertexes.Add(v);
+                    }
+                    vertexes.Add(
+                        new Vector2(
+                            box.Points().First().X, 
+                            box.Points().First().Y));
+
+                    var p = new LwPolyline(vertexes);
+                    p.Thickness = box.Width;
+                    p.Color = new AciColor(box.Color.R, box.Color.G, box.Color.B);
+                    dxf.AddEntity(p);
+                }
+
+                foreach (var image in layer.InsertedImages)
+                {
+                    string imageFile = "test.tif";
+                    var idef = new netDxf.Objects.ImageDefinition(imageFile);
+                    var position = new Vector2(image.Box.FirstCorner.X, image.Box.FirstCorner.Y);
+                    
+                    var i = new netDxf.Entities.Image(
+                        idef, 
+                        position, 
+                        image.Box.Size.Height, 
+                        image.Box.Size.Width);
+                }
             }
 
             dxf.Save(file);
         }
 
-        private void OpenFile(string file)
+        void OpenFile(string file)
         {
             bool isBinary;
             DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);

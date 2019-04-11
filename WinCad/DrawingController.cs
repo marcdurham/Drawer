@@ -134,6 +134,13 @@ namespace WinCad
             view.RefreshImage();
         }
 
+        internal void NewFile()
+        {
+            session.Canvas.CurrentLayer.Clear();
+            session.FileName = null;
+            view.RenderLayers();
+        }
+
         internal void InsertBlock()
         {
             session.Mode = DrawModes.StartInsertingBlock;

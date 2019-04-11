@@ -18,7 +18,6 @@ namespace WinCad
         }
 
         public List<Point> Vertices { get; } = new List<Point>();
-        public float Width { get; set; } = 3.0f;
 
         public override List<Point> Points()
         {

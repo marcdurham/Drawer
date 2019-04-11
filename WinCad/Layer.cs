@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WinCad
 {
@@ -31,6 +32,14 @@ namespace WinCad
                 InsertedImages.Remove((InsertedImage)entity);
             if (entity is Circle && Circles.Contains((Circle)entity))
                 Circles.Remove((Circle)entity);
+        }
+
+        internal void Clear()
+        {
+            Boxes.Clear();
+            Polylines.Clear();
+            InsertedImages.Clear();
+            Circles.Clear();
         }
     }
 }

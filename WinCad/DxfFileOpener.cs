@@ -1,6 +1,8 @@
 ﻿using netDxf;
+using netDxf.Entities;
 using netDxf.Header;
 using System.Drawing;
+using Point = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -8,10 +10,10 @@ namespace WinCad
     {
         internal static Canvas OpenFile(string file)
         {
+            var canvas = new Canvas();
+
             DxfVersion dxfVersion = DxfDocument
                 .CheckDxfFileVersion(file, out bool isBinary);
-
-            var canvas = new Canvas();
 
             if (dxfVersion < DxfVersion.AutoCad2000)
                 return canvas;
@@ -20,32 +22,48 @@ namespace WinCad
 
             foreach (var lwPline in loaded.LwPolylines)
             {
-                var pline = new Polyline();
-                foreach (var vertex in lwPline.Vertexes)
-                {
-                    var p = new Point((int)vertex.Position.X, (int)vertex.Position.Y);
-                    pline.Vertices.Add(p);
-                    pline.Color = Color.FromArgb(lwPline.Color.R, lwPline.Color.G, lwPline.Color.B);
-                    pline.Width = (int)lwPline.Thickness;
-                }
-
-                canvas.CurrentLayer.Polylines.Add(pline);
+                canvas.CurrentLayer.Polylines.Add(PolylineFrom(lwPline));
             }
 
             foreach (var image in loaded.Images)
             {
-                var img = Bitmap.FromFile(image.Definition.File);
-                var insertedImage = new InsertedImage(
-                    image: img,
-                    box: new Box(
-                        new Point((int)image.Position.X, (int)image.Position.Y),
-                        new Size((int)image.Width, (int)image.Height)),
-                    file: image.Definition.File);
-
-                canvas.CurrentLayer.InsertedImages.Add(insertedImage);
+                canvas.CurrentLayer.InsertedImages.Add(
+                    InsertedImageFrom(image));
             }
 
             return canvas;
+        }
+
+        static Polyline PolylineFrom(LwPolyline lwPolyline)
+        {
+            var polyline = new Polyline
+            {
+                Color = Color.FromArgb(
+                    red: lwPolyline.Color.R, 
+                    green: lwPolyline.Color.G, 
+                    blue: lwPolyline.Color.B),
+                Width = (int)lwPolyline.Thickness
+            };
+
+            foreach (var vertex in lwPolyline.Vertexes)
+            {
+                polyline.Vertices.Add(
+                    new Point((int)vertex.Position.X, (int)vertex.Position.Y));
+            }
+
+            return polyline;
+        }
+
+        static InsertedImage InsertedImageFrom(netDxf.Entities.Image image)
+        {
+            return new InsertedImage(
+                image: Bitmap.FromFile(image.Definition.File),
+                box: new Box(
+                    firstCorner: new Point(
+                        x: (int)image.Position.X,
+                        y: (int)image.Position.Y),
+                    size: new Size((int)image.Width, (int)image.Height)),
+                file: image.Definition.File);
         }
     }
 }

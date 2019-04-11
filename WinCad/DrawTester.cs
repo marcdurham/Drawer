@@ -134,7 +134,7 @@ namespace WinCad
             }
             else
             {
-                SaveAs(controller.session.FileName);
+                DxfFileSaver.SaveAs(controller.session.Canvas, controller.session.FileName);
             }
         }
 
@@ -174,68 +174,9 @@ namespace WinCad
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                SaveAs(saveFileDialog1.FileName);
+                DxfFileSaver.SaveAs(Canvas, saveFileDialog1.FileName);
                 controller.session.FileName = saveFileDialog1.FileName;
             }
-        }
-
-        public void SaveAs(string file)
-        {
-            // by default it will create an AutoCad2000 DXF version
-            var dxf = new DxfDocument();
-
-            foreach (var layer in Canvas.Layers)
-            {
-                foreach (var pline in layer.Polylines)
-                {
-                    var vertexes = new List<Vector2>();
-                    foreach (var point in pline.Points())
-                    {
-                        var v = new Vector2(point.X, point.Y);
-                        vertexes.Add(v);
-                    }
-
-                    var p = new LwPolyline(vertexes);
-                    p.Thickness = pline.Width;
-                    p.Color = new AciColor(pline.Color.R, pline.Color.G, pline.Color.B);
-                    dxf.AddEntity(p);
-                }
-
-                foreach (var box in layer.Boxes)
-                {
-                    var vertexes = new List<Vector2>();
-                    foreach (var point in box.Points())
-                    {
-                        var v = new Vector2(point.X, point.Y);
-                        vertexes.Add(v);
-                    }
-                    vertexes.Add(
-                        new Vector2(
-                            box.Points().First().X, 
-                            box.Points().First().Y));
-
-                    var p = new LwPolyline(vertexes);
-                    p.Thickness = box.Width;
-                    p.Color = new AciColor(box.Color.R, box.Color.G, box.Color.B);
-                    dxf.AddEntity(p);
-                }
-
-                foreach (var image in layer.InsertedImages)
-                {
-                    var idef = new ImageDefinition(image.File);
-                    var position = new Vector2(image.Box.FirstCorner.X, image.Box.FirstCorner.Y);
-                    
-                    var dxfImage = new netDxf.Entities.Image(
-                        idef, 
-                        position, 
-                        image.Box.Size.Height, 
-                        image.Box.Size.Width);
-
-                    dxf.AddEntity(dxfImage);
-                }
-            }
-
-            dxf.Save(file);
         }
     }
 }

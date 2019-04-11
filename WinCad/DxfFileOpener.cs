@@ -8,8 +8,8 @@ namespace WinCad
     {
         internal static Canvas OpenFile(string file)
         {
-            bool isBinary;
-            DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
+            DxfVersion dxfVersion = DxfDocument
+                .CheckDxfFileVersion(file, out bool isBinary);
 
             var canvas = new Canvas();
 

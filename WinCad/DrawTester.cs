@@ -234,6 +234,8 @@ namespace WinCad
             if (dxfVersion < DxfVersion.AutoCad2000) return;
             var loaded = DxfDocument.Load(file);
 
+            Canvas.CurrentLayer.Clear();
+
             foreach (var lwPline in loaded.LwPolylines)
             {
                 var pline = new Polyline();
@@ -255,7 +257,7 @@ namespace WinCad
                     img,
                     new Box(
                         new Point((int)image.Position.X, (int)image.Position.Y), 
-                        new Size(image.Definition.Width, image.Definition.Height)),
+                        new Size((int)image.Width, (int)image.Height)),
                     image.Definition.File);
 
                 Canvas.CurrentLayer.InsertedImages.Add(insertedImage);

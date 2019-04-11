@@ -61,6 +61,7 @@
     <Compile Include="DrawTester.Designer.cs">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
+    <Compile Include="DxfFileOpener.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityRenderEngine.cs" />
     <Compile Include="IDrawingView.cs" />

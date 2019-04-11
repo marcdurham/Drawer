@@ -143,8 +143,14 @@ namespace WinCad
             var result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                OpenFile(openFileDialog1.FileName);
+                controller.session.Canvas = DxfFileOpener.OpenFile(
+                    openFileDialog1.FileName);
+
+                Canvas = controller.session.Canvas;
+
                 controller.session.FileName = openFileDialog1.FileName;
+
+                RenderLayers();
             }
         }
 
@@ -230,48 +236,6 @@ namespace WinCad
             }
 
             dxf.Save(file);
-        }
-
-        void OpenFile(string file)
-        {
-            bool isBinary;
-            DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
-            if (dxfVersion < DxfVersion.AutoCad2000)
-                return;
-
-            var loaded = DxfDocument.Load(file);
-
-            controller.session.Canvas = new Canvas();
-            Canvas = controller.session.Canvas;
-
-            foreach (var lwPline in loaded.LwPolylines)
-            {
-                var pline = new Polyline();
-                foreach(var vertex in lwPline.Vertexes)
-                {
-                    var p = new Point((int)vertex.Position.X, (int)vertex.Position.Y);
-                    pline.Vertices.Add(p);
-                    pline.Color = Color.FromArgb(lwPline.Color.R, lwPline.Color.G, lwPline.Color.B);
-                    pline.Width = (int)lwPline.Thickness;
-                }
-
-                Canvas.CurrentLayer.Polylines.Add(pline);
-            }
-
-            foreach (var image in loaded.Images)
-            {
-                var img = Bitmap.FromFile(image.Definition.File);
-                var insertedImage = new InsertedImage(
-                    img,
-                    new Box(
-                        new Point((int)image.Position.X, (int)image.Position.Y), 
-                        new Size((int)image.Width, (int)image.Height)),
-                    image.Definition.File);
-
-                Canvas.CurrentLayer.InsertedImages.Add(insertedImage);
-            }
-
-            RenderLayers();
         }
     }
 }

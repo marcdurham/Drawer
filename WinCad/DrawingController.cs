@@ -134,6 +134,17 @@ namespace WinCad
             view.RefreshImage();
         }
 
+        internal void OpenFile(string fileName)
+        {
+            session.Canvas = DxfFileOpener.OpenFile(fileName);
+
+            view.Canvas = session.Canvas;
+
+            session.FileName = fileName;
+
+            view.RenderLayers();
+        }
+
         internal void NewFile()
         {
             session.Canvas.CurrentLayer.Clear();
@@ -165,6 +176,12 @@ namespace WinCad
                                     Radius = radius,
                                 });
                         }
+        }
+
+        internal void SaveAs(string fileName)
+        {
+            DxfFileSaver.SaveAs(session.Canvas, fileName);
+            session.FileName = fileName;
         }
 
         void ShowNewPolylineSegment(Point point)

@@ -134,23 +134,15 @@ namespace WinCad
             }
             else
             {
-                DxfFileSaver.SaveAs(controller.session.Canvas, controller.session.FileName);
+                controller.SaveAs(controller.session.FileName);
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var result = openFileDialog1.ShowDialog();
-            if (result == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                controller.session.Canvas = DxfFileOpener.OpenFile(
-                    openFileDialog1.FileName);
-
-                Canvas = controller.session.Canvas;
-
-                controller.session.FileName = openFileDialog1.FileName;
-
-                RenderLayers();
+                controller.OpenFile(openFileDialog1.FileName);
             }
         }
 
@@ -174,8 +166,7 @@ namespace WinCad
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                DxfFileSaver.SaveAs(Canvas, saveFileDialog1.FileName);
-                controller.session.FileName = saveFileDialog1.FileName;
+                controller.SaveAs(saveFileDialog1.FileName);
             }
         }
     }

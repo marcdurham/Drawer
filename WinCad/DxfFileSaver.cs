@@ -8,7 +8,6 @@ namespace WinCad
 {
     public class DxfFileSaver
     {
-
         public static void SaveAs(Canvas canvas, string file)
         {
             // By default it will create an AutoCad2000 DXF version
@@ -18,54 +17,73 @@ namespace WinCad
             {
                 foreach (var pline in layer.Polylines)
                 {
-                    var vertexes = new List<Vector2>();
-                    foreach (var point in pline.Points())
-                    {
-                        var v = new Vector2(point.X, point.Y);
-                        vertexes.Add(v);
-                    }
-
-                    var p = new LwPolyline(vertexes);
-                    p.Thickness = pline.Width;
-                    p.Color = new AciColor(pline.Color.R, pline.Color.G, pline.Color.B);
-                    dxf.AddEntity(p);
+                    dxf.AddEntity(LwPolylineFrom(pline));
                 }
 
                 foreach (var box in layer.Boxes)
                 {
-                    var vertexes = new List<Vector2>();
-                    foreach (var point in box.Points())
-                    {
-                        var v = new Vector2(point.X, point.Y);
-                        vertexes.Add(v);
-                    }
-                    vertexes.Add(
-                        new Vector2(
-                            box.Points().First().X,
-                            box.Points().First().Y));
-
-                    var p = new LwPolyline(vertexes);
-                    p.Thickness = box.Width;
-                    p.Color = new AciColor(box.Color.R, box.Color.G, box.Color.B);
-                    dxf.AddEntity(p);
+                    dxf.AddEntity(LwPolylineFrom(box));
                 }
 
                 foreach (var image in layer.InsertedImages)
                 {
-                    var idef = new ImageDefinition(image.File);
-                    var position = new Vector2(image.Box.FirstCorner.X, image.Box.FirstCorner.Y);
-
-                    var dxfImage = new netDxf.Entities.Image(
-                        idef,
-                        position,
-                        image.Box.Size.Height,
-                        image.Box.Size.Width);
-
-                    dxf.AddEntity(dxfImage);
+                    dxf.AddEntity(ImageFrom(image));
                 }
             }
 
             dxf.Save(file);
+        }
+
+        static LwPolyline LwPolylineFrom(Polyline pline)
+        {
+            var vertexes = new List<Vector2>();
+
+            foreach (var point in pline.Points())
+            {
+                vertexes.Add(new Vector2(point.X, point.Y));
+            }
+
+            return new LwPolyline(vertexes)
+            {
+                Thickness = pline.Width,
+                Color = new AciColor(
+                    pline.Color.R, 
+                    pline.Color.G, 
+                    pline.Color.B)
+            };
+        }
+
+        static LwPolyline LwPolylineFrom(Box box)
+        {
+            var vertexes = new List<Vector2>();
+
+            foreach (var point in box.Points())
+            {
+                vertexes.Add(new Vector2(point.X, point.Y));
+            }
+
+            // Connect last vertex to first, closing the polygon
+            vertexes.Add(
+                new Vector2(
+                    x: box.Points().First().X,
+                    y: box.Points().First().Y));
+
+            return new LwPolyline(vertexes)
+            {
+                Thickness = box.Width,
+                Color = new AciColor(box.Color.R, box.Color.G, box.Color.B)
+            };
+        }
+
+        static Image ImageFrom(InsertedImage image)
+        {
+            return new Image(
+                imageDefinition: new ImageDefinition(image.File),
+                position: new Vector2(
+                    x: image.Box.FirstCorner.X,
+                    y: image.Box.FirstCorner.Y),
+                width: image.Box.Size.Width,
+                height: image.Box.Size.Height);
         }
     }
 }

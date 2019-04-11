@@ -27,10 +27,10 @@ namespace WinCad
             view.RenderLayers();
         }
 
-        internal void ImportPicture(string fileName)
+        internal void InsertImage(string fileName)
         {
             session.OpenInsertPictureFileName = fileName;
-            session.Mode = DrawModes.ImportingPictureFirstCorner;
+            session.Mode = DrawModes.InsertingImageFirstCorner;
             view.Status = Properties.Resources.ImportPictureStatus;
         }
 
@@ -91,11 +91,11 @@ namespace WinCad
                 case DrawModes.DrawingPolylineExtraVertices:
                     AddExtraPolylineVertexAt(point);
                     break;
-                case DrawModes.ImportingPictureFirstCorner:
+                case DrawModes.InsertingImageFirstCorner:
                     StartImportingPictureAt(point);
                     break;
-                case DrawModes.ImportingPictureSecondCorner:
-                    FinishImportingPictureAt(point);
+                case DrawModes.InsertingImageSecondCorner:
+                    FinishInsertingImageAt(point);
                     break;
                 case DrawModes.DrawingRectangleFirstCorner:
                     StartDrawingRectangleAt(point);
@@ -124,7 +124,7 @@ namespace WinCad
             }
 
             if (session.Mode == DrawModes.DrawingRectangleSecondCorner
-                || session.Mode == DrawModes.ImportingPictureSecondCorner)
+                || session.Mode == DrawModes.InsertingImageSecondCorner)
             {
                 ShowNewRectangle(location);
             }
@@ -342,15 +342,16 @@ namespace WinCad
         void StartImportingPictureAt(Point point)
         {
             session.FirstCorner = point;
-            session.Mode = DrawModes.ImportingPictureSecondCorner;
+            session.Mode = DrawModes.InsertingImageSecondCorner;
             view.Status = Properties.Resources.StartImportingPictureStatus;
         }
 
-        void FinishImportingPictureAt(Point point)
+        void FinishInsertingImageAt(Point point)
         {
             session.SecondCorner = point;
             var image = new InsertedImage(
                 image: Bitmap.FromFile(session.OpenInsertPictureFileName),
+                file: session.OpenInsertPictureFileName,
                 box: new Box(
                     firstCorner: new Point(
                         session.FirstCorner.X, 

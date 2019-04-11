@@ -3,8 +3,8 @@
     public enum DrawModes
     {
         Ready,
-        ImportingPictureFirstCorner,
-        ImportingPictureSecondCorner,
+        InsertingImageFirstCorner,
+        InsertingImageSecondCorner,
         DrawingRectangleFirstCorner,
         DrawingRectangleSecondCorner,
         StartDrawing,

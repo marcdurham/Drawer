@@ -1,6 +1,7 @@
 ﻿using netDxf;
 using netDxf.Entities;
 using netDxf.Header;
+using netDxf.Objects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -69,7 +70,7 @@ namespace WinCad
         {
             var result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK)
-                controller.ImportPicture(openFileDialog.FileName);
+                controller.InsertImage(openFileDialog.FileName);
         }
 
         void drawRectangle_Click(object sender, EventArgs e)
@@ -210,15 +211,16 @@ namespace WinCad
 
                 foreach (var image in layer.InsertedImages)
                 {
-                    string imageFile = "test.tif";
-                    var idef = new netDxf.Objects.ImageDefinition(imageFile);
+                    var idef = new ImageDefinition(image.File);
                     var position = new Vector2(image.Box.FirstCorner.X, image.Box.FirstCorner.Y);
                     
-                    var i = new netDxf.Entities.Image(
+                    var dxfImage = new netDxf.Entities.Image(
                         idef, 
                         position, 
                         image.Box.Size.Height, 
                         image.Box.Size.Width);
+
+                    dxf.AddEntity(dxfImage);
                 }
             }
 
@@ -244,6 +246,19 @@ namespace WinCad
                 }
 
                 Canvas.CurrentLayer.Polylines.Add(pline);
+            }
+
+            foreach (var image in loaded.Images)
+            {
+                var img = Bitmap.FromFile(image.Definition.File);
+                var insertedImage = new InsertedImage(
+                    img,
+                    new Box(
+                        new Point((int)image.Position.X, (int)image.Position.Y), 
+                        new Size(image.Definition.Width, image.Definition.Height)),
+                    image.Definition.File);
+
+                Canvas.CurrentLayer.InsertedImages.Add(insertedImage);
             }
 
             RenderLayers();

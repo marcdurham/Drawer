@@ -234,7 +234,7 @@ namespace WinCad
             if (dxfVersion < DxfVersion.AutoCad2000) return;
             var loaded = DxfDocument.Load(file);
 
-            Canvas.CurrentLayer.Clear();
+            Canvas = new Canvas();
 
             foreach (var lwPline in loaded.LwPolylines)
             {

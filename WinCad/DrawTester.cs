@@ -153,6 +153,11 @@ namespace WinCad
             controller.NewFile();
         }
 
+        private void DrawTester_ResizeEnd(object sender, EventArgs e)
+        {
+            RenderLayers();
+        }
+
         void AskUserToSaveAs()
         {
             saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(

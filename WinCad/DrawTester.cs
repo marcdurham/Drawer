@@ -231,10 +231,13 @@ namespace WinCad
         {
             bool isBinary;
             DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out isBinary);
-            if (dxfVersion < DxfVersion.AutoCad2000) return;
+            if (dxfVersion < DxfVersion.AutoCad2000)
+                return;
+
             var loaded = DxfDocument.Load(file);
 
-            Canvas = new Canvas();
+            controller.session.Canvas = new Canvas();
+            Canvas = controller.session.Canvas;
 
             foreach (var lwPline in loaded.LwPolylines)
             {

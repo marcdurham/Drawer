@@ -325,6 +325,8 @@ namespace WinCad
                 session.FirstCorner, 
                 session.Canvas.NewLineEnd);
 
+            session.CurrentPolyline.Color = Color.DarkRed;
+
             session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
             session.Mode = DrawModes.DrawingPolylineExtraVertices;
             view.Status = Properties.Resources.DrawPolylineStatus;

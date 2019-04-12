@@ -1,8 +1,11 @@
 ﻿using netDxf;
 using netDxf.Entities;
 using netDxf.Header;
-using Bitmap = System.Drawing.Bitmap;
+using System;
+using System.Drawing;
 using Color = System.Drawing.Color;
+using Bitmap = System.Drawing.Bitmap;
+using Point = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -57,13 +60,25 @@ namespace WinCad
         static InsertedImage InsertedImageFrom(netDxf.Entities.Image image)
         {
             return new InsertedImage(
-                image: Bitmap.FromFile(image.Definition.File),
+                image: FromFile(image.Definition.File),
                 box: new Box(
                     firstCorner: new Point(
                         x: (int)image.Position.X,
                         y: (int)image.Position.Y),
                     size: new Size((int)image.Width, (int)image.Height)),
                 file: image.Definition.File);
+        }
+
+        static System.Drawing.Image FromFile(string file)
+        {
+            try
+            {
+                return Bitmap.FromFile(file);
+            }
+            catch (Exception)
+            {
+                return new Bitmap(10, 10);
+            }
         }
     }
 }

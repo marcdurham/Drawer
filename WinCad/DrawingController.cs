@@ -164,10 +164,20 @@ namespace WinCad
             view.RenderLayers();
         }
 
+        internal void ZoomInClick()
+        {
+            throw new NotImplementedException();
+        }
+
         internal void InsertBlock()
         {
             session.Mode = DrawModes.StartInsertingBlock;
             view.Status = "Inserting block: Click insertion point:";
+        }
+
+        internal void ZoomOutClick()
+        {
+            throw new NotImplementedException();
         }
 
         internal void ShowSelections()

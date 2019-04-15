@@ -167,6 +167,16 @@ namespace WinCad
             RenderLayers();
         }
 
+        private void ZoomInButton_Click(object sender, EventArgs e)
+        {
+            controller.ZoomInClick();
+        }
+
+        private void ZoomOutButton_Click(object sender, EventArgs e)
+        {
+            controller.ZoomOutClick();
+        }
+
         void AskUserToSaveAs()
         {
             saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(
@@ -179,16 +189,6 @@ namespace WinCad
             {
                 controller.SaveAs(saveFileDialog1.FileName);
             }
-        }
-
-        private void ZoomInButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ZoomOutButton_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

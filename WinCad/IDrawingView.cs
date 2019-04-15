@@ -9,5 +9,6 @@
 
         void RefreshImage();
         void RenderLayers();
+        UserAnswer AskUser(string question);
     }
 }

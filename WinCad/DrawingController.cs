@@ -48,15 +48,27 @@ namespace WinCad
 
         internal void DeleteSelectedEntities()
         {
-            var trash = new List<Entity>();
+            var selected = new List<Entity>();
             foreach (var entity in session.Canvas.Entities())
             {
                 if (entity.IsSelected)
-                    trash.Add(entity);
+                {
+                    selected.Add(entity);
+                }
+            }
+            
+            var delete = view
+                .AskUser($"Delete the {selected.Count} selected entities?");
+
+            if (delete != UserAnswer.Yes)
+            {
+                return;
             }
 
-            foreach (var entity in trash)
+            foreach (var entity in selected)
+            {
                 session.Canvas.Delete(entity);
+            }
 
             ShowSelections();
 

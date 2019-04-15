@@ -480,6 +480,7 @@
             this.zoomInButton.Name = "zoomInButton";
             this.zoomInButton.Size = new System.Drawing.Size(23, 22);
             this.zoomInButton.Text = "Zoom In";
+            this.zoomInButton.Click += new System.EventHandler(this.ZoomInButton_Click);
             // 
             // zoomOutButton
             // 
@@ -489,6 +490,7 @@
             this.zoomOutButton.Name = "zoomOutButton";
             this.zoomOutButton.Size = new System.Drawing.Size(23, 22);
             this.zoomOutButton.Text = "Zoom Out";
+            this.zoomOutButton.Click += new System.EventHandler(this.ZoomOutButton_Click);
             // 
             // DrawTester
             // 

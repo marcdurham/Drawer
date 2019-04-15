@@ -1,12 +1,6 @@
-﻿using netDxf;
-using netDxf.Entities;
-using netDxf.Header;
-using netDxf.Objects;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
 
@@ -59,6 +53,23 @@ namespace WinCad
             mainPicture.Image = image;
 
             mainPicture.Invalidate();
+        }
+
+        public UserAnswer AskUser(string question)
+        {
+            var answer = MessageBox.Show(
+                question, 
+                Properties.Resources.AskUserDialogCaption, 
+                MessageBoxButtons.YesNoCancel);
+
+            if (answer == DialogResult.Yes)
+                return UserAnswer.Yes;
+            else if (answer == DialogResult.No)
+                return UserAnswer.No;
+            else if (answer == DialogResult.Cancel)
+                return UserAnswer.Cancel;
+            else
+                return UserAnswer.UnknownAnswer;
         }
 
         void drawPolylineButton_Click(object sender, EventArgs e)
@@ -168,6 +179,16 @@ namespace WinCad
             {
                 controller.SaveAs(saveFileDialog1.FileName);
             }
+        }
+
+        private void ZoomInButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ZoomOutButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

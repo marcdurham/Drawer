@@ -71,6 +71,7 @@
     <Compile Include="Polyline.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserAnswer.cs" />
     <EmbeddedResource Include="DrawTester.resx">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </EmbeddedResource>

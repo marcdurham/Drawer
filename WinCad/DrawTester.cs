@@ -48,7 +48,9 @@ namespace WinCad
             var graphics = Graphics.FromImage(image);
 
             foreach (var layer in Canvas.Layers)
+            {
                 engine.Render(graphics, layer);
+            }
 
             mainPicture.Image = image;
 
@@ -58,18 +60,26 @@ namespace WinCad
         public UserAnswer AskUser(string question)
         {
             var answer = MessageBox.Show(
-                question, 
-                Properties.Resources.AskUserDialogCaption, 
+                question,
+                Properties.Resources.AskUserDialogCaption,
                 MessageBoxButtons.YesNoCancel);
 
             if (answer == DialogResult.Yes)
+            {
                 return UserAnswer.Yes;
+            }
             else if (answer == DialogResult.No)
+            {
                 return UserAnswer.No;
+            }
             else if (answer == DialogResult.Cancel)
+            {
                 return UserAnswer.Cancel;
+            }
             else
+            {
                 return UserAnswer.UnknownAnswer;
+            }
         }
 
         void drawPolylineButton_Click(object sender, EventArgs e)
@@ -81,7 +91,9 @@ namespace WinCad
         {
             var result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK)
+            {
                 controller.InsertImage(openFileDialog.FileName);
+            }
         }
 
         void drawRectangle_Click(object sender, EventArgs e)

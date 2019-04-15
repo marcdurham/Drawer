@@ -162,11 +162,6 @@ namespace WinCad
             controller.NewFile();
         }
 
-        private void DrawTester_ResizeEnd(object sender, EventArgs e)
-        {
-            RenderLayers();
-        }
-
         private void ZoomInButton_Click(object sender, EventArgs e)
         {
             controller.ZoomInClick();
@@ -189,6 +184,11 @@ namespace WinCad
             {
                 controller.SaveAs(saveFileDialog1.FileName);
             }
+        }
+
+        private void DrawTester_SizeChanged(object sender, EventArgs e)
+        {
+            RenderLayers();
         }
     }
 }

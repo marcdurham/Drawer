@@ -38,6 +38,8 @@
             this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
             this.orthoButton = new System.Windows.Forms.ToolStripButton();
             this.deleteButton = new System.Windows.Forms.ToolStripButton();
+            this.zoomInButton = new System.Windows.Forms.ToolStripButton();
+            this.zoomOutButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -75,8 +77,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.zoomInButton = new System.Windows.Forms.ToolStripButton();
-            this.zoomOutButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -183,6 +183,26 @@
             this.deleteButton.Text = "Delete";
             this.deleteButton.ToolTipText = "Delete selected entities";
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
+            // zoomInButton
+            // 
+            this.zoomInButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomInButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomInButton.Image")));
+            this.zoomInButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomInButton.Name = "zoomInButton";
+            this.zoomInButton.Size = new System.Drawing.Size(23, 22);
+            this.zoomInButton.Text = "Zoom In";
+            this.zoomInButton.Click += new System.EventHandler(this.ZoomInButton_Click);
+            // 
+            // zoomOutButton
+            // 
+            this.zoomOutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomOutButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomOutButton.Image")));
+            this.zoomOutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomOutButton.Name = "zoomOutButton";
+            this.zoomOutButton.Size = new System.Drawing.Size(23, 22);
+            this.zoomOutButton.Text = "Zoom Out";
+            this.zoomOutButton.Click += new System.EventHandler(this.ZoomOutButton_Click);
             // 
             // mainPicture
             // 
@@ -472,26 +492,6 @@
             this.openFileDialog1.FileName = "*.dxf";
             this.openFileDialog1.Filter = "AutoCAD DXF Files|*.dxf|All Files|*.*";
             // 
-            // zoomInButton
-            // 
-            this.zoomInButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.zoomInButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomInButton.Image")));
-            this.zoomInButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.zoomInButton.Name = "zoomInButton";
-            this.zoomInButton.Size = new System.Drawing.Size(23, 22);
-            this.zoomInButton.Text = "Zoom In";
-            this.zoomInButton.Click += new System.EventHandler(this.ZoomInButton_Click);
-            // 
-            // zoomOutButton
-            // 
-            this.zoomOutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.zoomOutButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomOutButton.Image")));
-            this.zoomOutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.zoomOutButton.Name = "zoomOutButton";
-            this.zoomOutButton.Size = new System.Drawing.Size(23, 22);
-            this.zoomOutButton.Text = "Zoom Out";
-            this.zoomOutButton.Click += new System.EventHandler(this.ZoomOutButton_Click);
-            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -504,7 +504,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "DrawTester";
             this.Text = "Draw Tester";
-            this.ResizeEnd += new System.EventHandler(this.DrawTester_ResizeEnd);
+            this.SizeChanged += new System.EventHandler(this.DrawTester_SizeChanged);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).EndInit();

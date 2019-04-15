@@ -111,69 +111,71 @@
             // 
             // insertImageButton
             // 
-            this.insertImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.insertImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.insertImageButton.Image = ((System.Drawing.Image)(resources.GetObject("insertImageButton.Image")));
             this.insertImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.insertImageButton.Name = "insertImageButton";
-            this.insertImageButton.Size = new System.Drawing.Size(76, 22);
+            this.insertImageButton.Size = new System.Drawing.Size(23, 22);
             this.insertImageButton.Text = "Insert Image";
             this.insertImageButton.Click += new System.EventHandler(this.importPictureButton_Click);
             // 
             // scaleImageButton
             // 
-            this.scaleImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.scaleImageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.scaleImageButton.Image = ((System.Drawing.Image)(resources.GetObject("scaleImageButton.Image")));
             this.scaleImageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.scaleImageButton.Name = "scaleImageButton";
-            this.scaleImageButton.Size = new System.Drawing.Size(74, 22);
+            this.scaleImageButton.Size = new System.Drawing.Size(23, 22);
             this.scaleImageButton.Text = "Scale Image";
             // 
             // insertBlock
             // 
-            this.insertBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.insertBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.insertBlock.Image = ((System.Drawing.Image)(resources.GetObject("insertBlock.Image")));
             this.insertBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.insertBlock.Name = "insertBlock";
-            this.insertBlock.Size = new System.Drawing.Size(40, 22);
+            this.insertBlock.Size = new System.Drawing.Size(23, 22);
             this.insertBlock.Text = "Block";
             this.insertBlock.Click += new System.EventHandler(this.insertBlock_Click);
             // 
             // drawRectangle
             // 
-            this.drawRectangle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.drawRectangle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.drawRectangle.Image = ((System.Drawing.Image)(resources.GetObject("drawRectangle.Image")));
             this.drawRectangle.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.drawRectangle.Name = "drawRectangle";
-            this.drawRectangle.Size = new System.Drawing.Size(63, 22);
+            this.drawRectangle.Size = new System.Drawing.Size(23, 22);
             this.drawRectangle.Text = "Rectangle";
             this.drawRectangle.ToolTipText = "Draw Rectangle";
             this.drawRectangle.Click += new System.EventHandler(this.drawRectangle_Click);
             // 
             // drawPolylineButton
             // 
+            this.drawPolylineButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.drawPolylineButton.Image = ((System.Drawing.Image)(resources.GetObject("drawPolylineButton.Image")));
             this.drawPolylineButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.drawPolylineButton.Name = "drawPolylineButton";
-            this.drawPolylineButton.Size = new System.Drawing.Size(53, 22);
+            this.drawPolylineButton.Size = new System.Drawing.Size(23, 22);
             this.drawPolylineButton.Text = "Polyline";
             this.drawPolylineButton.Click += new System.EventHandler(this.drawPolylineButton_Click);
             // 
             // orthoButton
             // 
-            this.orthoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.orthoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.orthoButton.Image = ((System.Drawing.Image)(resources.GetObject("orthoButton.Image")));
             this.orthoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.orthoButton.Name = "orthoButton";
-            this.orthoButton.Size = new System.Drawing.Size(42, 22);
+            this.orthoButton.Size = new System.Drawing.Size(23, 22);
             this.orthoButton.Text = "Ortho";
             this.orthoButton.Click += new System.EventHandler(this.orthoButton_Click);
             // 
             // deleteButton
             // 
-            this.deleteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.deleteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.deleteButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteButton.Image")));
             this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(44, 22);
+            this.deleteButton.Size = new System.Drawing.Size(23, 22);
             this.deleteButton.Text = "Delete";
             this.deleteButton.ToolTipText = "Delete selected entities";
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);

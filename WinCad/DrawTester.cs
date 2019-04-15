@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Point = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -111,7 +110,7 @@ namespace WinCad
         {
             try
             {
-                controller.ClickAt(new Point(e.X, e.Y), e.Button != MouseButtons.Left);
+                controller.ClickAt(e.Location, e.Button != MouseButtons.Left);
             }
             catch (Exception ex)
             {

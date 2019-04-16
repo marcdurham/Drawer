@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="Box.cs" />
     <Compile Include="Canvas.cs" />
-    <Compile Include="Circle.cs" />
+    <Compile Include="Grip.cs" />
     <Compile Include="DrawingController.cs" />
     <Compile Include="DrawingSession.cs" />
     <Compile Include="DrawModes.cs" />

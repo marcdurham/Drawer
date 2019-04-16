@@ -4,7 +4,6 @@ using netDxf.Header;
 using System;
 using Color = System.Drawing.Color;
 using Bitmap = System.Drawing.Bitmap;
-using SysImage = System.Drawing.Image;
 using DxfImage = netDxf.Entities.Image;
 
 namespace WinCad
@@ -58,8 +57,7 @@ namespace WinCad
 
             foreach (var vertex in lwPolyline.Vertexes)
             {
-                polyline.Vertices.Add(
-                    new Point((int)vertex.Position.X, (int)vertex.Position.Y));
+                polyline.Vertices.Add(PointFrom(vertex.Position));
             }
 
             return polyline;
@@ -69,9 +67,7 @@ namespace WinCad
         {
             return new InsertedImage(
                 box: new Box(
-                    firstCorner: new Point(
-                        x: (int)image.Position.X,
-                        y: (int)image.Position.Y),
+                    firstCorner: PointFrom(image.Position),
                     size: new Size((int)image.Width, (int)image.Height)),
                 file: image.Definition.File);
         }
@@ -81,8 +77,18 @@ namespace WinCad
             return new TextBox()
             {
                 Text = text.Value,
-                Location = new Point(text.Position.X, text.Position.Y)
+                Location = PointFrom(text.Position)
             };
+        }
+
+        static Point PointFrom(Vector2 vector)
+        {
+            return new Point(vector.X, -vector.Y);
+        }
+
+        static Point PointFrom(Vector3 vector)
+        {
+            return new Point(vector.X, -vector.Y);
         }
     }
 }

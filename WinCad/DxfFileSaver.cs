@@ -48,7 +48,7 @@ namespace WinCad
 
             foreach (var point in pline.Points())
             {
-                vertexes.Add(new Vector2(point.X, point.Y));
+                vertexes.Add(Vector2From(point));
             }
 
             return new LwPolyline(vertexes)
@@ -67,12 +67,11 @@ namespace WinCad
 
             foreach (var point in box.Points())
             {
-                vertexes.Add(new Vector2(point.X, point.Y));
+                vertexes.Add(Vector2From(point));
             }
 
             // Connect last vertex to first, closing the polygon
-            var first = box.Points().First();
-            vertexes.Add(new Vector2(first.X, first.Y));
+            vertexes.Add(Vector2From(box.Points().First()));
 
             return new LwPolyline(vertexes)
             {
@@ -85,9 +84,7 @@ namespace WinCad
         {
             return new Image(
                 imageDefinition: new ImageDefinition(image.File),
-                position: new Vector2(
-                    x: image.Box.FirstCorner.X,
-                    y: image.Box.FirstCorner.Y),
+                position: Vector2From(image.Box.FirstCorner),
                 width: image.Box.Size.Width,
                 height: image.Box.Size.Height);
         }
@@ -96,14 +93,17 @@ namespace WinCad
         {
             var text = new Text(
                 text: $"Missing Image File: {image.File}",
-                position: new Vector2(
-                    x: image.Box.FirstCorner.X,
-                    y: image.Box.FirstCorner.Y),
+                position: Vector2From(image.Box.FirstCorner),
                 height: 10.0f);
 
             text.Layer = new netDxf.Tables.Layer("Missing Images");
 
             return text;
+        }
+
+        static Vector2 Vector2From(Point point)
+        {
+            return new Vector2(point.X, -point.Y);
         }
     }
 }

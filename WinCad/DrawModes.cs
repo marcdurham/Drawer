@@ -12,6 +12,7 @@
         DrawingPolylineExtraVertices,
         DrawingPolylineSecondVertex,
         StartInsertingBlock,
-        SelectEntity
+        SelectEntity,
+        Panning
     }
 }

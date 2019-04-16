@@ -188,17 +188,6 @@
         x/ktQngCSU2Ze1JrXJYAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="orthoButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEQSURBVFhH3dZtqsJAEETR7MMfulS3KrgPTUEK+rVdk+lk
-        PsK7UCCoySGR4PJfe2y7RLd1r214PTViPtumojxmKkphuKGoPQw3BFWL4bqishhuyJViEQDrWumBF2Ew
-        1emHJ2+TKsJgqlO3z/5mVB7CqfDeIZTFlE7wFFPxeCmUx5RA2ewxq1ARJlrpKjB8JvquXRFVi8FagbAQ
-        lcFgLUHYD+q+7r0u+nC01iCcG4Y/ZVAtQSGG1aJagYoYFqFaZY9ZhWEepcJViKY6hGEWpeIJ/FR47xCG
-        EaXyEE51CsMu9fdjrwiDDcn+pjJrcptUWVRXDKtFDcGwPdRQDFOoKRjmUVMxjKhLYBgeeN0fehNali/Z
-        YEvsUvCgYgAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="deleteButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -208,6 +197,17 @@
         gVfIsfFcG3Eo5S7ELCC/8DEck86zkQbTd3gN9qk5NlT4DxzDFC6GfWqODRXOomqX7ragXv1k6UM9h7Pz
         5YViD/Uetjn2HFPs2Ld5MXJM2mcjDaa9+nTkauMIVYEuMsPGJ1RFusgMG0O4hapQG3dwBK08Q54g9ef9
         LzmHcyuVAjTNCdivgs/4VRszAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="panButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEQSURBVFhH3dZtqsJAEETR7MMfulS3KrgPTUEK+rVdk+lk
+        PsK7UCCoySGR4PJfe2y7RLd1r214PTViPtumojxmKkphuKGoPQw3BFWL4bqishhuyJViEQDrWumBF2Ew
+        1emHJ2+TKsJgqlO3z/5mVB7CqfDeIZTFlE7wFFPxeCmUx5RA2ewxq1ARJlrpKjB8JvquXRFVi8FagbAQ
+        lcFgLUHYD+q+7r0u+nC01iCcG4Y/ZVAtQSGG1aJagYoYFqFaZY9ZhWEepcJViKY6hGEWpeIJ/FR47xCG
+        EaXyEE51CsMu9fdjrwiDDcn+pjJrcptUWVRXDKtFDcGwPdRQDFOoKRjmUVMxjKhLYBgeeN0fehNali/Z
+        YEvsUvCgYgAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="zoomInButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

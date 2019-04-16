@@ -129,6 +129,9 @@
   <data name="ImportPictureStatus" xml:space="preserve">
     <value>Importing ImageClick first corner:</value>
   </data>
+  <data name="PanningStatus" xml:space="preserve">
+    <value>Panning</value>
+  </data>
   <data name="ReadyStatus" xml:space="preserve">
     <value>Ready</value>
   </data>
@@ -143,5 +146,11 @@
   </data>
   <data name="StartImportingPictureStatus" xml:space="preserve">
     <value>Importing Image: Click second corner:</value>
+  </data>
+  <data name="ZoomingInStatus" xml:space="preserve">
+    <value>Zooming In</value>
+  </data>
+  <data name="ZoomingOutStatus" xml:space="preserve">
+    <value>Zooming Out</value>
   </data>
 </root>

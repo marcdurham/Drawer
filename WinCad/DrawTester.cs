@@ -124,7 +124,7 @@ namespace WinCad
 
         void orthoButton_Click(object sender, EventArgs e)
         {
-            orthoButton.Checked = !orthoButton.Checked;
+            controller.StartPanning();
         }
 
         private void insertBlock_Click(object sender, EventArgs e)

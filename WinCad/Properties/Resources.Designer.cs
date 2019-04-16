@@ -97,6 +97,15 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Panning.
+        /// </summary>
+        internal static string PanningStatus {
+            get {
+                return ResourceManager.GetString("PanningStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ready.
         /// </summary>
         internal static string ReadyStatus {
@@ -138,6 +147,24 @@ namespace WinCad.Properties {
         internal static string StartImportingPictureStatus {
             get {
                 return ResourceManager.GetString("StartImportingPictureStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zooming In.
+        /// </summary>
+        internal static string ZoomingInStatus {
+            get {
+                return ResourceManager.GetString("ZoomingInStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zooming Out.
+        /// </summary>
+        internal static string ZoomingOutStatus {
+            get {
+                return ResourceManager.GetString("ZoomingOutStatus", resourceCulture);
             }
         }
     }

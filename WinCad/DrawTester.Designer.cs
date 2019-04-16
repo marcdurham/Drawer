@@ -36,14 +36,17 @@
             this.insertBlock = new System.Windows.Forms.ToolStripButton();
             this.drawRectangle = new System.Windows.Forms.ToolStripButton();
             this.drawPolylineButton = new System.Windows.Forms.ToolStripButton();
-            this.orthoButton = new System.Windows.Forms.ToolStripButton();
             this.deleteButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.panButton = new System.Windows.Forms.ToolStripButton();
             this.zoomInButton = new System.Windows.Forms.ToolStripButton();
             this.zoomOutButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.secondStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.spacerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.orthoStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,7 +80,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.orthoStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -93,8 +95,9 @@
             this.insertBlock,
             this.drawRectangle,
             this.drawPolylineButton,
-            this.orthoButton,
             this.deleteButton,
+            this.toolStripSeparator6,
+            this.panButton,
             this.zoomInButton,
             this.zoomOutButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
@@ -164,16 +167,6 @@
             this.drawPolylineButton.Text = "Polyline";
             this.drawPolylineButton.Click += new System.EventHandler(this.drawPolylineButton_Click);
             // 
-            // orthoButton
-            // 
-            this.orthoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.orthoButton.Image = ((System.Drawing.Image)(resources.GetObject("orthoButton.Image")));
-            this.orthoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.orthoButton.Name = "orthoButton";
-            this.orthoButton.Size = new System.Drawing.Size(23, 22);
-            this.orthoButton.Text = "Ortho";
-            this.orthoButton.Click += new System.EventHandler(this.orthoButton_Click);
-            // 
             // deleteButton
             // 
             this.deleteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -184,6 +177,21 @@
             this.deleteButton.Text = "Delete";
             this.deleteButton.ToolTipText = "Delete selected entities";
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
+            // panButton
+            // 
+            this.panButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.panButton.Image = ((System.Drawing.Image)(resources.GetObject("panButton.Image")));
+            this.panButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.panButton.Name = "panButton";
+            this.panButton.Size = new System.Drawing.Size(23, 22);
+            this.panButton.Text = "Pan";
+            this.panButton.Click += new System.EventHandler(this.orthoButton_Click);
             // 
             // zoomInButton
             // 
@@ -222,6 +230,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainStatus,
             this.secondStatus,
+            this.spacerStatusLabel,
             this.orthoStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 426);
             this.statusStrip1.Name = "statusStrip1";
@@ -239,6 +248,23 @@
             // 
             this.secondStatus.Name = "secondStatus";
             this.secondStatus.Size = new System.Drawing.Size(0, 19);
+            // 
+            // spacerStatusLabel
+            // 
+            this.spacerStatusLabel.Name = "spacerStatusLabel";
+            this.spacerStatusLabel.Size = new System.Drawing.Size(650, 19);
+            this.spacerStatusLabel.Spring = true;
+            // 
+            // orthoStatus
+            // 
+            this.orthoStatus.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.orthoStatus.Name = "orthoStatus";
+            this.orthoStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.orthoStatus.Size = new System.Drawing.Size(65, 19);
+            this.orthoStatus.Text = "Ortho: Off";
+            this.orthoStatus.Click += new System.EventHandler(this.OrthoStatus_Click);
             // 
             // openFileDialog
             // 
@@ -494,16 +520,6 @@
             this.openFileDialog1.FileName = "*.dxf";
             this.openFileDialog1.Filter = "AutoCAD DXF Files|*.dxf|All Files|*.*";
             // 
-            // orthoStatus
-            // 
-            this.orthoStatus.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.orthoStatus.Name = "orthoStatus";
-            this.orthoStatus.Size = new System.Drawing.Size(65, 19);
-            this.orthoStatus.Text = "Ortho: Off";
-            this.orthoStatus.Click += new System.EventHandler(this.OrthoStatus_Click);
-            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -540,7 +556,7 @@
         private System.Windows.Forms.ToolStripButton drawRectangle;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolStripButton scaleImageButton;
-        private System.Windows.Forms.ToolStripButton orthoButton;
+        private System.Windows.Forms.ToolStripButton panButton;
         private System.Windows.Forms.ToolStripStatusLabel secondStatus;
         private System.Windows.Forms.ToolStripButton insertBlock;
         private System.Windows.Forms.ToolStripButton selectEntityButtonh;
@@ -580,6 +596,8 @@
         private System.Windows.Forms.ToolStripButton zoomInButton;
         private System.Windows.Forms.ToolStripButton zoomOutButton;
         private System.Windows.Forms.ToolStripStatusLabel orthoStatus;
+        private System.Windows.Forms.ToolStripStatusLabel spacerStatusLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
     }
 }
 

@@ -77,6 +77,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.orthoStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -220,23 +221,24 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainStatus,
-            this.secondStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.secondStatus,
+            this.orthoStatus});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 426);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(800, 24);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // mainStatus
             // 
             this.mainStatus.Name = "mainStatus";
-            this.mainStatus.Size = new System.Drawing.Size(39, 17);
+            this.mainStatus.Size = new System.Drawing.Size(39, 19);
             this.mainStatus.Text = "Ready";
             // 
             // secondStatus
             // 
             this.secondStatus.Name = "secondStatus";
-            this.secondStatus.Size = new System.Drawing.Size(0, 17);
+            this.secondStatus.Size = new System.Drawing.Size(0, 19);
             // 
             // openFileDialog
             // 
@@ -492,6 +494,16 @@
             this.openFileDialog1.FileName = "*.dxf";
             this.openFileDialog1.Filter = "AutoCAD DXF Files|*.dxf|All Files|*.*";
             // 
+            // orthoStatus
+            // 
+            this.orthoStatus.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.orthoStatus.Name = "orthoStatus";
+            this.orthoStatus.Size = new System.Drawing.Size(65, 19);
+            this.orthoStatus.Text = "Ortho: Off";
+            this.orthoStatus.Click += new System.EventHandler(this.OrthoStatus_Click);
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -567,6 +579,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripButton zoomInButton;
         private System.Windows.Forms.ToolStripButton zoomOutButton;
+        private System.Windows.Forms.ToolStripStatusLabel orthoStatus;
     }
 }
 

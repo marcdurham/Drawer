@@ -9,7 +9,7 @@ namespace WinCad
     {
         readonly DrawingController controller;
         readonly EntityRenderEngine engine;
-        
+
         public DrawTester()
         {
             InitializeComponent();
@@ -30,10 +30,7 @@ namespace WinCad
             set { secondStatus.Text = value; }
         }
 
-        public bool OrthoIsOn
-        {
-            get { return orthoButton.Checked; }
-        }
+        public bool OrthoIsOn { get; set; } = false;
 
         public void RefreshImage()
         {
@@ -202,6 +199,15 @@ namespace WinCad
         private void DrawTester_SizeChanged(object sender, EventArgs e)
         {
             RenderLayers();
+        }
+
+        private void OrthoStatus_Click(object sender, EventArgs e)
+        {
+            OrthoIsOn = !OrthoIsOn;
+
+            string state = OrthoIsOn ? "On" : "Off";
+
+            orthoStatus.Text = $"Ortho: {state}";
         }
     }
 }

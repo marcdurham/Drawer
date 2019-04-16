@@ -9,7 +9,7 @@ namespace WinCad
         public List<Polyline> Polylines { get; set; } = new List<Polyline>();
         public List<InsertedImage> InsertedImages { get; set; } = new List<InsertedImage>();
         public List<TextBox> TextBoxes { get; set; } = new List<TextBox>();
-        public List<Circle> Grips { get; set; } = new List<Circle>();
+        public List<Grip> Grips { get; set; } = new List<Grip>();
 
         public List<Entity> Entities()
         {
@@ -32,8 +32,8 @@ namespace WinCad
                 Polylines.Remove((Polyline)entity);
             if (entity is InsertedImage && InsertedImages.Contains((InsertedImage)entity))
                 InsertedImages.Remove((InsertedImage)entity);
-            if (entity is Circle && Grips.Contains((Circle)entity))
-                Grips.Remove((Circle)entity);
+            if (entity is Grip && Grips.Contains((Grip)entity))
+                Grips.Remove((Grip)entity);
             if (entity is TextBox && TextBoxes.Contains((TextBox)entity))
                 TextBoxes.Remove((TextBox)entity);
         }

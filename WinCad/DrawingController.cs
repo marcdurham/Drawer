@@ -240,7 +240,7 @@ namespace WinCad
                         foreach (var point in entity.Points())
                         {
                             session.Canvas.Selections.Grips.Add(
-                                new Circle()
+                                new Grip()
                                 {
                                     Center = point,
                                     Color = Color.Magenta,
@@ -307,7 +307,7 @@ namespace WinCad
 
         void HoverOverPointsAt(Point cursor)
         {
-            var grip = new Circle()
+            var grip = new Grip()
             {
                 Radius = HighlightRadius,
                 Color = Color.Blue
@@ -372,7 +372,7 @@ namespace WinCad
 
             session.Canvas.CurrentLayer.Boxes.Add(box);
             session.Canvas.CurrentLayer.Grips.Add(
-                new Circle()
+                new Grip()
                 {
                     Center = point,
                     Radius = 6,

@@ -108,7 +108,7 @@ namespace WinCad
                 y: (float)box.Location.Y);
         }
 
-        void RenderGrip(Graphics graphics, Circle grip)
+        void RenderGrip(Graphics graphics, Grip grip)
         {
             var corner = SysPointFrom(
                 new Point(

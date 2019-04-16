@@ -166,13 +166,13 @@ namespace WinCad
 
         internal void ZoomInClick()
         {
-            session.ZoomLevel++;
+            session.ZoomLevel *= 2;
             view.RenderLayers();
         }
 
         internal void ZoomOutClick()
         {
-            session.ZoomLevel--;
+            session.ZoomLevel /= 2;
             view.RenderLayers();
         }
 

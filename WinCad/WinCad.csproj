@@ -73,6 +73,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Size.cs" />
+    <Compile Include="TextBox.cs" />
     <Compile Include="UserAnswer.cs" />
     <EmbeddedResource Include="DrawTester.resx">
       <DependentUpon>DrawTester.cs</DependentUpon>

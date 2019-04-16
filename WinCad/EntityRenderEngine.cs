@@ -31,6 +31,11 @@ namespace WinCad
                 RenderPolyline(graphics, pline);
             }
 
+            foreach (var box in layer.TextBoxes)
+            {
+                RenderTextBox(graphics, box);
+            }
+
             foreach (var grip in layer.Grips)
             {
                 RenderGrip(graphics, grip);
@@ -91,6 +96,16 @@ namespace WinCad
             graphics.DrawImage(
                 image: FromFile(image.File),
                 rect: RectangleFrom(image.Box));
+        }
+
+        void RenderTextBox(Graphics graphics, TextBox box)
+        {
+            graphics.DrawString(
+                s: box.Text, 
+                font: new Font("Arial", 10.0f),
+                brush: Brushes.Black, 
+                x: (float)box.Location.X, 
+                y: (float)box.Location.Y);
         }
 
         void RenderGrip(Graphics graphics, Circle grip)

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using SysPoint = System.Drawing.Point;
+using SysSize = System.Drawing.Size;
 
 namespace WinCad
 {
@@ -60,9 +61,23 @@ namespace WinCad
             return new Point(point.X, point.Y);
         }
 
+        public SysSize SysSizeFrom(Size size)
+        {
+            return new SysSize(
+                width: (int)(size.Width * session.ZoomFactor),
+                height: (int)(size.Height * session.ZoomFactor));
+        }
+
+        public Size SizeFrom(SysSize size)
+        {
+            return new Size(size.Width, size.Height);
+        }
+
         Rectangle RectangleFrom(Box box)
         {
-            return new Rectangle(SysPointFrom(box.FirstCorner), box.Size);
+            return new Rectangle(
+                location: SysPointFrom(box.FirstCorner), 
+                size: SysSizeFrom(box.Size));
         }
     }
 }

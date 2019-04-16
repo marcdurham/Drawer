@@ -1,8 +1,8 @@
 ﻿using netDxf;
 using netDxf.Entities;
 using netDxf.Header;
-using System.Drawing;
-using Point = System.Drawing.Point;
+using Bitmap = System.Drawing.Bitmap;
+using Color = System.Drawing.Color;
 
 namespace WinCad
 {

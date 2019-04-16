@@ -35,11 +35,15 @@ namespace WinCad
                         x: grip.Center.X,
                         y: grip.Center.Y));
 
-                var sysCorner = new SysPoint(corner.X - 5, corner.Y - 5);
+                var sysCorner = new SysPoint(
+                    x: corner.X - grip.Radius, 
+                    y: corner.Y - grip.Radius);
 
                 graphics.DrawRectangle(
                     new Pen(grip.Color),
-                    new Rectangle(sysCorner, new SysSize(10, 10)));
+                    new Rectangle(
+                        location: sysCorner, 
+                        size: new SysSize(grip.Radius * 2, grip.Radius * 2)));
             }
         }
 

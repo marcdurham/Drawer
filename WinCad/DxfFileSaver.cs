@@ -1,6 +1,7 @@
 ﻿using netDxf;
 using netDxf.Entities;
 using netDxf.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,7 +28,14 @@ namespace WinCad
 
                 foreach (var image in layer.InsertedImages)
                 {
-                    dxf.AddEntity(ImageFrom(image));
+                    try
+                    {
+                        dxf.AddEntity(ImageFrom(image));
+                    }
+                    catch (Exception)
+                    {
+                        dxf.AddEntity(TextFrom(image));
+                    }
                 }
             }
 
@@ -81,6 +89,16 @@ namespace WinCad
                     x: image.Box.FirstCorner.X,
                     y: image.Box.FirstCorner.Y),
                 width: image.Box.Size.Width,
+                height: image.Box.Size.Height);
+        }
+
+        static Text TextFrom(InsertedImage image)
+        {
+            return new Text(
+                text: image.File,
+                position: new Vector2(
+                    x: image.Box.FirstCorner.X,
+                    y: image.Box.FirstCorner.Y),
                 height: image.Box.Size.Height);
         }
     }

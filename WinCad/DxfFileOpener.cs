@@ -2,10 +2,8 @@
 using netDxf.Entities;
 using netDxf.Header;
 using System;
-using System.Drawing;
 using Color = System.Drawing.Color;
 using Bitmap = System.Drawing.Bitmap;
-using Point = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -19,7 +17,9 @@ namespace WinCad
                 .CheckDxfFileVersion(file, out bool isBinary);
 
             if (dxfVersion < DxfVersion.AutoCad2000)
+            {
                 return canvas;
+            }
 
             var loaded = DxfDocument.Load(file);
 

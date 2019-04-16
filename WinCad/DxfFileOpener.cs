@@ -4,6 +4,8 @@ using netDxf.Header;
 using System;
 using Color = System.Drawing.Color;
 using Bitmap = System.Drawing.Bitmap;
+using SysImage = System.Drawing.Image;
+using DxfImage = netDxf.Entities.Image;
 
 namespace WinCad
 {
@@ -57,7 +59,7 @@ namespace WinCad
             return polyline;
         }
 
-        static InsertedImage InsertedImageFrom(netDxf.Entities.Image image)
+        static InsertedImage InsertedImageFrom(DxfImage image)
         {
             return new InsertedImage(
                 image: FromFile(image.Definition.File),
@@ -69,7 +71,7 @@ namespace WinCad
                 file: image.Definition.File);
         }
 
-        static System.Drawing.Image FromFile(string file)
+        static SysImage FromFile(string file)
         {
             try
             {

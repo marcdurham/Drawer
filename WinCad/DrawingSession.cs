@@ -11,6 +11,6 @@ namespace WinCad
         public Canvas Canvas { get; set; } = new Canvas();
         public string OpenInsertPictureFileName { get; set; }
         public string FileName { get; set; }
-        public double ZoomLevel { get; set; } = 1.0;
+        public double ZoomFactor { get; set; } = 1.0;
     }
 }

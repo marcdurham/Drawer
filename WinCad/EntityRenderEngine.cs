@@ -51,8 +51,8 @@ namespace WinCad
         public SysPoint SysPointFrom(Point point)
         {
             return new SysPoint(
-                x: (int)(point.X * session.ZoomLevel), 
-                y: (int)(point.Y * session.ZoomLevel));
+                x: (int)(point.X * session.ZoomFactor), 
+                y: (int)(point.Y * session.ZoomFactor));
         }
 
         public Point PointFrom(SysPoint point)

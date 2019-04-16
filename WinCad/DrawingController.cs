@@ -307,7 +307,7 @@ namespace WinCad
 
         void HoverOverPointsAt(Point cursor)
         {
-            var circle = new Circle()
+            var grip = new Circle()
             {
                 Radius = HighlightRadius,
                 Color = Color.Blue
@@ -322,10 +322,10 @@ namespace WinCad
                     {
                         if (AreNear(point, cursor))
                         {
-                            circle.Center = point;
+                            grip.Center = point;
 
                             session.Canvas.Highlights.Grips.Clear();
-                            session.Canvas.Highlights.Grips.Add(circle);
+                            session.Canvas.Highlights.Grips.Add(grip);
                             nearSomething = true;
                         }
                     }
@@ -469,10 +469,10 @@ namespace WinCad
             view.SecondStatus = string.Empty;
         }
 
-        static bool AreNear(Point a, Point b)
+        bool AreNear(Point a, Point b)
         {
-            return Math.Abs(a.X - b.X) <= NearDistance
-                && Math.Abs(a.Y - b.Y) <= NearDistance;
+            return Math.Abs(a.X - b.X) <= NearDistance / session.ZoomFactor
+                && Math.Abs(a.Y - b.Y) <= NearDistance / session.ZoomFactor;
         }
 
         static Size SizeFrom(Point a, Point b)

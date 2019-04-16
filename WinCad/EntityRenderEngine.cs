@@ -6,7 +6,7 @@ namespace WinCad
 {
     public class EntityRenderEngine
     {
-        DrawingSession session;
+        readonly DrawingSession session;
 
         public EntityRenderEngine(DrawingSession session)
         {
@@ -58,12 +58,13 @@ namespace WinCad
 
         public Point PointFrom(SysPoint point)
         {
-            return new Point(point.X, point.Y);
+            return new Point(
+                x: (point.X - session.PanningOffset.X) / session.ZoomFactor, 
+                y: (point.Y - session.PanningOffset.Y) / session.ZoomFactor);
         }
 
         public SysSize SysSizeFrom(Size size)
         {
-          
             return new SysSize(
                 width: (int)(size.Width * session.ZoomFactor),
                 height: (int)(size.Height * session.ZoomFactor));
@@ -71,7 +72,9 @@ namespace WinCad
 
         public Size SizeFrom(SysSize size)
         {
-            return new Size(size.Width, size.Height);
+            return new Size(
+                width: size.Width / session.ZoomFactor, 
+                height: size.Height / session.ZoomFactor);
         }
 
         Rectangle RectangleFrom(Box box)

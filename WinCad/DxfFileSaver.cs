@@ -94,12 +94,16 @@ namespace WinCad
 
         static Text TextFrom(InsertedImage image)
         {
-            return new Text(
-                text: image.File,
+            var text = new Text(
+                text: $"Missing Image File: {image.File}",
                 position: new Vector2(
                     x: image.Box.FirstCorner.X,
                     y: image.Box.FirstCorner.Y),
-                height: image.Box.Size.Height);
+                height: 10.0f);
+
+            text.Layer = new netDxf.Tables.Layer("Missing Images");
+
+            return text;
         }
     }
 }

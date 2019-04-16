@@ -36,6 +36,12 @@ namespace WinCad
                     InsertedImageFrom(image));
             }
 
+            foreach (var box in loaded.Texts)
+            {
+                canvas.CurrentLayer.TextBoxes.Add(
+                    TextBoxFrom(box));
+            }
+
             return canvas;
         }
 
@@ -68,6 +74,15 @@ namespace WinCad
                         y: (int)image.Position.Y),
                     size: new Size((int)image.Width, (int)image.Height)),
                 file: image.Definition.File);
+        }
+
+        static TextBox TextBoxFrom(Text text)
+        {
+            return new TextBox()
+            {
+                Text = text.Value,
+                Location = new Point(text.Position.X, text.Position.Y)
+            };
         }
     }
 }

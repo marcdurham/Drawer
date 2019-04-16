@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using SysPoint = System.Drawing.Point;
 using SysSize = System.Drawing.Size;
 
@@ -36,44 +37,6 @@ namespace WinCad
             }
         }
 
-        void RenderInsertedImage(Graphics graphics, InsertedImage image)
-        {
-            graphics.DrawRectangle(
-                pen: new Pen(Color.Magenta),
-                rect: RectangleFrom(image.Box));
-
-            graphics.DrawImage(image.Image, RectangleFrom(image.Box));
-        }
-
-        void RenderGrip(Graphics graphics, Circle grip)
-        {
-            var corner = SysPointFrom(
-                new Point(
-                    x: grip.Center.X,
-                    y: grip.Center.Y));
-
-            var sysCorner = new SysPoint(
-                x: corner.X - grip.Radius,
-                y: corner.Y - grip.Radius);
-
-            graphics.DrawRectangle(
-                new Pen(grip.Color),
-                new Rectangle(
-                    location: sysCorner,
-                    size: new SysSize(grip.Radius * 2, grip.Radius * 2)));
-        }
-
-        void RenderPolyline(Graphics graphics, Polyline pline)
-        {
-            for (int i = 1; i < pline.Vertices.Count; i++)
-            {
-                graphics.DrawLine(
-                    new Pen(pline.Color) { Width = pline.Width },
-                    SysPointFrom(pline.Vertices[i - 1]),
-                    SysPointFrom(pline.Vertices[i]));
-            }
-        }
-
         /// <summary>
         /// SysPoint is an alias for System.Drawing.Point
         /// </summary>
@@ -105,6 +68,58 @@ namespace WinCad
             return new Size(
                 width: size.Width / session.ZoomFactor, 
                 height: size.Height / session.ZoomFactor);
+        }
+
+        static Image FromFile(string file)
+        {
+            try
+            {
+                return Bitmap.FromFile(file);
+            }
+            catch (Exception)
+            {
+                return new Bitmap(10, 10);
+            }
+        }
+
+        void RenderInsertedImage(Graphics graphics, InsertedImage image)
+        {
+            graphics.DrawRectangle(
+                pen: new Pen(Color.Magenta),
+                rect: RectangleFrom(image.Box));
+
+            graphics.DrawImage(
+                image: FromFile(image.File),
+                rect: RectangleFrom(image.Box));
+        }
+
+        void RenderGrip(Graphics graphics, Circle grip)
+        {
+            var corner = SysPointFrom(
+                new Point(
+                    x: grip.Center.X,
+                    y: grip.Center.Y));
+
+            var sysCorner = new SysPoint(
+                x: corner.X - grip.Radius,
+                y: corner.Y - grip.Radius);
+
+            graphics.DrawRectangle(
+                new Pen(grip.Color),
+                new Rectangle(
+                    location: sysCorner,
+                    size: new SysSize(grip.Radius * 2, grip.Radius * 2)));
+        }
+
+        void RenderPolyline(Graphics graphics, Polyline pline)
+        {
+            for (int i = 1; i < pline.Vertices.Count; i++)
+            {
+                graphics.DrawLine(
+                    new Pen(pline.Color) { Width = pline.Width },
+                    SysPointFrom(pline.Vertices[i - 1]),
+                    SysPointFrom(pline.Vertices[i]));
+            }
         }
 
         Rectangle RectangleFrom(Box box)

@@ -63,10 +63,8 @@ namespace WinCad
             }
 
             // Connect last vertex to first, closing the polygon
-            vertexes.Add(
-                new Vector2(
-                    x: box.Points().First().X,
-                    y: box.Points().First().Y));
+            var first = box.Points().First();
+            vertexes.Add(new Vector2(first.X, first.Y));
 
             return new LwPolyline(vertexes)
             {

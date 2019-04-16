@@ -62,25 +62,12 @@ namespace WinCad
         static InsertedImage InsertedImageFrom(DxfImage image)
         {
             return new InsertedImage(
-                image: FromFile(image.Definition.File),
                 box: new Box(
                     firstCorner: new Point(
                         x: (int)image.Position.X,
                         y: (int)image.Position.Y),
                     size: new Size((int)image.Width, (int)image.Height)),
                 file: image.Definition.File);
-        }
-
-        static SysImage FromFile(string file)
-        {
-            try
-            {
-                return Bitmap.FromFile(file);
-            }
-            catch (Exception)
-            {
-                return new Bitmap(10, 10);
-            }
         }
     }
 }

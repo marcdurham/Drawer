@@ -440,7 +440,6 @@ namespace WinCad
         {
             session.SecondCorner = point;
             var image = new InsertedImage(
-                image: Bitmap.FromFile(session.OpenInsertPictureFileName),
                 file: session.OpenInsertPictureFileName,
                 box: new Box(
                     firstCorner: new Point(

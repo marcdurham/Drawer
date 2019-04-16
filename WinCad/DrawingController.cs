@@ -75,7 +75,7 @@ namespace WinCad
             view.RenderLayers();
         }
 
-        internal void ClickAt(Point point, bool cancel)
+        internal void ClickAt(Point point, bool cancel, bool isMiddleButton)
         {
             if (cancel) // TODO: detect mode switching
             {
@@ -120,6 +120,9 @@ namespace WinCad
                     break;
                 case DrawModes.SelectEntity:
                     SelectEntityAt(point);
+                    break;
+                case DrawModes.Panning:
+                    // Do nothing, but don't CancelMode();
                     break;
                 default:
                     CancelMode();
@@ -188,6 +191,25 @@ namespace WinCad
         {
             session.Mode = DrawModes.StartInsertingBlock;
             view.Status = "Inserting block: Click insertion point:";
+        }
+
+        internal void MouseDownAt(Point point, bool isMiddleButton)
+        {
+            if (session.Mode == DrawModes.Panning || isMiddleButton)
+            {
+                session.StartPanningFrom = point;
+                view.SecondStatus = $"Start panning: {session.StartPanningFrom.X}, {session.StartPanningFrom.Y} ...";
+            }
+        }
+
+        internal void MouseUpAt(Point point, bool isMiddleButton)
+        {
+            if (session.Mode == DrawModes.Panning || isMiddleButton)
+            {
+                session.EndPanningAt = point;
+
+                view.SecondStatus = $"Start panning: {session.StartPanningFrom.X}, {session.StartPanningFrom.Y} to {point.X}, {point.Y}";
+            }
         }
 
         internal void ShowSelections()

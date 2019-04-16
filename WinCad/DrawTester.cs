@@ -109,7 +109,8 @@ namespace WinCad
             {
                 controller.ClickAt(
                     engine.PointFrom(e.Location), 
-                    e.Button != MouseButtons.Left);
+                    e.Button != MouseButtons.Left,
+                    e.Button == MouseButtons.Middle);
             }
             catch (Exception ex)
             {
@@ -208,6 +209,16 @@ namespace WinCad
             string state = OrthoIsOn ? "On" : "Off";
 
             orthoStatus.Text = $"Ortho: {state}";
+        }
+
+        private void MainPicture_MouseUp(object sender, MouseEventArgs e)
+        {
+            controller.MouseUpAt(engine.PointFrom(e.Location), e.Button == MouseButtons.Middle);
+        }
+
+        private void MainPicture_MouseDown(object sender, MouseEventArgs e)
+        {
+            controller.MouseDownAt(engine.PointFrom(e.Location), e.Button == MouseButtons.Middle);
         }
     }
 }

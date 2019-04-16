@@ -12,5 +12,7 @@ namespace WinCad
         public string OpenInsertPictureFileName { get; set; }
         public string FileName { get; set; }
         public double ZoomFactor { get; set; } = 1.0;
+        public Point StartPanningFrom { get; internal set; }
+        public Point EndPanningAt { get; internal set; }
     }
 }

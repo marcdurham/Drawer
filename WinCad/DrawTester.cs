@@ -213,12 +213,12 @@ namespace WinCad
 
         private void MainPicture_MouseUp(object sender, MouseEventArgs e)
         {
-            controller.MouseUpAt(engine.PointFrom(e.Location), e.Button == MouseButtons.Middle);
+            controller.MouseUpAt(e.Location, e.Button == MouseButtons.Middle);
         }
 
         private void MainPicture_MouseDown(object sender, MouseEventArgs e)
         {
-            controller.MouseDownAt(engine.PointFrom(e.Location), e.Button == MouseButtons.Middle);
+            controller.MouseDownAt(e.Location, e.Button == MouseButtons.Middle);
         }
     }
 }

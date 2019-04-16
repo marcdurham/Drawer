@@ -23,5 +23,10 @@
         public double Y { get; set; }
 
         public virtual bool IsEmpty => false;
+
+        public override string ToString()
+        {
+            return $"{X},{Y}";
+        }
     }
 }

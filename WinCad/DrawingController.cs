@@ -193,7 +193,7 @@ namespace WinCad
             view.Status = "Inserting block: Click insertion point:";
         }
 
-        internal void MouseDownAt(Point point, bool isMiddleButton)
+        internal void MouseDownAt(System.Drawing.Point point, bool isMiddleButton)
         {
             if (session.Mode == DrawModes.Panning || isMiddleButton)
             {
@@ -202,13 +202,30 @@ namespace WinCad
             }
         }
 
-        internal void MouseUpAt(Point point, bool isMiddleButton)
+        internal void MouseUpAt(System.Drawing.Point point, bool isMiddleButton)
         {
             if (session.Mode == DrawModes.Panning || isMiddleButton)
             {
                 session.EndPanningAt = point;
 
+                int panX = 0;
+                int panY = 0;
+
+                if (!session.StartPanningFrom.IsEmpty
+                    && !session.EndPanningAt.IsEmpty)
+                {
+                    System.Drawing.Point started = session.StartPanningFrom;
+                    System.Drawing.Point ended = session.EndPanningAt;
+                    panX = ended.X - started.X;
+                    panY = ended.Y - started.Y;
+                    session.PanningOffset = new System.Drawing.Point(
+                        x: session.PanningOffset.X + panX,
+                        y: session.PanningOffset.Y + panY);
+                }
+
                 view.SecondStatus = $"Start panning: {session.StartPanningFrom.X}, {session.StartPanningFrom.Y} to {point.X}, {point.Y}";
+
+                view.RenderLayers();
             }
         }
 

@@ -15,7 +15,7 @@ namespace WinCad
             InitializeComponent();
 
             controller = new DrawingController(this);
-            engine = new EntityRenderEngine();
+            engine = new EntityRenderEngine(controller.session);
         }
     
         public Canvas Canvas { get; set; }
@@ -110,7 +110,9 @@ namespace WinCad
         {
             try
             {
-                controller.ClickAt(e.Location, e.Button != MouseButtons.Left);
+                controller.ClickAt(
+                    engine.PointFrom(e.Location), 
+                    e.Button != MouseButtons.Left);
             }
             catch (Exception ex)
             {
@@ -120,7 +122,7 @@ namespace WinCad
 
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
-            controller.HoverAt(e.Location);
+            controller.HoverAt(engine.PointFrom(e.Location));
         }
 
         void orthoButton_Click(object sender, EventArgs e)

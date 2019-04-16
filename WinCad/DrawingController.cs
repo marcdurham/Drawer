@@ -166,18 +166,20 @@ namespace WinCad
 
         internal void ZoomInClick()
         {
-            throw new NotImplementedException();
+            session.ZoomLevel++;
+            view.RenderLayers();
+        }
+
+        internal void ZoomOutClick()
+        {
+            session.ZoomLevel--;
+            view.RenderLayers();
         }
 
         internal void InsertBlock()
         {
             session.Mode = DrawModes.StartInsertingBlock;
             view.Status = "Inserting block: Click insertion point:";
-        }
-
-        internal void ZoomOutClick()
-        {
-            throw new NotImplementedException();
         }
 
         internal void ShowSelections()
@@ -428,7 +430,9 @@ namespace WinCad
 
         static Size SizeFrom(Point a, Point b)
         {
-            return new Size(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+            return new Size(
+                width: Math.Abs((int)a.X - (int)b.X),
+                height: Math.Abs((int)a.Y - (int)b.Y));
         }
 
         static int Angle(Point a, Point b)

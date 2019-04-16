@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
+using Size = System.Drawing.Size;
+using Color = System.Drawing.Color;
 
 namespace WinCad
 {

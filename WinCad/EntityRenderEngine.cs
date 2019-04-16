@@ -45,9 +45,16 @@ namespace WinCad
             }
         }
 
+        /// <summary>
+        /// SysPoint is an alias for System.Drawing.Point
+        /// </summary>
         public SysPoint SysPointFrom(Point point)
         {
-            return new SysPoint((int)point.X, (int)point.Y);
+            int factor = session.ZoomLevel + 1;
+
+            return new SysPoint(
+                x: (int)point.X * factor, 
+                y: (int)point.Y * factor);
         }
 
         public Point PointFrom(SysPoint point)

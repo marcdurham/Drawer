@@ -83,11 +83,15 @@ namespace WinCad
 
         static Point PointFrom(Vector2 vector)
         {
+            // Y is positive in the up direction in a DXF file
+            // but Y is postive in a down direction on the screen
             return new Point(vector.X, -vector.Y);
         }
 
         static Point PointFrom(Vector3 vector)
         {
+            // Y is positive in the up direction in a DXF file
+            // but Y is postive in a down direction on the screen
             return new Point(vector.X, -vector.Y);
         }
     }

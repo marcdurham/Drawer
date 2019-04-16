@@ -16,6 +16,11 @@ namespace WinCad
         public void Render(Graphics graphics, Layer layer)
         {
             foreach (var image in layer.InsertedImages)
+                graphics.DrawRectangle(
+                    new Pen(Color.Magenta),
+                    RectangleFrom(image.Box));
+
+            foreach (var image in layer.InsertedImages)
                 graphics.DrawImage(image.Image, RectangleFrom(image.Box));
 
             foreach (var box in layer.Boxes)

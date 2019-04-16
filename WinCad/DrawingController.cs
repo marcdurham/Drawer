@@ -232,14 +232,14 @@ namespace WinCad
         internal void ShowSelections()
         {
             int radius = 5;
-            session.Canvas.Selections.Circles.Clear();
+            session.Canvas.Selections.Grips.Clear();
 
             foreach (var layer in session.Canvas.Layers)
                 foreach (var entity in layer.Entities())
                     if (entity.IsSelected)
                         foreach (var point in entity.Points())
                         {
-                            session.Canvas.Selections.Circles.Add(
+                            session.Canvas.Selections.Grips.Add(
                                 new Circle()
                                 {
                                     Center = point,
@@ -324,8 +324,8 @@ namespace WinCad
                         {
                             circle.Center = point;
 
-                            session.Canvas.Highlights.Circles.Clear();
-                            session.Canvas.Highlights.Circles.Add(circle);
+                            session.Canvas.Highlights.Grips.Clear();
+                            session.Canvas.Highlights.Grips.Add(circle);
                             nearSomething = true;
                         }
                     }
@@ -333,7 +333,7 @@ namespace WinCad
             }
 
             if (!nearSomething)
-                session.Canvas.Highlights.Circles.Clear();
+                session.Canvas.Highlights.Grips.Clear();
         }
 
         void StartDrawingRectangleAt(Point point)
@@ -371,7 +371,7 @@ namespace WinCad
             box.Color = Color.Red;
 
             session.Canvas.CurrentLayer.Boxes.Add(box);
-            session.Canvas.CurrentLayer.Circles.Add(
+            session.Canvas.CurrentLayer.Grips.Add(
                 new Circle()
                 {
                     Center = point,

@@ -16,39 +16,61 @@ namespace WinCad
         public void Render(Graphics graphics, Layer layer)
         {
             foreach (var image in layer.InsertedImages)
-                graphics.DrawRectangle(
-                    new Pen(Color.Magenta),
-                    RectangleFrom(image.Box));
-
-            foreach (var image in layer.InsertedImages)
-                graphics.DrawImage(image.Image, RectangleFrom(image.Box));
+            {
+                RenderInsertedImage(graphics, image);
+            }
 
             foreach (var box in layer.Boxes)
+            {
                 graphics.DrawRectangle(new Pen(box.Color), RectangleFrom(box));
+            }
 
             foreach (var pline in layer.Polylines)
-                for (int i = 1; i < pline.Vertices.Count; i++)
-                    graphics.DrawLine(
-                        new Pen(pline.Color) { Width = pline.Width },
-                        SysPointFrom(pline.Vertices[i - 1]),
-                        SysPointFrom(pline.Vertices[i]));
+            {
+                RenderPolyline(graphics, pline);
+            }
 
             foreach (var grip in layer.Grips)
             {
-                var corner = SysPointFrom(
-                    new Point(
-                        x: grip.Center.X,
-                        y: grip.Center.Y));
+                RenderGrip(graphics, grip);
+            }
+        }
 
-                var sysCorner = new SysPoint(
-                    x: corner.X - grip.Radius, 
-                    y: corner.Y - grip.Radius);
+        void RenderInsertedImage(Graphics graphics, InsertedImage image)
+        {
+            graphics.DrawRectangle(
+                pen: new Pen(Color.Magenta),
+                rect: RectangleFrom(image.Box));
 
-                graphics.DrawRectangle(
-                    new Pen(grip.Color),
-                    new Rectangle(
-                        location: sysCorner, 
-                        size: new SysSize(grip.Radius * 2, grip.Radius * 2)));
+            graphics.DrawImage(image.Image, RectangleFrom(image.Box));
+        }
+
+        void RenderGrip(Graphics graphics, Circle grip)
+        {
+            var corner = SysPointFrom(
+                new Point(
+                    x: grip.Center.X,
+                    y: grip.Center.Y));
+
+            var sysCorner = new SysPoint(
+                x: corner.X - grip.Radius,
+                y: corner.Y - grip.Radius);
+
+            graphics.DrawRectangle(
+                new Pen(grip.Color),
+                new Rectangle(
+                    location: sysCorner,
+                    size: new SysSize(grip.Radius * 2, grip.Radius * 2)));
+        }
+
+        void RenderPolyline(Graphics graphics, Polyline pline)
+        {
+            for (int i = 1; i < pline.Vertices.Count; i++)
+            {
+                graphics.DrawLine(
+                    new Pen(pline.Color) { Width = pline.Width },
+                    SysPointFrom(pline.Vertices[i - 1]),
+                    SysPointFrom(pline.Vertices[i]));
             }
         }
 
@@ -58,8 +80,10 @@ namespace WinCad
         public SysPoint SysPointFrom(Point point)
         {
             return new SysPoint(
-                x: session.PanningOffset.X + (int)(point.X * session.ZoomFactor), 
-                y: session.PanningOffset.Y + (int)(point.Y * session.ZoomFactor));
+                x: session.PanningOffset.X 
+                    + (int)(point.X * session.ZoomFactor), 
+                y: session.PanningOffset.Y 
+                    + (int)(point.Y * session.ZoomFactor));
         }
 
         public Point PointFrom(SysPoint point)

@@ -31,18 +31,24 @@ namespace WinCad
             foreach (var circle in layer.Circles)
             {
                 // Draws circles from rectangles, convert from center & radius
-                var corner = new Point(
-                        circle.Center.X - circle.Radius,
-                        circle.Center.Y - circle.Radius);
+                //var side = (int)(10.0 * session.ZoomFactor)/2;
 
-                int side = circle.Radius * 2;
+                var corner = SysPointFrom(
+                    new Point(
+                        x: circle.Center.X,
+                        y: circle.Center.Y));
 
-                graphics.DrawEllipse(
-                    new Pen(circle.Color), 
-                    (float)corner.X, 
-                    (float)corner.Y, 
-                    side, 
-                    side);
+                var sysCorner = new SysPoint(corner.X - 5, corner.Y - 5);
+
+                //graphics.DrawEllipse(
+                //    new Pen(circle.Color), 
+                //    corner.X - side, 
+                //    corner.Y - side, 
+                //    10, 
+                //    10);
+                graphics.DrawRectangle(
+                    new Pen(circle.Color),
+                    new Rectangle(sysCorner, new SysSize(10, 10)));
             }
         }
 

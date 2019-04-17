@@ -7,6 +7,8 @@ namespace WinCad
 {
     public class DrawingController
     {
+        const double ZoomIncrement = 1.5;
+
         static readonly int NearDistance = 5;
         static readonly int HighlightRadius = 5;
 
@@ -176,14 +178,14 @@ namespace WinCad
 
         internal void ZoomInClick()
         {
-            session.ZoomFactor *= 2;
+            session.ZoomFactor *= ZoomIncrement;
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
         }
 
         internal void ZoomOutClick()
         {
-            session.ZoomFactor /= 2;
+            session.ZoomFactor /= ZoomIncrement;
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
         }
@@ -209,19 +211,14 @@ namespace WinCad
             {
                 session.EndPanningAt = point;
 
-                int panX = 0;
-                int panY = 0;
-
                 if (!session.StartPanningFrom.IsEmpty
                     && !session.EndPanningAt.IsEmpty)
                 {
                     System.Drawing.Point started = session.StartPanningFrom;
                     System.Drawing.Point ended = session.EndPanningAt;
-                    panX = ended.X - started.X;
-                    panY = ended.Y - started.Y;
                     session.PanningOffset = new System.Drawing.Point(
-                        x: session.PanningOffset.X + panX,
-                        y: session.PanningOffset.Y + panY);
+                        x: session.PanningOffset.X + ended.X - started.X,
+                        y: session.PanningOffset.Y + ended.Y - started.Y);
                 }
 
                 view.SecondStatus = $"Start panning: {session.StartPanningFrom.X}, {session.StartPanningFrom.Y} to {point.X}, {point.Y}";

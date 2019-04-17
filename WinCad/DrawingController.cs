@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace WinCad
@@ -19,10 +20,11 @@ namespace WinCad
         public DrawingController(IDrawingView view)
         {
             this.view = view;
+            session = new DrawingSession(view);
             view.Canvas = session.Canvas;
         }
 
-        public DrawingSession session { get; set; } = new DrawingSession();
+        public DrawingSession session { get; }
 
         internal void DrawPolyline()
         {
@@ -159,18 +161,18 @@ namespace WinCad
         internal void OpenFile(string fileName)
         {
             session.Canvas = DxfFileOpener.OpenFile(fileName);
-
             view.Canvas = session.Canvas;
-
             session.FileName = fileName;
-
+            string fileOnly = Path.GetFileName(fileName);
+            view.Title = $"Drawer - {fileOnly}";
             view.RenderLayers();
         }
 
         internal void NewFile()
         {
-            session.Canvas.CurrentLayer.Clear();
+            session.Canvas = new Canvas();
             session.FileName = null;
+            view.Title = $"Drawer - New File";
             view.RenderLayers();
         }
 
@@ -267,6 +269,8 @@ namespace WinCad
         {
             DxfFileSaver.SaveAs(session.Canvas, fileName);
             session.FileName = fileName;
+            string fileOnly = Path.GetFileName(fileName);
+            view.Title = $"Drawer - {fileOnly}";
         }
 
         void ShowNewPolylineSegment(Point point)

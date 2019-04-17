@@ -22,6 +22,11 @@ namespace WinCad
 
         public Canvas Canvas { get; set; }
 
+        public string Title
+        {
+            set { Text = value; }
+        }
+
         public string Status
         {
             set { mainStatus.Text = value; }

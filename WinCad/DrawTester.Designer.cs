@@ -543,9 +543,10 @@
             this.Controls.Add(this.mainPicture);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "DrawTester";
-            this.Text = "Draw Tester";
+            this.Text = "Drawer";
             this.SizeChanged += new System.EventHandler(this.DrawTester_SizeChanged);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

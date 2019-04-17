@@ -2,6 +2,7 @@
 {
     public interface IDrawingView
     {
+        string Title { set; }
         string Status { set; }
         string SecondStatus { set; }
         Canvas Canvas { get; set; }

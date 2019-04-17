@@ -60,7 +60,7 @@ namespace WinCad
                     selected.Add(entity);
                 }
             }
-            
+
             var delete = view
                 .AskUser($"Delete the {selected.Count} selected entities?");
 
@@ -98,11 +98,11 @@ namespace WinCad
                 return;
             }
 
-            switch(session.Mode)
+            switch (session.Mode)
             {
                 case DrawModes.DrawingPolylineFirstVertex:
                     // TODO: This is the only method here that does not call RenderLayers()
-                    StartDrawingPolylineAt(point); 
+                    StartDrawingPolylineAt(point);
                     break;
                 case DrawModes.DrawingPolylineSecondVertex:
                     AddSecondPolylineVertexAt(point);
@@ -150,7 +150,7 @@ namespace WinCad
             {
                 ShowNewRectangle(location);
             }
- 
+
             HoverOverPointsAt(location);
 
             view.RefreshImage();
@@ -298,15 +298,21 @@ namespace WinCad
         Point OrthoPointFrom(Point previousPoint, Point point)
         {
             if (!view.OrthoIsOn)
+            {
                 return point;
+            }
 
             int angle = Angle(previousPoint, point);
 
             if (Math.Abs(angle) >= 0 && Math.Abs(angle) < 45
                 || Math.Abs(angle) <= 180 && Math.Abs(angle) > 135)
+            { 
                 return new Point(point.X, previousPoint.Y);
+            }
             else
+            {
                 return new Point(previousPoint.X, point.Y);
+            }
         }
 
         void ShowNewRectangle(Point location)

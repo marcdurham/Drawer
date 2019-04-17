@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Box.cs" />
+    <Compile Include="BoxBuilder.cs" />
     <Compile Include="Canvas.cs" />
     <Compile Include="Grip.cs" />
     <Compile Include="DrawingController.cs" />

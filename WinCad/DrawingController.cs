@@ -11,6 +11,7 @@ namespace WinCad
         static readonly int HighlightRadius = 5;
 
         readonly IDrawingView view;
+        readonly BoxBuilder boxBuilder = new BoxBuilder();
 
         public DrawingController(IDrawingView view)
         {
@@ -294,15 +295,11 @@ namespace WinCad
 
         void ShowNewRectangle(Point location)
         {
-            var size = SizeFrom(session.FirstCorner, location);
+            var pline = boxBuilder.Draw(session.FirstCorner, location);
+            pline.Color = Color.Blue;
 
-            var box = new Box(session.FirstCorner, size)
-            {
-                Color = Color.Blue
-            };
-
-            session.Canvas.Highlights.Boxes.Clear();
-            session.Canvas.Highlights.Boxes.Add(box);
+            session.Canvas.Highlights.Polylines.Clear();
+            session.Canvas.Highlights.Polylines.Add(pline);
         }
 
         void HoverOverPointsAt(Point cursor)
@@ -346,15 +343,15 @@ namespace WinCad
         void FinishDrawingRectangleAt(Point point)
         {
             session.SecondCorner = point;
-            var box = new Box(
-                firstCorner: session.FirstCorner,
-                size: SizeFrom(session.FirstCorner, session.SecondCorner));
+            var line = boxBuilder.Draw(
+                corner: session.FirstCorner,
+                opposite: session.SecondCorner);
 
-            box.Color = Color.Green;
+            line.Color = Color.Green;
 
-            session.Canvas.CurrentLayer.Boxes.Add(box);
+            session.Canvas.CurrentLayer.Polylines.Add(line);
 
-            session.Canvas.Highlights.Boxes.Clear();
+            session.Canvas.Highlights.Polylines.Clear();
 
             session.Mode = DrawModes.DrawingRectangleFirstCorner;
 

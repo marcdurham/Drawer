@@ -14,10 +14,12 @@ namespace WinCad
         {
             InitializeComponent();
 
+            mainPicture.MouseWheel += mainPicture_MouseWheel;
+
             controller = new DrawingController(this);
             engine = new EntityRenderEngine(controller.session);
         }
-    
+
         public Canvas Canvas { get; set; }
 
         public string Status
@@ -121,6 +123,18 @@ namespace WinCad
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
             controller.HoverAt(engine.PointFrom(e.Location));
+        }
+
+        void mainPicture_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                controller.ZoomInClick();
+            }
+            else
+            {
+                controller.ZoomOutClick();
+            }
         }
 
         void orthoButton_Click(object sender, EventArgs e)

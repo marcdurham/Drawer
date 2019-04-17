@@ -238,6 +238,18 @@
         AAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="zoomExtentsButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFPSURBVFhH7Zc7SkRBEEWfCi7D7x5EjNyOmeGEkxkaCAZm
+        GrkBN6aBod6DU9A29fozNcIT+sBhPnRV3wmm+vU0GPwB13Jd8UTWYI1Xm8peVVj4VfBOtsJar4fJXlVK
+        ge5lL9R4vTAUaJswxqP0eoYCPchtodbrGQqET7KHPUmN1wu7A93KvCGf2agGa55lXktP+9wViEKg8Yu0
+        JshGpVBeGHpYjYVqDmRhjH35Kq35hzyTc5zLd2nrqaVHyko2BTravOYcyDf5KS/5osKVZC011Hq0DNgi
+        h/Li520TBKdmMBj8W3r/9qwN/+2PN6856WBk6NVgBtUG49xev2CcM9ZT8qODY6E0ZTlWOF52cnSwiCaL
+        OlytyY1czOOHJw17IFT+g1JDgSKPsHOhQoEiD/lzN49QIFzUNcjsuSiWwmBToF1dpU+lV5vadJUeDNqZ
+        pm+mK+uQY9FwiQAAAABJRU5ErkJggg==
+</value>
+  </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>122, 17</value>
   </metadata>

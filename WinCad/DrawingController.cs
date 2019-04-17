@@ -176,16 +176,23 @@ namespace WinCad
             view.Status = Properties.Resources.PanningStatus;
         }
 
-        internal void ZoomInClick()
+        internal void ZoomIn()
         {
             session.ZoomFactor *= ZoomIncrement;
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
         }
 
-        internal void ZoomOutClick()
+        internal void ZoomOut()
         {
             session.ZoomFactor /= ZoomIncrement;
+            view.Status = Properties.Resources.ZoomingOutStatus;
+            view.RenderLayers();
+        }
+
+        internal void ZoomExtents()
+        {
+            session.ZoomFactor = 0.3;
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
         }

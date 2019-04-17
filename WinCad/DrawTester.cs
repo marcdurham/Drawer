@@ -129,11 +129,11 @@ namespace WinCad
         {
             if (e.Delta > 0)
             {
-                controller.ZoomInClick();
+                controller.ZoomIn();
             }
             else
             {
-                controller.ZoomOutClick();
+                controller.ZoomOut();
             }
         }
 
@@ -189,12 +189,12 @@ namespace WinCad
 
         private void ZoomInButton_Click(object sender, EventArgs e)
         {
-            controller.ZoomInClick();
+            controller.ZoomIn();
         }
 
         private void ZoomOutButton_Click(object sender, EventArgs e)
         {
-            controller.ZoomOutClick();
+            controller.ZoomOut();
         }
 
         void AskUserToSaveAs()
@@ -233,6 +233,11 @@ namespace WinCad
         private void MainPicture_MouseDown(object sender, MouseEventArgs e)
         {
             controller.MouseDownAt(e.Location, e.Button == MouseButtons.Middle);
+        }
+
+        private void ZoomExtentsButton_Click(object sender, EventArgs e)
+        {
+            controller.ZoomExtents();
         }
     }
 }

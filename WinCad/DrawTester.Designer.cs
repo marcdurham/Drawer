@@ -80,6 +80,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.zoomExtentsButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -99,7 +100,8 @@
             this.toolStripSeparator6,
             this.panButton,
             this.zoomInButton,
-            this.zoomOutButton});
+            this.zoomOutButton,
+            this.zoomExtentsButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -254,7 +256,7 @@
             // spacerStatusLabel
             // 
             this.spacerStatusLabel.Name = "spacerStatusLabel";
-            this.spacerStatusLabel.Size = new System.Drawing.Size(650, 19);
+            this.spacerStatusLabel.Size = new System.Drawing.Size(681, 19);
             this.spacerStatusLabel.Spring = true;
             // 
             // orthoStatus
@@ -522,6 +524,16 @@
             this.openFileDialog1.FileName = "*.dxf";
             this.openFileDialog1.Filter = "AutoCAD DXF Files|*.dxf|All Files|*.*";
             // 
+            // zoomExtentsButton
+            // 
+            this.zoomExtentsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomExtentsButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomExtentsButton.Image")));
+            this.zoomExtentsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomExtentsButton.Name = "zoomExtentsButton";
+            this.zoomExtentsButton.Size = new System.Drawing.Size(23, 22);
+            this.zoomExtentsButton.Text = "Zoom Extents";
+            this.zoomExtentsButton.Click += new System.EventHandler(this.ZoomExtentsButton_Click);
+            // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -600,6 +612,7 @@
         private System.Windows.Forms.ToolStripStatusLabel orthoStatus;
         private System.Windows.Forms.ToolStripStatusLabel spacerStatusLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton zoomExtentsButton;
     }
 }
 

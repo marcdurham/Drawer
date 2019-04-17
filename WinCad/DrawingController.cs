@@ -240,8 +240,11 @@ namespace WinCad
             session.Canvas.Selections.Grips.Clear();
 
             foreach (var layer in session.Canvas.Layers)
+            {
                 foreach (var entity in layer.Entities())
+                {
                     if (entity.IsSelected)
+                    {
                         foreach (var point in entity.Points())
                         {
                             session.Canvas.Selections.Grips.Add(
@@ -252,6 +255,9 @@ namespace WinCad
                                     Radius = radius,
                                 });
                         }
+                    }
+                }
+            }
         }
 
         internal void SaveAs(string fileName)

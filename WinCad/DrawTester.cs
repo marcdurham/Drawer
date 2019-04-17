@@ -228,11 +228,15 @@ namespace WinCad
         private void MainPicture_MouseUp(object sender, MouseEventArgs e)
         {
             controller.MouseUpAt(e.Location, e.Button == MouseButtons.Middle);
+            if (e.Button == MouseButtons.Middle)
+                mainPicture.Cursor = Cursors.Default;
         }
 
         private void MainPicture_MouseDown(object sender, MouseEventArgs e)
         {
             controller.MouseDownAt(e.Location, e.Button == MouseButtons.Middle);
+            if (e.Button == MouseButtons.Middle)
+                mainPicture.Cursor = Cursors.SizeAll;
         }
 
         private void ZoomExtentsButton_Click(object sender, EventArgs e)

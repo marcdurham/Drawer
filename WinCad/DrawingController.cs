@@ -8,6 +8,7 @@ namespace WinCad
     public class DrawingController
     {
         const double ZoomIncrement = 1.5;
+        const int GripRadius = 5;
 
         static readonly int NearDistance = 5;
         static readonly int HighlightRadius = 5;
@@ -90,7 +91,10 @@ namespace WinCad
                     session.Canvas.Highlights.Polylines.Clear();
                 }
                 else
+                {
                     CancelMode();
+                }
+
                 return;
             }
 
@@ -236,7 +240,6 @@ namespace WinCad
 
         internal void ShowSelections()
         {
-            int radius = 5;
             session.Canvas.Selections.Grips.Clear();
 
             foreach (var layer in session.Canvas.Layers)
@@ -252,7 +255,7 @@ namespace WinCad
                                 {
                                     Center = point,
                                     Color = Color.Magenta,
-                                    Radius = radius,
+                                    Radius = GripRadius,
                                 });
                         }
                     }
@@ -274,9 +277,12 @@ namespace WinCad
                 .Last() ?? session.FirstCorner;
 
             int angle = Angle(session.Canvas.NewLineStart, point);
-            view.SecondStatus = $"{session.Canvas.NewLineStart.X}, {session.Canvas.NewLineStart.Y} -> {point.X}, {point.Y} = {angle}deg";
+            view.SecondStatus = $"{session.Canvas.NewLineStart.X}, "
+                + $"{session.Canvas.NewLineStart.Y} -> "
+                + $"{point.X}, {point.Y} = {angle}deg";
 
-            session.Canvas.NewLineEnd = OrthoPointFrom(session.Canvas.NewLineStart, point);
+            session.Canvas.NewLineEnd = OrthoPointFrom(
+                session.Canvas.NewLineStart, point);
 
             var rubberband = new Polyline(
                 session.Canvas.NewLineStart,

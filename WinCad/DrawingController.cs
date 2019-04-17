@@ -81,7 +81,7 @@ namespace WinCad
 
         internal void ClickAt(Point point, bool cancel, bool isMiddleButton)
         {
-            if (cancel) // TODO: detect mode switching
+            if (cancel)
             {
                 if (session.Mode == DrawModes.DrawingPolylineExtraVertices)
                 {

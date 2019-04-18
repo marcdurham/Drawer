@@ -7,6 +7,8 @@ namespace WinCad
 {
     public class Zoomer
     {
+        const int Padding = 30;
+
         public double ZoomFactorForExtents(SysSize size, Canvas canvas)
         {
             var allPoints = new List<Point>();
@@ -24,6 +26,10 @@ namespace WinCad
                 return 0;
             }
 
+            var paddedSize = new SysSize(
+              width: size.Width - Padding,
+              height: size.Height - Padding);
+
             double maxX = allPoints.Max(p => p.X);
             double minX = allPoints.Min(p => p.X);
             double maxY = allPoints.Max(p => p.Y);
@@ -32,8 +38,13 @@ namespace WinCad
             double xDelta = maxX - minX;
             double yDelta = maxY - minY;
 
-            double xRatio = size.Width == 0 ? 0 : size.Width / xDelta;
-            double yRatio = size.Height == 0 ? 0 : size.Height / yDelta;
+            double xRatio = paddedSize.Width == 0 
+                ? 0 
+                : paddedSize.Width / xDelta;
+
+            double yRatio = paddedSize.Height == 0 
+                ? 0 
+                : paddedSize.Height / yDelta;
 
             return Math.Min(xRatio, yRatio);
         }

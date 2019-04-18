@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using SysSize = System.Drawing.Size;
+using SysPoint = System.Drawing.Point;
 
 namespace WinCad.UnitTests
 {
@@ -10,11 +11,11 @@ namespace WinCad.UnitTests
         {
             var zoomer = new Zoomer(padding: 0);
 
-            double actual = zoomer.ZoomFactorForExtents(
+            var actual = zoomer.ZoomFactorForExtents(
                 new SysSize(0,0), 
                 new Canvas());
 
-            Assert.Equal(0.0, actual);
+            Assert.Equal(0.0, actual.ZoomFactor);
         }
 
         [Fact]
@@ -97,11 +98,11 @@ namespace WinCad.UnitTests
 
             canvas.CurrentLayer.Polylines.Add(pline);
 
-            double actual = zoomer.ZoomFactorForExtents(
+            var actual = zoomer.ZoomFactorForExtents(
               new SysSize(width, height),
               canvas);
 
-            Assert.Equal(factor, actual);
+            Assert.Equal(factor, actual.ZoomFactor);
         }
     }
 }

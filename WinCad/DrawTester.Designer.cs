@@ -41,6 +41,7 @@
             this.panButton = new System.Windows.Forms.ToolStripButton();
             this.zoomInButton = new System.Windows.Forms.ToolStripButton();
             this.zoomOutButton = new System.Windows.Forms.ToolStripButton();
+            this.zoomExtentsButton = new System.Windows.Forms.ToolStripButton();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -80,15 +81,20 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.zoomExtentsButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
+            this.toolStripContainer1.ContentPanel.SuspendLayout();
+            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectEntityButtonh,
             this.insertImageButton,
@@ -102,9 +108,9 @@
             this.zoomInButton,
             this.zoomOutButton,
             this.zoomExtentsButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(800, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(290, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -215,12 +221,22 @@
             this.zoomOutButton.Text = "Zoom Out";
             this.zoomOutButton.Click += new System.EventHandler(this.ZoomOutButton_Click);
             // 
+            // zoomExtentsButton
+            // 
+            this.zoomExtentsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomExtentsButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomExtentsButton.Image")));
+            this.zoomExtentsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomExtentsButton.Name = "zoomExtentsButton";
+            this.zoomExtentsButton.Size = new System.Drawing.Size(23, 22);
+            this.zoomExtentsButton.Text = "Zoom Extents";
+            this.zoomExtentsButton.Click += new System.EventHandler(this.ZoomExtentsButton_Click);
+            // 
             // mainPicture
             // 
             this.mainPicture.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainPicture.Location = new System.Drawing.Point(0, 49);
+            this.mainPicture.Location = new System.Drawing.Point(0, 0);
             this.mainPicture.Name = "mainPicture";
-            this.mainPicture.Size = new System.Drawing.Size(800, 401);
+            this.mainPicture.Size = new System.Drawing.Size(800, 377);
             this.mainPicture.TabIndex = 1;
             this.mainPicture.TabStop = false;
             this.mainPicture.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPicture_Paint);
@@ -231,12 +247,13 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainStatus,
             this.secondStatus,
             this.spacerStatusLabel,
             this.orthoStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 426);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 0);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 24);
             this.statusStrip1.TabIndex = 2;
@@ -524,24 +541,34 @@
             this.openFileDialog1.FileName = "*.dxf";
             this.openFileDialog1.Filter = "AutoCAD DXF Files|*.dxf|All Files|*.*";
             // 
-            // zoomExtentsButton
+            // toolStripContainer1
             // 
-            this.zoomExtentsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.zoomExtentsButton.Image = ((System.Drawing.Image)(resources.GetObject("zoomExtentsButton.Image")));
-            this.zoomExtentsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.zoomExtentsButton.Name = "zoomExtentsButton";
-            this.zoomExtentsButton.Size = new System.Drawing.Size(23, 22);
-            this.zoomExtentsButton.Text = "Zoom Extents";
-            this.zoomExtentsButton.Click += new System.EventHandler(this.ZoomExtentsButton_Click);
+            // 
+            // toolStripContainer1.BottomToolStripPanel
+            // 
+            this.toolStripContainer1.BottomToolStripPanel.Controls.Add(this.statusStrip1);
+            // 
+            // toolStripContainer1.ContentPanel
+            // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.mainPicture);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(800, 377);
+            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer1.Location = new System.Drawing.Point(0, 24);
+            this.toolStripContainer1.Name = "toolStripContainer1";
+            this.toolStripContainer1.Size = new System.Drawing.Size(800, 426);
+            this.toolStripContainer1.TabIndex = 4;
+            this.toolStripContainer1.Text = "toolStripContainer1";
+            // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
             // DrawTester
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.mainPicture);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.toolStripContainer1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -555,6 +582,13 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer1.BottomToolStripPanel.PerformLayout();
+            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer1.ResumeLayout(false);
+            this.toolStripContainer1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -614,6 +648,7 @@
         private System.Windows.Forms.ToolStripStatusLabel spacerStatusLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton zoomExtentsButton;
+        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
     }
 }
 

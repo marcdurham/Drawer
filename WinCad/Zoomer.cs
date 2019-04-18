@@ -15,7 +15,7 @@ namespace WinCad
             this.padding = padding;
         }
 
-        public ZoomBox ZoomFactorForExtents(SysSize size, Canvas canvas)
+        public ZoomBox ZoomExtents(SysSize size, Canvas canvas)
         {
             var extents = ExtentsFrom(canvas);
             
@@ -37,8 +37,8 @@ namespace WinCad
             double zoomFactor = Math.Min(xRatio, yRatio);
 
             var offset = new SysPoint(
-                x: (int)(zoomFactor * extents.UpperLeft.X),
-                y: (int)(zoomFactor * extents.UpperLeft.Y));
+                x: -(int)(zoomFactor * extents.UpperLeft.X),
+                y: -(int)(zoomFactor * extents.UpperLeft.Y));
 
             return new ZoomBox { ZoomFactor = zoomFactor, Offset = offset };
         }

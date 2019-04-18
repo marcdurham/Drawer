@@ -199,11 +199,12 @@ namespace WinCad
 
         internal void ZoomExtents()
         {
-            var zoomBox = zoomer.ZoomFactorForExtents(
+            var zoomBox = zoomer.ZoomExtents(
                 view.PictureSize,
                 view.Canvas);
 
             session.ZoomFactor = zoomBox.ZoomFactor;
+            session.PanningOffset = zoomBox.Offset;
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();

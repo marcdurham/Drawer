@@ -17,8 +17,8 @@ namespace WinCad
 
         public double ZoomFactorForExtents(SysSize size, Canvas canvas)
         {
-            Extents extents = ExtentsFrom(canvas);
-
+            var extents = ExtentsFrom(canvas);
+            
             double xDelta = extents.LowerRight.X - extents.UpperLeft.X;
             double yDelta = extents.LowerRight.Y - extents.UpperLeft.Y;
 
@@ -37,13 +37,18 @@ namespace WinCad
             return Math.Min(xRatio, yRatio);
         }
 
-        static Extents ExtentsFrom(Canvas canvas)
+        static (SysPoint UpperLeft, SysPoint LowerRight) 
+            ExtentsFrom(Canvas canvas)
         {
             List<Point> allPoints = AllPointsFrom(canvas);
 
             if (allPoints.Count == 0)
             {
-                return new Extents();
+                return  
+                (
+                    UpperLeft: new SysPoint(0, 0),
+                    LowerRight: new SysPoint(0, 0)
+                );
             }
 
             var maxX = (int)allPoints.Max(p => p.X);
@@ -51,11 +56,11 @@ namespace WinCad
             var maxY = (int)allPoints.Max(p => p.Y);
             var minY = (int)allPoints.Min(p => p.Y);
 
-            return new Extents()
-            {
-                UpperLeft = new SysPoint(minX, minY),
-                LowerRight = new SysPoint(maxX, maxY)
-            };
+            return
+            (
+                UpperLeft:  new SysPoint(minX, minY),
+                LowerRight: new SysPoint(maxX, maxY)
+            );
         }
 
         static List<Point> AllPointsFrom(Canvas canvas)
@@ -71,12 +76,6 @@ namespace WinCad
             }
 
             return allPoints;
-        }
-
-        class Extents
-        {
-            public SysPoint UpperLeft { get; set; }
-            public SysPoint LowerRight { get; set; }
         }
     }
 }

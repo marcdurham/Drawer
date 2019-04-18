@@ -3,9 +3,9 @@ using System.Drawing;
 
 namespace WinCad
 {
-    public class Circle : Entity
+    public class Grip : Entity
     {
-        public Circle()
+        public Grip()
         {
             Color = Color.Turquoise;
         }

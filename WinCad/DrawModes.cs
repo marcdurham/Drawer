@@ -3,8 +3,8 @@
     public enum DrawModes
     {
         Ready,
-        ImportingPictureFirstCorner,
-        ImportingPictureSecondCorner,
+        InsertingImageFirstCorner,
+        InsertingImageSecondCorner,
         DrawingRectangleFirstCorner,
         DrawingRectangleSecondCorner,
         StartDrawing,
@@ -12,6 +12,7 @@
         DrawingPolylineExtraVertices,
         DrawingPolylineSecondVertex,
         StartInsertingBlock,
-        SelectEntity
+        SelectEntity,
+        Panning
     }
 }

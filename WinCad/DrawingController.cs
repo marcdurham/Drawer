@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace WinCad
 {
     public class DrawingController
     {
+        const double ZoomIncrement = 1.5;
+        const int GripRadius = 5;
+
         static readonly int NearDistance = 5;
         static readonly int HighlightRadius = 5;
 
         readonly IDrawingView view;
+        readonly BoxBuilder boxBuilder = new BoxBuilder();
 
         public DrawingController(IDrawingView view)
         {
             this.view = view;
+            session = new DrawingSession(view);
             view.Canvas = session.Canvas;
         }
 
-        public DrawingSession session { get; set; } = new DrawingSession();
+        public DrawingSession session { get; }
 
         internal void DrawPolyline()
         {
@@ -27,10 +33,10 @@ namespace WinCad
             view.RenderLayers();
         }
 
-        internal void ImportPicture(string fileName)
+        internal void InsertImage(string fileName)
         {
-            session.OpenFileName = fileName;
-            session.Mode = DrawModes.ImportingPictureFirstCorner;
+            session.OpenInsertPictureFileName = fileName;
+            session.Mode = DrawModes.InsertingImageFirstCorner;
             view.Status = Properties.Resources.ImportPictureStatus;
         }
 
@@ -48,24 +54,36 @@ namespace WinCad
 
         internal void DeleteSelectedEntities()
         {
-            var trash = new List<Entity>();
+            var selected = new List<Entity>();
             foreach (var entity in session.Canvas.Entities())
             {
                 if (entity.IsSelected)
-                    trash.Add(entity);
+                {
+                    selected.Add(entity);
+                }
             }
 
-            foreach (var entity in trash)
+            var delete = view
+                .AskUser($"Delete the {selected.Count} selected entities?");
+
+            if (delete != UserAnswer.Yes)
+            {
+                return;
+            }
+
+            foreach (var entity in selected)
+            {
                 session.Canvas.Delete(entity);
+            }
 
             ShowSelections();
 
             view.RenderLayers();
         }
 
-        internal void ClickAt(Point point, bool cancel)
+        internal void ClickAt(Point point, bool cancel, bool isMiddleButton)
         {
-            if (cancel) // TODO: detect mode switching
+            if (cancel)
             {
                 if (session.Mode == DrawModes.DrawingPolylineExtraVertices)
                 {
@@ -75,15 +93,18 @@ namespace WinCad
                     session.Canvas.Highlights.Polylines.Clear();
                 }
                 else
+                {
                     CancelMode();
+                }
+
                 return;
             }
 
-            switch(session.Mode)
+            switch (session.Mode)
             {
                 case DrawModes.DrawingPolylineFirstVertex:
                     // TODO: This is the only method here that does not call RenderLayers()
-                    StartDrawingPolylineAt(point); 
+                    StartDrawingPolylineAt(point);
                     break;
                 case DrawModes.DrawingPolylineSecondVertex:
                     AddSecondPolylineVertexAt(point);
@@ -91,11 +112,11 @@ namespace WinCad
                 case DrawModes.DrawingPolylineExtraVertices:
                     AddExtraPolylineVertexAt(point);
                     break;
-                case DrawModes.ImportingPictureFirstCorner:
+                case DrawModes.InsertingImageFirstCorner:
                     StartImportingPictureAt(point);
                     break;
-                case DrawModes.ImportingPictureSecondCorner:
-                    FinishImportingPictureAt(point);
+                case DrawModes.InsertingImageSecondCorner:
+                    FinishInsertingImageAt(point);
                     break;
                 case DrawModes.DrawingRectangleFirstCorner:
                     StartDrawingRectangleAt(point);
@@ -108,6 +129,9 @@ namespace WinCad
                     break;
                 case DrawModes.SelectEntity:
                     SelectEntityAt(point);
+                    break;
+                case DrawModes.Panning:
+                    // Do nothing, but don't CancelMode();
                     break;
                 default:
                     CancelMode();
@@ -124,7 +148,7 @@ namespace WinCad
             }
 
             if (session.Mode == DrawModes.DrawingRectangleSecondCorner
-                || session.Mode == DrawModes.ImportingPictureSecondCorner)
+                || session.Mode == DrawModes.InsertingImageSecondCorner)
             {
                 ShowNewRectangle(location);
             }
@@ -134,30 +158,119 @@ namespace WinCad
             view.RefreshImage();
         }
 
+        internal void OpenFile(string fileName)
+        {
+            session.Canvas = DxfFileOpener.OpenFile(fileName);
+            view.Canvas = session.Canvas;
+            session.FileName = fileName;
+            string fileOnly = Path.GetFileName(fileName);
+            view.Title = $"Drawer - {fileOnly}";
+            view.RenderLayers();
+        }
+
+        internal void NewFile()
+        {
+            session.Canvas = new Canvas();
+            session.FileName = null;
+            view.Title = $"Drawer - New File";
+            view.RenderLayers();
+        }
+
+        internal void StartPanning()
+        {
+            session.Mode = DrawModes.Panning;
+            view.Status = Properties.Resources.PanningStatus;
+        }
+
+        internal void ZoomIn()
+        {
+            session.ZoomFactor *= ZoomIncrement;
+            view.Status = Properties.Resources.ZoomingInStatus;
+            view.RenderLayers();
+        }
+
+        internal void ZoomOut()
+        {
+            session.ZoomFactor /= ZoomIncrement;
+            view.Status = Properties.Resources.ZoomingOutStatus;
+            view.RenderLayers();
+        }
+
+        internal void ZoomExtents()
+        {
+            session.ZoomFactor = 0.3;
+            view.Status = Properties.Resources.ZoomingOutStatus;
+            view.RenderLayers();
+        }
+
         internal void InsertBlock()
         {
             session.Mode = DrawModes.StartInsertingBlock;
             view.Status = "Inserting block: Click insertion point:";
         }
 
+        internal void MouseDownAt(System.Drawing.Point point, bool isMiddleButton)
+        {
+            if (session.Mode == DrawModes.Panning || isMiddleButton)
+            {
+                session.StartPanningFrom = point;
+                view.SecondStatus = $"Start panning: {session.StartPanningFrom.X}, {session.StartPanningFrom.Y} ...";
+            }
+        }
+
+        internal void MouseUpAt(System.Drawing.Point point, bool isMiddleButton)
+        {
+            if (session.Mode == DrawModes.Panning || isMiddleButton)
+            {
+                session.EndPanningAt = point;
+
+                if (!session.StartPanningFrom.IsEmpty
+                    && !session.EndPanningAt.IsEmpty)
+                {
+                    System.Drawing.Point started = session.StartPanningFrom;
+                    System.Drawing.Point ended = session.EndPanningAt;
+                    session.PanningOffset = new System.Drawing.Point(
+                        x: session.PanningOffset.X + ended.X - started.X,
+                        y: session.PanningOffset.Y + ended.Y - started.Y);
+                }
+
+                view.SecondStatus = $"Start panning: {session.StartPanningFrom.X}, {session.StartPanningFrom.Y} to {point.X}, {point.Y}";
+
+                view.RenderLayers();
+            }
+        }
+
         internal void ShowSelections()
         {
-            int radius = 5;
-            session.Canvas.Selections.Circles.Clear();
+            session.Canvas.Selections.Grips.Clear();
 
             foreach (var layer in session.Canvas.Layers)
+            {
                 foreach (var entity in layer.Entities())
+                {
                     if (entity.IsSelected)
+                    {
                         foreach (var point in entity.Points())
                         {
-                            session.Canvas.Selections.Circles.Add(
-                                new Circle()
+                            session.Canvas.Selections.Grips.Add(
+                                new Grip()
                                 {
                                     Center = point,
                                     Color = Color.Magenta,
-                                    Radius = radius,
+                                    Radius = GripRadius,
                                 });
                         }
+                    }
+                }
+            }
+        }
+
+        internal void SaveAs(string fileName)
+        {
+            DxfFileSaver.SaveAs(session.Canvas, fileName);
+            session.FileName = fileName;
+            string fileOnly = Path.GetFileName(fileName);
+            view.Title = $"Drawer - {fileOnly}";
         }
 
         void ShowNewPolylineSegment(Point point)
@@ -168,9 +281,12 @@ namespace WinCad
                 .Last() ?? session.FirstCorner;
 
             int angle = Angle(session.Canvas.NewLineStart, point);
-            view.SecondStatus = $"{session.Canvas.NewLineStart.X}, {session.Canvas.NewLineStart.Y} -> {point.X}, {point.Y} = {angle}deg";
+            view.SecondStatus = $"{session.Canvas.NewLineStart.X}, "
+                + $"{session.Canvas.NewLineStart.Y} -> "
+                + $"{point.X}, {point.Y} = {angle}deg";
 
-            session.Canvas.NewLineEnd = OrthoPointFrom(session.Canvas.NewLineStart, point);
+            session.Canvas.NewLineEnd = OrthoPointFrom(
+                session.Canvas.NewLineStart, point);
 
             var rubberband = new Polyline(
                 session.Canvas.NewLineStart,
@@ -186,33 +302,35 @@ namespace WinCad
         Point OrthoPointFrom(Point previousPoint, Point point)
         {
             if (!view.OrthoIsOn)
+            {
                 return point;
+            }
 
             int angle = Angle(previousPoint, point);
 
             if (Math.Abs(angle) >= 0 && Math.Abs(angle) < 45
                 || Math.Abs(angle) <= 180 && Math.Abs(angle) > 135)
+            { 
                 return new Point(point.X, previousPoint.Y);
+            }
             else
+            {
                 return new Point(previousPoint.X, point.Y);
+            }
         }
 
         void ShowNewRectangle(Point location)
         {
-            var size = SizeFrom(session.FirstCorner, location);
+            var pline = boxBuilder.Draw(session.FirstCorner, location);
+            pline.Color = Color.Blue;
 
-            var box = new Box(session.FirstCorner, size)
-            {
-                Color = Color.Blue
-            };
-
-            session.Canvas.Highlights.Boxes.Clear();
-            session.Canvas.Highlights.Boxes.Add(box);
+            session.Canvas.Highlights.Polylines.Clear();
+            session.Canvas.Highlights.Polylines.Add(pline);
         }
 
         void HoverOverPointsAt(Point cursor)
         {
-            var circle = new Circle()
+            var grip = new Grip()
             {
                 Radius = HighlightRadius,
                 Color = Color.Blue
@@ -227,10 +345,10 @@ namespace WinCad
                     {
                         if (AreNear(point, cursor))
                         {
-                            circle.Center = point;
+                            grip.Center = point;
 
-                            session.Canvas.Highlights.Circles.Clear();
-                            session.Canvas.Highlights.Circles.Add(circle);
+                            session.Canvas.Highlights.Grips.Clear();
+                            session.Canvas.Highlights.Grips.Add(grip);
                             nearSomething = true;
                         }
                     }
@@ -238,7 +356,7 @@ namespace WinCad
             }
 
             if (!nearSomething)
-                session.Canvas.Highlights.Circles.Clear();
+                session.Canvas.Highlights.Grips.Clear();
         }
 
         void StartDrawingRectangleAt(Point point)
@@ -251,15 +369,15 @@ namespace WinCad
         void FinishDrawingRectangleAt(Point point)
         {
             session.SecondCorner = point;
-            var box = new Box(
-                firstCorner: session.FirstCorner,
-                size: SizeFrom(session.FirstCorner, session.SecondCorner));
+            var line = boxBuilder.Draw(
+                corner: session.FirstCorner,
+                opposite: session.SecondCorner);
 
-            box.Color = Color.Green;
+            line.Color = Color.Green;
 
-            session.Canvas.CurrentLayer.Boxes.Add(box);
+            session.Canvas.CurrentLayer.Polylines.Add(line);
 
-            session.Canvas.Highlights.Boxes.Clear();
+            session.Canvas.Highlights.Polylines.Clear();
 
             session.Mode = DrawModes.DrawingRectangleFirstCorner;
 
@@ -276,8 +394,8 @@ namespace WinCad
             box.Color = Color.Red;
 
             session.Canvas.CurrentLayer.Boxes.Add(box);
-            session.Canvas.CurrentLayer.Circles.Add(
-                new Circle()
+            session.Canvas.CurrentLayer.Grips.Add(
+                new Grip()
                 {
                     Center = point,
                     Radius = 6,
@@ -318,6 +436,8 @@ namespace WinCad
                 session.FirstCorner, 
                 session.Canvas.NewLineEnd);
 
+            session.CurrentPolyline.Color = Color.DarkRed;
+
             session.Canvas.CurrentLayer.Polylines.Add(session.CurrentPolyline);
             session.Mode = DrawModes.DrawingPolylineExtraVertices;
             view.Status = Properties.Resources.DrawPolylineStatus;
@@ -335,15 +455,15 @@ namespace WinCad
         void StartImportingPictureAt(Point point)
         {
             session.FirstCorner = point;
-            session.Mode = DrawModes.ImportingPictureSecondCorner;
+            session.Mode = DrawModes.InsertingImageSecondCorner;
             view.Status = Properties.Resources.StartImportingPictureStatus;
         }
 
-        void FinishImportingPictureAt(Point point)
+        void FinishInsertingImageAt(Point point)
         {
             session.SecondCorner = point;
             var image = new InsertedImage(
-                image: Bitmap.FromFile(session.OpenFileName),
+                file: session.OpenInsertPictureFileName,
                 box: new Box(
                     firstCorner: new Point(
                         session.FirstCorner.X, 
@@ -371,15 +491,17 @@ namespace WinCad
             view.SecondStatus = string.Empty;
         }
 
-        static bool AreNear(Point a, Point b)
+        bool AreNear(Point a, Point b)
         {
-            return Math.Abs(a.X - b.X) <= NearDistance
-                && Math.Abs(a.Y - b.Y) <= NearDistance;
+            return Math.Abs(a.X - b.X) <= NearDistance / session.ZoomFactor
+                && Math.Abs(a.Y - b.Y) <= NearDistance / session.ZoomFactor;
         }
 
         static Size SizeFrom(Point a, Point b)
         {
-            return new Size(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+            return new Size(
+                width: Math.Abs((int)a.X - (int)b.X),
+                height: Math.Abs((int)a.Y - (int)b.Y));
         }
 
         static int Angle(Point a, Point b)

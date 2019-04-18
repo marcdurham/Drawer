@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace WinCad
@@ -8,16 +9,23 @@ namespace WinCad
     {
         readonly DrawingController controller;
         readonly EntityRenderEngine engine;
-        
+
         public DrawTester()
         {
             InitializeComponent();
 
+            mainPicture.MouseWheel += mainPicture_MouseWheel;
+
             controller = new DrawingController(this);
-            engine = new EntityRenderEngine();
+            engine = new EntityRenderEngine(controller.session);
         }
-    
+
         public Canvas Canvas { get; set; }
+
+        public string Title
+        {
+            set { Text = value; }
+        }
 
         public string Status
         {
@@ -29,10 +37,7 @@ namespace WinCad
             set { secondStatus.Text = value; }
         }
 
-        public bool OrthoIsOn
-        {
-            get { return orthoButton.Checked; }
-        }
+        public bool OrthoIsOn { get; set; } = false;
 
         public void RefreshImage()
         {
@@ -46,11 +51,38 @@ namespace WinCad
             var graphics = Graphics.FromImage(image);
 
             foreach (var layer in Canvas.Layers)
+            {
                 engine.Render(graphics, layer);
+            }
 
             mainPicture.Image = image;
 
             mainPicture.Invalidate();
+        }
+
+        public UserAnswer AskUser(string question)
+        {
+            var answer = MessageBox.Show(
+                question,
+                Properties.Resources.AskUserDialogCaption,
+                MessageBoxButtons.YesNoCancel);
+
+            if (answer == DialogResult.Yes)
+            {
+                return UserAnswer.Yes;
+            }
+            else if (answer == DialogResult.No)
+            {
+                return UserAnswer.No;
+            }
+            else if (answer == DialogResult.Cancel)
+            {
+                return UserAnswer.Cancel;
+            }
+            else
+            {
+                return UserAnswer.UnknownAnswer;
+            }
         }
 
         void drawPolylineButton_Click(object sender, EventArgs e)
@@ -62,7 +94,9 @@ namespace WinCad
         {
             var result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK)
-                controller.ImportPicture(openFileDialog.FileName);
+            {
+                controller.InsertImage(openFileDialog.FileName);
+            }
         }
 
         void drawRectangle_Click(object sender, EventArgs e)
@@ -80,7 +114,10 @@ namespace WinCad
         {
             try
             {
-                controller.ClickAt(new Point(e.X, e.Y), e.Button != MouseButtons.Left);
+                controller.ClickAt(
+                    engine.PointFrom(e.Location), 
+                    e.Button != MouseButtons.Left,
+                    e.Button == MouseButtons.Middle);
             }
             catch (Exception ex)
             {
@@ -90,12 +127,24 @@ namespace WinCad
 
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
-            controller.HoverAt(e.Location);
+            controller.HoverAt(engine.PointFrom(e.Location));
+        }
+
+        void mainPicture_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                controller.ZoomIn();
+            }
+            else
+            {
+                controller.ZoomOut();
+            }
         }
 
         void orthoButton_Click(object sender, EventArgs e)
         {
-            orthoButton.Checked = !orthoButton.Checked;
+            controller.StartPanning();
         }
 
         private void insertBlock_Click(object sender, EventArgs e)
@@ -111,6 +160,93 @@ namespace WinCad
         private void deleteButton_Click(object sender, EventArgs e)
         {
             controller.DeleteSelectedEntities();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AskUserToSaveAs();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(controller.session.FileName))
+            {
+                AskUserToSaveAs();
+            }
+            else
+            {
+                controller.SaveAs(controller.session.FileName);
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                controller.OpenFile(openFileDialog1.FileName);
+            }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            controller.NewFile();
+        }
+
+        private void ZoomInButton_Click(object sender, EventArgs e)
+        {
+            controller.ZoomIn();
+        }
+
+        private void ZoomOutButton_Click(object sender, EventArgs e)
+        {
+            controller.ZoomOut();
+        }
+
+        void AskUserToSaveAs()
+        {
+            saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(
+                controller.session.FileName);
+
+            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(
+                controller.session.FileName);
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                controller.SaveAs(saveFileDialog1.FileName);
+            }
+        }
+
+        private void DrawTester_SizeChanged(object sender, EventArgs e)
+        {
+            RenderLayers();
+        }
+
+        private void OrthoStatus_Click(object sender, EventArgs e)
+        {
+            OrthoIsOn = !OrthoIsOn;
+
+            string state = OrthoIsOn ? "On" : "Off";
+
+            orthoStatus.Text = $"Ortho: {state}";
+        }
+
+        private void MainPicture_MouseUp(object sender, MouseEventArgs e)
+        {
+            controller.MouseUpAt(e.Location, e.Button == MouseButtons.Middle);
+            if (e.Button == MouseButtons.Middle)
+                mainPicture.Cursor = Cursors.Default;
+        }
+
+        private void MainPicture_MouseDown(object sender, MouseEventArgs e)
+        {
+            controller.MouseDownAt(e.Location, e.Button == MouseButtons.Middle);
+            if (e.Button == MouseButtons.Middle)
+                mainPicture.Cursor = Cursors.SizeAll;
+        }
+
+        private void ZoomExtentsButton_Click(object sender, EventArgs e)
+        {
+            controller.ZoomExtents();
         }
     }
 }

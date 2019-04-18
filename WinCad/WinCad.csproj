@@ -32,6 +32,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>WinCad.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>WinCad.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="netDxf, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\netDXF.2.2.0.1\lib\net45\netDxf.dll</HintPath>
@@ -50,8 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Box.cs" />
+    <Compile Include="BoxBuilder.cs" />
     <Compile Include="Canvas.cs" />
-    <Compile Include="Circle.cs" />
+    <Compile Include="Grip.cs" />
     <Compile Include="DrawingController.cs" />
     <Compile Include="DrawingSession.cs" />
     <Compile Include="DrawModes.cs" />
@@ -61,14 +68,20 @@
     <Compile Include="DrawTester.Designer.cs">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </Compile>
+    <Compile Include="DxfFileOpener.cs" />
+    <Compile Include="DxfFileSaver.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityRenderEngine.cs" />
     <Compile Include="IDrawingView.cs" />
     <Compile Include="InsertedImage.cs" />
     <Compile Include="Layer.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="Polyline.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="TextBox.cs" />
+    <Compile Include="UserAnswer.cs" />
     <EmbeddedResource Include="DrawTester.resx">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </EmbeddedResource>
@@ -95,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WinCad.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

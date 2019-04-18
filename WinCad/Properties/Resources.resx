@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AskUserDialogCaption" xml:space="preserve">
+    <value>Drawer - Question For User</value>
+  </data>
   <data name="DrawPolylineStatus" xml:space="preserve">
     <value>Drawing Polyline: Click next point:</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="ImportPictureStatus" xml:space="preserve">
     <value>Importing ImageClick first corner:</value>
+  </data>
+  <data name="PanningStatus" xml:space="preserve">
+    <value>Panning</value>
   </data>
   <data name="ReadyStatus" xml:space="preserve">
     <value>Ready</value>
@@ -140,5 +146,11 @@
   </data>
   <data name="StartImportingPictureStatus" xml:space="preserve">
     <value>Importing Image: Click second corner:</value>
+  </data>
+  <data name="ZoomingInStatus" xml:space="preserve">
+    <value>Zooming In</value>
+  </data>
+  <data name="ZoomingOutStatus" xml:space="preserve">
+    <value>Zooming Out</value>
   </data>
 </root>

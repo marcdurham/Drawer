@@ -7,7 +7,8 @@ namespace WinCad
         public List<Box> Boxes { get; set; } = new List<Box>();
         public List<Polyline> Polylines { get; set; } = new List<Polyline>();
         public List<InsertedImage> InsertedImages { get; set; } = new List<InsertedImage>();
-        public List<Circle> Circles { get; set; } = new List<Circle>();
+        public List<TextBox> TextBoxes { get; set; } = new List<TextBox>();
+        public List<Grip> Grips { get; set; } = new List<Grip>();
 
         public List<Entity> Entities()
         {
@@ -16,7 +17,8 @@ namespace WinCad
             list.AddRange(Boxes);
             list.AddRange(Polylines);
             list.AddRange(InsertedImages);
-            list.AddRange(Circles);
+            list.AddRange(TextBoxes);
+            list.AddRange(Grips);
 
             return list;
         }
@@ -29,8 +31,19 @@ namespace WinCad
                 Polylines.Remove((Polyline)entity);
             if (entity is InsertedImage && InsertedImages.Contains((InsertedImage)entity))
                 InsertedImages.Remove((InsertedImage)entity);
-            if (entity is Circle && Circles.Contains((Circle)entity))
-                Circles.Remove((Circle)entity);
+            if (entity is Grip && Grips.Contains((Grip)entity))
+                Grips.Remove((Grip)entity);
+            if (entity is TextBox && TextBoxes.Contains((TextBox)entity))
+                TextBoxes.Remove((TextBox)entity);
+        }
+
+        internal void Clear()
+        {
+            Boxes.Clear();
+            Polylines.Clear();
+            InsertedImages.Clear();
+            TextBoxes.Clear();
+            Grips.Clear();
         }
     }
 }

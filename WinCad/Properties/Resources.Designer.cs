@@ -19,7 +19,7 @@ namespace WinCad.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,6 +61,15 @@ namespace WinCad.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Drawer - Question For User.
+        /// </summary>
+        internal static string AskUserDialogCaption {
+            get {
+                return ResourceManager.GetString("AskUserDialogCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drawing Polyline: Click next point:.
         /// </summary>
         internal static string DrawPolylineStatus {
@@ -84,6 +93,15 @@ namespace WinCad.Properties {
         internal static string ImportPictureStatus {
             get {
                 return ResourceManager.GetString("ImportPictureStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Panning.
+        /// </summary>
+        internal static string PanningStatus {
+            get {
+                return ResourceManager.GetString("PanningStatus", resourceCulture);
             }
         }
         
@@ -129,6 +147,24 @@ namespace WinCad.Properties {
         internal static string StartImportingPictureStatus {
             get {
                 return ResourceManager.GetString("StartImportingPictureStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zooming In.
+        /// </summary>
+        internal static string ZoomingInStatus {
+            get {
+                return ResourceManager.GetString("ZoomingInStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zooming Out.
+        /// </summary>
+        internal static string ZoomingOutStatus {
+            get {
+                return ResourceManager.GetString("ZoomingOutStatus", resourceCulture);
             }
         }
     }

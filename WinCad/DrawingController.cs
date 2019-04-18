@@ -16,7 +16,7 @@ namespace WinCad
 
         readonly IDrawingView view;
         readonly BoxBuilder boxBuilder = new BoxBuilder();
-        readonly Zoomer zoomer = new Zoomer();
+        readonly Zoomer zoomer = new Zoomer(padding: 30);
 
         public DrawingController(IDrawingView view)
         {

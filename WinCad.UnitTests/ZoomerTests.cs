@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Xunit;
+﻿using Xunit;
 using SysSize = System.Drawing.Size;
 
 namespace WinCad.UnitTests
@@ -9,7 +8,7 @@ namespace WinCad.UnitTests
         [Fact]
         public void ZoomExtents_Zero()
         {
-            var zoomer = new Zoomer();
+            var zoomer = new Zoomer(padding: 0);
 
             double actual = zoomer.ZoomFactorForExtents(
                 new SysSize(0,0), 
@@ -90,7 +89,7 @@ namespace WinCad.UnitTests
             int height, 
             params Point[] points)
         {
-            var zoomer = new Zoomer();
+            var zoomer = new Zoomer(padding: 0);
             var canvas = new Canvas();
             var pline = new Polyline();
             foreach (var point in points)

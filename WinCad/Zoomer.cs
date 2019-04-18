@@ -7,7 +7,12 @@ namespace WinCad
 {
     public class Zoomer
     {
-        const int Padding = 30;
+        readonly int padding = 30;
+
+        public Zoomer(int padding)
+        {
+            this.padding = padding;
+        }
 
         public double ZoomFactorForExtents(SysSize size, Canvas canvas)
         {
@@ -27,8 +32,8 @@ namespace WinCad
             double yDelta = maxY - minY;
 
             var paddedSize = new SysSize(
-                width: size.Width - Padding,
-                height: size.Height - Padding);
+                width: size.Width - padding,
+                height: size.Height - padding);
 
             double xRatio = paddedSize.Width == 0
                 ? 0

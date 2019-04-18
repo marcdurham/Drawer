@@ -35,8 +35,8 @@ namespace WinCad
             double xDelta = maxX - minX;
             double yDelta = maxY - minY;
 
-            double xRatio = size.Width == 0 ? 0 : xDelta / size.Width;
-            double yRatio = size.Height == 0 ? 0: yDelta / size.Height;
+            double xRatio = size.Width == 0 ? 0 : size.Width / xDelta;
+            double yRatio = size.Height == 0 ? 0 : size.Height / yDelta;
 
             return Math.Min(xRatio, yRatio);
         }

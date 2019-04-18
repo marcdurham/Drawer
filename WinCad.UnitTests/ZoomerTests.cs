@@ -30,6 +30,28 @@ namespace WinCad.UnitTests
         }
 
         [Fact]
+        public void ZoomExtents_Size200x100_SmallestFactorWidth()
+        {
+            AssertFactor(
+                factor: 0.5,
+                width: 100,
+                height: 100,
+                new Point(0, 0),
+                new Point(200, 100));
+        }
+
+        [Fact]
+        public void ZoomExtents_Size200x100_SmallestFactorHeight()
+        {
+            AssertFactor(
+                factor: 0.5,
+                width: 100,
+                height: 100,
+                new Point(0, 0),
+                new Point(100, 200));
+        }
+
+        [Fact]
         public void ZoomExtents_Size100_FactorHalf()
         {
             AssertFactor(
@@ -37,7 +59,7 @@ namespace WinCad.UnitTests
                 width: 100,
                 height: 100,
                 new Point(0, 0),
-                new Point(50, 50));
+                new Point(200, 200));
         }
 
         [Fact]
@@ -48,7 +70,18 @@ namespace WinCad.UnitTests
                 width: 100, 
                 height: 100, 
                 new Point(0, 0), 
-                new Point(200, 200));
+                new Point(50, 50));
+        }
+
+        [Fact]
+        public void ZoomExtents_Size100_OffCenter_FactorHalf()
+        {
+            AssertFactor(
+                factor: 0.5,
+                width: 100,
+                height: 100,
+                new Point(-100, -100),
+                new Point(100, 100));
         }
 
         void AssertFactor(

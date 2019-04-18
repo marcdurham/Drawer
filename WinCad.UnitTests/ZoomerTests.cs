@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Collections.Generic;
+using Xunit;
 using SysSize = System.Drawing.Size;
 
 namespace WinCad.UnitTests
@@ -20,55 +21,55 @@ namespace WinCad.UnitTests
         [Fact]
         public void ZoomExtents_Size200x100_Factor1()
         {
-            var zoomer = new Zoomer();
-            var canvas = new Canvas();
-            var pline = new Polyline();
-            pline.Vertices.Add(new Point(0, 0));
-            pline.Vertices.Add(new Point(200, 100));
-
-            canvas.CurrentLayer.Polylines.Add(pline);
-          
-            double actual = zoomer.ZoomFactorForExtents(
-                new SysSize(200, 100),
-                canvas);
-
-            Assert.Equal(1.0, actual);
+            AssertFactor(
+                factor: 1.0,
+                width: 200,
+                height: 100,
+                new Point(0, 0),
+                new Point(200, 100));
         }
 
         [Fact]
         public void ZoomExtents_Size100_FactorHalf()
         {
-            var zoomer = new Zoomer();
-            var canvas = new Canvas();
-            var pline = new Polyline();
-            pline.Vertices.Add(new Point(0, 0));
-            pline.Vertices.Add(new Point(50, 50));
-
-            canvas.CurrentLayer.Polylines.Add(pline);
-
-            double actual = zoomer.ZoomFactorForExtents(
-                new SysSize(100, 100),
-                canvas);
-
-            Assert.Equal(0.5, actual);
+            AssertFactor(
+                factor: 0.5,
+                width: 100,
+                height: 100,
+                new Point(0, 0),
+                new Point(50, 50));
         }
 
         [Fact]
         public void ZoomExtents_Size100_FactorDouble()
         {
+            AssertFactor(
+                factor: 2.0, 
+                width: 100, 
+                height: 100, 
+                new Point(0, 0), 
+                new Point(200, 200));
+        }
+
+        void AssertFactor(
+            double factor, 
+            int width, 
+            int height, 
+            params Point[] points)
+        {
             var zoomer = new Zoomer();
             var canvas = new Canvas();
             var pline = new Polyline();
-            pline.Vertices.Add(new Point(0, 0));
-            pline.Vertices.Add(new Point(200, 200));
+            foreach (var point in points)
+                pline.Vertices.Add(point);
 
             canvas.CurrentLayer.Polylines.Add(pline);
 
             double actual = zoomer.ZoomFactorForExtents(
-                new SysSize(100, 100),
-                canvas);
+              new SysSize(width, height),
+              canvas);
 
-            Assert.Equal(2.0, actual);
+            Assert.Equal(factor, actual);
         }
     }
 }

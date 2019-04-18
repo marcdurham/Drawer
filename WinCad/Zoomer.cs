@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SysSize = System.Drawing.Size;
+using SysPoint = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -16,20 +17,10 @@ namespace WinCad
 
         public double ZoomFactorForExtents(SysSize size, Canvas canvas)
         {
-            List<Point> allPoints = AllPointsFrom(canvas);
+            Extents extents = ExtentsFrom(canvas);
 
-            if (allPoints.Count == 0)
-            {
-                return 0;
-            }
-
-            double maxX = allPoints.Max(p => p.X);
-            double minX = allPoints.Min(p => p.X);
-            double maxY = allPoints.Max(p => p.Y);
-            double minY = allPoints.Min(p => p.Y);
-
-            double xDelta = maxX - minX;
-            double yDelta = maxY - minY;
+            double xDelta = extents.LowerRight.X - extents.UpperLeft.X;
+            double yDelta = extents.LowerRight.Y - extents.UpperLeft.Y;
 
             var paddedSize = new SysSize(
                 width: size.Width - padding,
@@ -46,6 +37,27 @@ namespace WinCad
             return Math.Min(xRatio, yRatio);
         }
 
+        static Extents ExtentsFrom(Canvas canvas)
+        {
+            List<Point> allPoints = AllPointsFrom(canvas);
+
+            if (allPoints.Count == 0)
+            {
+                return new Extents();
+            }
+
+            var maxX = (int)allPoints.Max(p => p.X);
+            var minX = (int)allPoints.Min(p => p.X);
+            var maxY = (int)allPoints.Max(p => p.Y);
+            var minY = (int)allPoints.Min(p => p.Y);
+
+            return new Extents()
+            {
+                UpperLeft = new SysPoint(minX, minY),
+                LowerRight = new SysPoint(maxX, maxY)
+            };
+        }
+
         static List<Point> AllPointsFrom(Canvas canvas)
         {
             var allPoints = new List<Point>();
@@ -59,6 +71,12 @@ namespace WinCad
             }
 
             return allPoints;
+        }
+
+        class Extents
+        {
+            public SysPoint UpperLeft { get; set; }
+            public SysPoint LowerRight { get; set; }
         }
     }
 }

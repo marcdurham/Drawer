@@ -16,6 +16,7 @@ namespace WinCad
 
         readonly IDrawingView view;
         readonly BoxBuilder boxBuilder = new BoxBuilder();
+        readonly Zoomer zoomer = new Zoomer();
 
         public DrawingController(IDrawingView view)
         {
@@ -198,7 +199,10 @@ namespace WinCad
 
         internal void ZoomExtents()
         {
-            session.ZoomFactor = 0.3;
+            session.ZoomFactor = zoomer.ZoomFactorForExtents(
+                view.PictureSize,
+                view.Canvas);
+
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
         }

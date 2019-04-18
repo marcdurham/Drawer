@@ -7,6 +7,7 @@
         string SecondStatus { set; }
         Canvas Canvas { get; set; }
         bool OrthoIsOn { get; }
+        System.Drawing.Size PictureSize { get; }
 
         void RefreshImage();
         void RenderLayers();

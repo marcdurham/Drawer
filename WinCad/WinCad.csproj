@@ -82,6 +82,7 @@
     <Compile Include="Size.cs" />
     <Compile Include="TextBox.cs" />
     <Compile Include="UserAnswer.cs" />
+    <Compile Include="Zoomer.cs" />
     <EmbeddedResource Include="DrawTester.resx">
       <DependentUpon>DrawTester.cs</DependentUpon>
     </EmbeddedResource>

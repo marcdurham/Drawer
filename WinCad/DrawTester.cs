@@ -40,6 +40,11 @@ namespace WinCad
 
         public bool OrthoIsOn { get; set; } = false;
 
+        public System.Drawing.Size PictureSize
+        {
+            get { return mainPicture.Size; }
+        }
+
         public void RefreshImage()
         {
             mainPicture.Invalidate();

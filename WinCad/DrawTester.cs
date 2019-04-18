@@ -22,6 +22,7 @@ namespace WinCad
 
         public Canvas Canvas { get; set; }
 
+        // Implemented View Interface Members
         public string Title
         {
             set { Text = value; }
@@ -85,6 +86,7 @@ namespace WinCad
             }
         }
 
+        // UI Events
         void drawPolylineButton_Click(object sender, EventArgs e)
         {
             controller.DrawPolyline();
@@ -202,18 +204,9 @@ namespace WinCad
             controller.ZoomOut();
         }
 
-        void AskUserToSaveAs()
+        private void ZoomExtentsButton_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(
-                controller.session.FileName);
-
-            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(
-                controller.session.FileName);
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                controller.SaveAs(saveFileDialog1.FileName);
-            }
+            controller.ZoomExtents();
         }
 
         private void DrawTester_SizeChanged(object sender, EventArgs e)
@@ -244,9 +237,18 @@ namespace WinCad
                 mainPicture.Cursor = Cursors.SizeAll;
         }
 
-        private void ZoomExtentsButton_Click(object sender, EventArgs e)
+        void AskUserToSaveAs()
         {
-            controller.ZoomExtents();
+            saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(
+                controller.session.FileName);
+
+            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(
+                controller.session.FileName);
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                controller.SaveAs(saveFileDialog1.FileName);
+            }
         }
     }
 }

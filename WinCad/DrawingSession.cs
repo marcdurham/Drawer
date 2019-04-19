@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using SysPoint = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -30,8 +30,9 @@ namespace WinCad
         }
 
         public double ZoomFactor { get; set; } = 1.0;
-        public System.Drawing.Point PanningOffset { get; set; } = new System.Drawing.Point(0, 0);
-        public System.Drawing.Point StartPanningFrom { get; set; } = System.Drawing.Point.Empty;
-        public System.Drawing.Point EndPanningAt { get; set; } = System.Drawing.Point.Empty;
+        public SysPoint PanningOffset { get; set; } = new SysPoint(0, 0);
+        public SysPoint ZoomOffset { get; set; } = new SysPoint(0, 0);
+        public SysPoint StartPanningFrom { get; set; } = SysPoint.Empty;
+        public SysPoint EndPanningAt { get; set; } = SysPoint.Empty;
     }
 }

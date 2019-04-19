@@ -49,16 +49,20 @@ namespace WinCad
         {
             return new SysPoint(
                 x: session.PanningOffset.X 
+                    + session.ZoomOffset.X
                     + (int)(point.X * session.ZoomFactor), 
-                y: session.PanningOffset.Y 
+                y: session.PanningOffset.Y
+                    + session.ZoomOffset.Y
                     + (int)(point.Y * session.ZoomFactor));
         }
 
         public Point PointFrom(SysPoint point)
         {
             return new Point(
-                x: (point.X - session.PanningOffset.X) / session.ZoomFactor, 
-                y: (point.Y - session.PanningOffset.Y) / session.ZoomFactor);
+                x: (point.X - session.PanningOffset.X - session.ZoomOffset.X) 
+                    / session.ZoomFactor, 
+                y: (point.Y - session.PanningOffset.Y - session.ZoomOffset.Y) 
+                    / session.ZoomFactor);
         }
 
         public SysSize SysSizeFrom(Size size)

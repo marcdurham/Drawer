@@ -141,11 +141,11 @@ namespace WinCad
         {
             if (e.Delta > 0)
             {
-                controller.ZoomIn();
+                controller.ZoomIn(e.Location);
             }
             else
             {
-                controller.ZoomOut();
+                controller.ZoomOut(e.Location);
             }
         }
 
@@ -201,12 +201,12 @@ namespace WinCad
 
         private void ZoomInButton_Click(object sender, EventArgs e)
         {
-            controller.ZoomIn();
+            controller.ZoomIn(new System.Drawing.Point(0, 0));
         }
 
         private void ZoomOutButton_Click(object sender, EventArgs e)
         {
-            controller.ZoomOut();
+            controller.ZoomOut(new System.Drawing.Point(0, 0));
         }
 
         private void ZoomExtentsButton_Click(object sender, EventArgs e)

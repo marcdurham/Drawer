@@ -188,15 +188,7 @@ namespace WinCad
         {
             session.ZoomFactor *= ZoomIncrement;
 
-            int szox = (int)-((view.PictureSize.Width * session.ZoomFactor)
-                - view.PictureSize.Width)
-                / 2;
-
-            int szoy = (int)-((view.PictureSize.Height * session.ZoomFactor)
-                - view.PictureSize.Height)
-                / 2;
-
-            session.ZoomOffset = new SysPoint(x: szox, y: szoy);
+            session.ZoomOffset = ZoomOffset(session.ZoomFactor);
 
             session.PanningOffset = new SysPoint(
                 x: (int)(session.PanningOffset.X * ZoomIncrement),
@@ -210,15 +202,7 @@ namespace WinCad
         {
             session.ZoomFactor /= ZoomIncrement;
 
-            int szox = (int)-((view.PictureSize.Width * session.ZoomFactor)
-                - view.PictureSize.Width)
-                / 2;
-
-            int szoy = (int)-((view.PictureSize.Height * session.ZoomFactor)
-                - view.PictureSize.Height)
-                / 2;
-
-            session.ZoomOffset = new SysPoint(x: szox, y: szoy);
+            session.ZoomOffset = ZoomOffset(session.ZoomFactor);
 
             session.PanningOffset = new SysPoint(
                 x: (int)(session.PanningOffset.X / ZoomIncrement),
@@ -226,6 +210,15 @@ namespace WinCad
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
+        }
+
+        private SysPoint ZoomOffset(double zoomFactor)
+        {
+            return new SysPoint(
+                x: (int)-((view.PictureSize.Width * zoomFactor)
+                    - view.PictureSize.Width) / 2,
+                y: (int)-((view.PictureSize.Height * zoomFactor)
+                    - view.PictureSize.Height) / 2);
         }
 
         internal void ZoomExtents()

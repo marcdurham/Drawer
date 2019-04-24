@@ -188,15 +188,19 @@ namespace WinCad
         {
             session.ZoomFactor *= ZoomIncrement;
 
-            double increment = ZoomIncrement * 4;
+            int szox = (int)-((view.PictureSize.Width * session.ZoomFactor)
+                - view.PictureSize.Width)
+                / 2;
 
-            session.ZoomOffset = new SysPoint(
-                x: session.ZoomOffset.X - view.PictureSize.Width / 4,
-                y: session.ZoomOffset.Y - view.PictureSize.Height / 4);
+            int szoy = (int)-((view.PictureSize.Height * session.ZoomFactor)
+                - view.PictureSize.Height)
+                / 2;
+
+            session.ZoomOffset = new SysPoint(x: szox, y: szoy);
 
             //session.PanningOffset = new SysPoint(
-            //    x: cursor.X,
-            //    y: cursor.Y);
+            //    x: (int)(session.PanningOffset.X * ZoomIncrement),
+            //    y: (int)(session.PanningOffset.Y * ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
@@ -206,14 +210,19 @@ namespace WinCad
         {
             session.ZoomFactor /= ZoomIncrement;
 
-            session.ZoomOffset = new SysPoint(
-                x: session.ZoomOffset.X + view.PictureSize.Width / 4,
-                y: session.ZoomOffset.Y + view.PictureSize.Height / 4);
+            int szox = (int)-((view.PictureSize.Width * session.ZoomFactor)
+                - view.PictureSize.Width)
+                / 2;
 
+            int szoy = (int)-((view.PictureSize.Height * session.ZoomFactor)
+                - view.PictureSize.Height)
+                / 2;
+
+            session.ZoomOffset = new SysPoint(x: szox, y: szoy);
 
             //session.PanningOffset = new SysPoint(
-            //    x: cursor.X,
-            //    y: cursor.Y);
+            //    x: (int)(session.PanningOffset.X / ZoomIncrement),
+            //    y: (int)(session.PanningOffset.Y / ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();

@@ -198,9 +198,9 @@ namespace WinCad
 
             session.ZoomOffset = new SysPoint(x: szox, y: szoy);
 
-            //session.PanningOffset = new SysPoint(
-            //    x: (int)(session.PanningOffset.X * ZoomIncrement),
-            //    y: (int)(session.PanningOffset.Y * ZoomIncrement));
+            session.PanningOffset = new SysPoint(
+                x: (int)(session.PanningOffset.X * ZoomIncrement),
+                y: (int)(session.PanningOffset.Y * ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
@@ -220,9 +220,9 @@ namespace WinCad
 
             session.ZoomOffset = new SysPoint(x: szox, y: szoy);
 
-            //session.PanningOffset = new SysPoint(
-            //    x: (int)(session.PanningOffset.X / ZoomIncrement),
-            //    y: (int)(session.PanningOffset.Y / ZoomIncrement));
+            session.PanningOffset = new SysPoint(
+                x: (int)(session.PanningOffset.X / ZoomIncrement),
+                y: (int)(session.PanningOffset.Y / ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();

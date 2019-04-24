@@ -188,11 +188,14 @@ namespace WinCad
         {
             session.ZoomFactor *= ZoomIncrement;
 
-            session.ZoomOffset = ZoomOffset(session.ZoomFactor);
+            session.ZoomOffset = ZoomOffset(session.ZoomFactor, cursor);
+
+            //int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
+            //int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
 
             session.PanningOffset = new SysPoint(
-                x: (int)(session.PanningOffset.X * ZoomIncrement),
-                y: (int)(session.PanningOffset.Y * ZoomIncrement));
+                x: (int)((session.PanningOffset.X) * ZoomIncrement),
+                y: (int)((session.PanningOffset.Y) * ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
@@ -202,23 +205,29 @@ namespace WinCad
         {
             session.ZoomFactor /= ZoomIncrement;
 
-            session.ZoomOffset = ZoomOffset(session.ZoomFactor);
+            session.ZoomOffset = ZoomOffset(session.ZoomFactor, cursor);
+
+            //int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
+            //int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
 
             session.PanningOffset = new SysPoint(
-                x: (int)(session.PanningOffset.X / ZoomIncrement),
-                y: (int)(session.PanningOffset.Y / ZoomIncrement));
+                x: (int)((session.PanningOffset.X) / ZoomIncrement),
+                y: (int)((session.PanningOffset.Y) / ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
         }
 
-        private SysPoint ZoomOffset(double zoomFactor)
+        private SysPoint ZoomOffset(double zoomFactor, SysPoint cursor)
         {
+            int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
+            int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
+
             return new SysPoint(
-                x: (int)-((view.PictureSize.Width * zoomFactor)
-                    - view.PictureSize.Width) / 2,
-                y: (int)-((view.PictureSize.Height * zoomFactor)
-                    - view.PictureSize.Height) / 2);
+                x: cursorXFromCenter + ((int)-((view.PictureSize.Width * zoomFactor)
+                    - view.PictureSize.Width) / 2),
+                y: cursorYFromCenter + ((int)-((view.PictureSize.Height * zoomFactor)
+                    - view.PictureSize.Height) / 2));
         }
 
         internal void ZoomExtents()

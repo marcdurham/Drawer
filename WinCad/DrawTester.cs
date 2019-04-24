@@ -52,6 +52,9 @@ namespace WinCad
 
         public void RenderLayers()
         {
+            if (mainPicture.Width == 0 || mainPicture.Height == 0)
+                return;
+
             var image = new Bitmap(mainPicture.Width, mainPicture.Height);
 
             var graphics = Graphics.FromImage(image);

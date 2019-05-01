@@ -8,7 +8,7 @@ namespace WinCad
 {
     public class Zoomer
     {
-        readonly int padding = 30;
+        readonly int padding = 0;
 
         public Zoomer(int padding)
         {
@@ -19,20 +19,17 @@ namespace WinCad
         {
             var extents = ExtentsFrom(canvas);
             
-            double xDelta = extents.LowerRight.X - extents.UpperLeft.X;
-            double yDelta = extents.LowerRight.Y - extents.UpperLeft.Y;
-
             var paddedSize = new SysSize(
                 width: size.Width - padding,
                 height: size.Height - padding);
 
             double xRatio = paddedSize.Width == 0
                 ? 0
-                : paddedSize.Width / xDelta;
+                : paddedSize.Width / (double)extents.Width;
 
             double yRatio = paddedSize.Height == 0
                 ? 0
-                : paddedSize.Height / yDelta;
+                : paddedSize.Height / (double)extents.Height;
 
             double zoomFactor = Math.Min(xRatio, yRatio);
 
@@ -40,10 +37,23 @@ namespace WinCad
                 x: -(int)(zoomFactor * extents.UpperLeft.X),
                 y: -(int)(zoomFactor * extents.UpperLeft.Y));
 
-            return new ZoomBox { ZoomFactor = zoomFactor, Offset = offset };
+            var panningOffset = new SysPoint(
+                x: offset.X,
+                y: offset.Y);
+
+            var zoomOffset = new SysPoint(
+                x: 0,
+                y: 0);
+
+            return new ZoomBox
+            {
+                ZoomFactor = zoomFactor,
+                PanningOffset = panningOffset,
+                ZoomOffset = zoomOffset
+            };
         }
 
-        static (SysPoint UpperLeft, SysPoint LowerRight) 
+        static (SysPoint UpperLeft, SysPoint LowerRight, int Width, int Height) 
             ExtentsFrom(Canvas canvas)
         {
             List<Point> allPoints = AllPointsFrom(canvas);
@@ -53,7 +63,9 @@ namespace WinCad
                 return  
                 (
                     UpperLeft: new SysPoint(0, 0),
-                    LowerRight: new SysPoint(0, 0)
+                    LowerRight: new SysPoint(0, 0),
+                    Width: 0,
+                    Height: 0
                 );
             }
 
@@ -62,10 +74,15 @@ namespace WinCad
             var maxY = (int)allPoints.Max(p => p.Y);
             var minY = (int)allPoints.Min(p => p.Y);
 
+            var upperLeft = new SysPoint(minX, minY);
+            var lowerRight = new SysPoint(maxX, maxY);
+
             return
             (
-                UpperLeft:  new SysPoint(minX, minY),
-                LowerRight: new SysPoint(maxX, maxY)
+                UpperLeft: upperLeft,
+                LowerRight: lowerRight,
+                Width: lowerRight.X - upperLeft.X,
+                Height: lowerRight.Y - upperLeft.Y
             );
         }
 
@@ -88,6 +105,7 @@ namespace WinCad
     public class ZoomBox
     {
         public double ZoomFactor { get; set; }
-        public SysPoint Offset { get; set; } = new SysPoint();
+        public SysPoint PanningOffset { get; set; } = new SysPoint();
+        public SysPoint ZoomOffset { get; set; } = new SysPoint();
     }
 }

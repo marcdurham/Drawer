@@ -194,8 +194,8 @@ namespace WinCad
             //int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
 
             session.PanningOffset = new SysPoint(
-                x: (int)((session.PanningOffset.X) * ZoomIncrement),
-                y: (int)((session.PanningOffset.Y) * ZoomIncrement));
+                x: (int)(session.PanningOffset.X * ZoomIncrement),
+                y: (int)(session.PanningOffset.Y * ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
@@ -223,11 +223,15 @@ namespace WinCad
             int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
             int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
 
+            var imageCenter = new SysPoint(
+                x: (int)-((view.PictureSize.Width * zoomFactor)
+                    - view.PictureSize.Width) / 2,
+                y: (int)-((view.PictureSize.Height * zoomFactor)
+                    - view.PictureSize.Height) / 2);
+
             return new SysPoint(
-                x: cursorXFromCenter + ((int)-((view.PictureSize.Width * zoomFactor)
-                    - view.PictureSize.Width) / 2),
-                y: cursorYFromCenter + ((int)-((view.PictureSize.Height * zoomFactor)
-                    - view.PictureSize.Height) / 2));
+                x: cursorXFromCenter + imageCenter.X,
+                y: cursorYFromCenter + imageCenter.Y);
         }
 
         internal void ZoomExtents()

@@ -113,7 +113,7 @@ namespace WinCad.UnitTests
               new SysSize(width, height),
               canvas);
 
-            Assert.Equal(offset, actual.Offset);
+            Assert.Equal(offset, actual.PanningOffset);
             Assert.Equal(factor, actual.ZoomFactor);
         }
     }

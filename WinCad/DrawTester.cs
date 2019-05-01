@@ -137,11 +137,15 @@ namespace WinCad
 
         void mainPicture_MouseMove(object sender, MouseEventArgs e)
         {
+            ShowCursorAndInfo(e.Location);
+
             controller.HoverAt(engine.PointFrom(e.Location));
         }
 
         void mainPicture_MouseWheel(object sender, MouseEventArgs e)
         {
+            ShowCursorAndInfo(e.Location);
+
             if (e.Delta > 0)
             {
                 controller.ZoomIn(e.Location);
@@ -150,6 +154,26 @@ namespace WinCad
             {
                 controller.ZoomOut(e.Location);
             }
+        }
+
+        private void ShowCursorAndInfo(System.Drawing.Point cursor)
+        {
+            //var canvasCursor = engine.PointFrom(e.Location);
+            var canvasCursor = new Point(
+             x: (cursor.X
+                    - controller.session.PanningOffset.X
+                    - controller.session.ZoomOffset.X)
+                    / controller.session.ZoomFactor,
+             y: (cursor.Y
+                 - controller.session.PanningOffset.Y
+                 - controller.session.ZoomOffset.Y)
+                 / controller.session.ZoomFactor);
+
+            SecondStatus = $"Cursor: {cursor.X}, {cursor.Y} "
+                + $"Canvas: {canvasCursor.X:F2}, {canvasCursor.Y:F2} "
+                + $"ZoomFactor: {controller.session.ZoomFactor:F2} "
+                + $"PanOffset: {controller.session.PanningOffset.X}, {controller.session.PanningOffset.Y} "
+                + $"ZoomOffset: {controller.session.ZoomOffset.X}, {controller.session.ZoomOffset.Y}";
         }
 
         void orthoButton_Click(object sender, EventArgs e)

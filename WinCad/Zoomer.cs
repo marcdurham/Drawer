@@ -37,13 +37,13 @@ namespace WinCad
                 x: -(int)(zoomFactor * extents.UpperLeft.X),
                 y: -(int)(zoomFactor * extents.UpperLeft.Y));
 
-            var panningOffset = new SysPoint(
-                x: offset.X,
-                y: offset.Y);
+            var zoomOffset = ZoomOffset(
+                zoomFactor,
+                size);
 
-            var zoomOffset = new SysPoint(
-                x: 0,
-                y: 0);
+            var panningOffset = new SysPoint(
+                x: offset.X-zoomOffset.X,
+                y: offset.Y-zoomOffset.Y);
 
             return new ZoomBox
             {
@@ -51,6 +51,16 @@ namespace WinCad
                 PanningOffset = panningOffset,
                 ZoomOffset = zoomOffset
             };
+        }
+
+        SysPoint ZoomOffset(double zoomFactor, System.Drawing.Size size)
+        {
+            var w = ((double)size.Width / 2)
+                - ((double)size.Width * zoomFactor / 2);
+            var h = ((double)size.Height / 2)
+                - ((double)size.Height * zoomFactor / 2);
+
+            return new SysPoint((int)w, (int)h);
         }
 
         static (SysPoint UpperLeft, SysPoint LowerRight, int Width, int Height) 

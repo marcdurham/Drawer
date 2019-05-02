@@ -194,9 +194,7 @@ namespace WinCad
 
             if (offScreen)
             {
-                cursor = new SysPoint(
-                    x: view.PictureSize.Width / 2,
-                    y: view.PictureSize.Height / 2);
+                cursor = CenterPoint();
             }
 
             session.PanningOffset = new SysPoint(
@@ -207,6 +205,13 @@ namespace WinCad
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
+        }
+
+        private SysPoint CenterPoint()
+        {
+            return new SysPoint(
+                x: view.PictureSize.Width / 2,
+                y: view.PictureSize.Height / 2);
         }
 
         internal void ZoomOut(SysPoint cursor, bool offScreen)

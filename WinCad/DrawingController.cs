@@ -186,47 +186,33 @@ namespace WinCad
             view.Status = Properties.Resources.PanningStatus;
         }
 
-        internal void ZoomIn(SysPoint cursor)
+        internal void ZoomIn(SysPoint cursor, bool offScreen)
         {
             session.ZoomFactor *= ZoomIncrement;
-
-            ////session.ZoomOffset = ZoomOffset(session.ZoomFactor, cursor);
-
-            //int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
-            //int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
 
             session.ZoomOffset = ZoomOffset(session.ZoomFactor, view.PictureSize);
 
             session.PanningOffset = new SysPoint(
-               x: (int)(session.PanningOffset.X * ZoomIncrement),
-               y: (int)(session.PanningOffset.Y * ZoomIncrement));
-
-            //session.PanningOffset = new SysPoint(
-            // x: (int)w,
-            // y: (int)h);
+               x: (int)(session.PanningOffset.X * ZoomIncrement) + (view.PictureSize.Width / 2 - cursor.X),
+               y: (int)(session.PanningOffset.Y * ZoomIncrement) + (view.PictureSize.Height / 2 - cursor.Y));
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
         }
 
-        internal void ZoomOut(SysPoint cursor)
+        internal void ZoomOut(SysPoint cursor, bool offScreen)
         {
             session.ZoomFactor /= ZoomIncrement;
-
-            ////session.ZoomOffset = ZoomOffset(session.ZoomFactor, cursor);
-
-            //int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
-            //int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
 
             session.ZoomOffset = ZoomOffset(session.ZoomFactor, view.PictureSize);
 
             session.PanningOffset = new SysPoint(
+                x: session.PanningOffset.X - (view.PictureSize.Width / 2 - cursor.X),
+                y: session.PanningOffset.Y - (view.PictureSize.Height / 2 - cursor.Y));
+
+            session.PanningOffset = new SysPoint(
                 x: (int)(session.PanningOffset.X / ZoomIncrement),
                 y: (int)(session.PanningOffset.Y / ZoomIncrement));
-
-            //session.PanningOffset = new SysPoint(
-            //   x: (int)w,
-            //   y: (int)h);
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
@@ -242,35 +228,6 @@ namespace WinCad
             return new SysPoint((int)w, (int)h);
         }
 
-        private SysPoint ZoomOffset(double zoomFactor, SysPoint cursor)
-        {
-            //int cursorXFromCenter = cursor.X - view.PictureSize.Width / 2;
-            //int cursorYFromCenter = cursor.Y - view.PictureSize.Height / 2;
-
-            //var imageCenter = new SysPoint(
-            //    x: (int)-((view.PictureSize.Width * zoomFactor)
-            //        - view.PictureSize.Width) / 2,
-            //    y: (int)-((view.PictureSize.Height * zoomFactor)
-            //        - view.PictureSize.Height) / 2);
-
-            //return new SysPoint(
-            //    x: cursorXFromCenter + imageCenter.X,
-            //    y: cursorYFromCenter + imageCenter.Y);
-
-            //var canvasCursor = engine.PointFrom(cursor);
-            var canvasCursor = new Point(
-                x: (cursor.X - session.PanningOffset.X - session.ZoomOffset.X) / zoomFactor,
-                y: (cursor.Y - session.PanningOffset.Y - session.ZoomOffset.Y) / zoomFactor);
-
-            var ax = cursor.X - canvasCursor.X;
-            var ay = cursor.Y - canvasCursor.Y;
-            System.Diagnostics.Debug.WriteLine($"Cursor: {cursor.X}, {cursor.Y}"
-                + $" Canvas Cursor: {canvasCursor.X}, {canvasCursor.Y}"
-                + $" ZoomFactor: {zoomFactor} ZoomOffset: {ax}, {ay}");
-
-            return new SysPoint((int)ax, (int)ay);
-        }
-
         internal void ZoomExtents()
         {
             var zoomBox = zoomer.ZoomExtents(
@@ -280,13 +237,6 @@ namespace WinCad
             session.ZoomFactor = zoomBox.ZoomFactor;
             session.PanningOffset = zoomBox.PanningOffset;
             session.ZoomOffset = zoomBox.ZoomOffset;
-
-            var w = ((double)view.PictureSize.Width / 2)
-              - ((double)view.PictureSize.Width * session.ZoomFactor / 2);
-            var h = ((double)view.PictureSize.Height / 2)
-                - ((double)view.PictureSize.Height * session.ZoomFactor / 2);
-
-            //session.ZoomOffset = new SysPoint(); // (int)w/4, (int)h/4);
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();

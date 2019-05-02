@@ -192,9 +192,18 @@ namespace WinCad
 
             session.ZoomOffset = ZoomOffset(session.ZoomFactor, view.PictureSize);
 
+            if (offScreen)
+            {
+                cursor = new SysPoint(
+                    x: view.PictureSize.Width / 2,
+                    y: view.PictureSize.Height / 2);
+            }
+
             session.PanningOffset = new SysPoint(
-               x: (int)(session.PanningOffset.X * ZoomIncrement) + (view.PictureSize.Width / 2 - cursor.X),
-               y: (int)(session.PanningOffset.Y * ZoomIncrement) + (view.PictureSize.Height / 2 - cursor.Y));
+                x: (int)(session.PanningOffset.X * ZoomIncrement) 
+                    + (view.PictureSize.Width / 2 - cursor.X),
+                y: (int)(session.PanningOffset.Y * ZoomIncrement) 
+                    + (view.PictureSize.Height / 2 - cursor.Y));
 
             view.Status = Properties.Resources.ZoomingInStatus;
             view.RenderLayers();
@@ -206,13 +215,20 @@ namespace WinCad
 
             session.ZoomOffset = ZoomOffset(session.ZoomFactor, view.PictureSize);
 
-            session.PanningOffset = new SysPoint(
-                x: session.PanningOffset.X - (view.PictureSize.Width / 2 - cursor.X),
-                y: session.PanningOffset.Y - (view.PictureSize.Height / 2 - cursor.Y));
+            if (offScreen)
+            {
+                cursor = new SysPoint(
+                    x: view.PictureSize.Width / 2,
+                    y: view.PictureSize.Height / 2);
+            }
 
             session.PanningOffset = new SysPoint(
-                x: (int)(session.PanningOffset.X / ZoomIncrement),
-                y: (int)(session.PanningOffset.Y / ZoomIncrement));
+                x: (int)((session.PanningOffset.X 
+                    - (view.PictureSize.Width / 2 - cursor.X)) 
+                    / ZoomIncrement),
+                y: (int)((session.PanningOffset.Y 
+                    - (view.PictureSize.Height / 2 - cursor.Y)) 
+                    / ZoomIncrement));
 
             view.Status = Properties.Resources.ZoomingOutStatus;
             view.RenderLayers();
@@ -222,6 +238,7 @@ namespace WinCad
         {
             var w = ((double)size.Width / 2)
                 - ((double)size.Width * zoomFactor / 2);
+
             var h = ((double)size.Height / 2)
                 - ((double)size.Height * zoomFactor / 2);
 
@@ -248,7 +265,7 @@ namespace WinCad
             view.Status = "Inserting block: Click insertion point:";
         }
 
-        internal void MouseDownAt(System.Drawing.Point point, bool isMiddleButton)
+        internal void MouseDownAt(SysPoint point, bool isMiddleButton)
         {
             if (session.Mode == DrawModes.Panning || isMiddleButton)
             {
@@ -257,7 +274,7 @@ namespace WinCad
             }
         }
 
-        internal void MouseUpAt(System.Drawing.Point point, bool isMiddleButton)
+        internal void MouseUpAt(SysPoint point, bool isMiddleButton)
         {
             if (session.Mode == DrawModes.Panning || isMiddleButton)
             {
@@ -266,9 +283,9 @@ namespace WinCad
                 if (!session.StartPanningFrom.IsEmpty
                     && !session.EndPanningAt.IsEmpty)
                 {
-                    System.Drawing.Point started = session.StartPanningFrom;
-                    System.Drawing.Point ended = session.EndPanningAt;
-                    session.PanningOffset = new System.Drawing.Point(
+                    SysPoint started = session.StartPanningFrom;
+                    SysPoint ended = session.EndPanningAt;
+                    session.PanningOffset = new SysPoint(
                         x: session.PanningOffset.X + ended.X - started.X,
                         y: session.PanningOffset.Y + ended.Y - started.Y);
                 }

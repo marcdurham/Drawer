@@ -274,13 +274,17 @@ namespace WinCad
             saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(
                 controller.session.FileName);
 
-            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(
-                controller.session.FileName);
+            if (!string.IsNullOrWhiteSpace(controller.session.FileName))
+            {
+                saveFileDialog1.InitialDirectory = Path.GetDirectoryName(
+                    controller.session.FileName);
+            }
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 controller.SaveAs(saveFileDialog1.FileName);
             }
+
         }
     }
 }

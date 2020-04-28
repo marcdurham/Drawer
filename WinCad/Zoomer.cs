@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SysSize = System.Drawing.Size;
-using SysPoint = System.Drawing.Point;
 
 namespace WinCad
 {
@@ -15,11 +13,11 @@ namespace WinCad
             this.padding = padding;
         }
 
-        public ZoomBox ZoomExtents(SysSize size, Canvas canvas)
+        public ZoomBox ZoomExtents(Size size, Canvas canvas)
         {
             var extents = ExtentsFrom(canvas);
             
-            var paddedSize = new SysSize(
+            var paddedSize = new Size(
                 width: size.Width - padding,
                 height: size.Height - padding);
 
@@ -33,7 +31,7 @@ namespace WinCad
 
             double zoomFactor = Math.Min(xRatio, yRatio);
 
-            var offset = new SysPoint(
+            var offset = new Pixel(
                 x: -(int)(zoomFactor * extents.UpperLeft.X),
                 y: -(int)(zoomFactor * extents.UpperLeft.Y));
 
@@ -41,7 +39,7 @@ namespace WinCad
                 zoomFactor,
                 size);
 
-            var panningOffset = new SysPoint(
+            var panningOffset = new Offset(
                 x: offset.X-zoomOffset.X,
                 y: offset.Y-zoomOffset.Y);
 
@@ -53,17 +51,17 @@ namespace WinCad
             };
         }
 
-        SysPoint ZoomOffset(double zoomFactor, System.Drawing.Size size)
+        Offset ZoomOffset(double zoomFactor, System.Drawing.Size size)
         {
             var w = ((double)size.Width / 2)
                 - ((double)size.Width * zoomFactor / 2);
             var h = ((double)size.Height / 2)
                 - ((double)size.Height * zoomFactor / 2);
 
-            return new SysPoint((int)w, (int)h);
+            return new Offset((int)w, (int)h);
         }
 
-        static (SysPoint UpperLeft, SysPoint LowerRight, int Width, int Height) 
+        static (Pixel UpperLeft, Pixel LowerRight, int Width, int Height) 
             ExtentsFrom(Canvas canvas)
         {
             List<Point> allPoints = AllPointsFrom(canvas);
@@ -72,8 +70,8 @@ namespace WinCad
             {
                 return  
                 (
-                    UpperLeft: new SysPoint(0, 0),
-                    LowerRight: new SysPoint(0, 0),
+                    UpperLeft: new Pixel(0, 0),
+                    LowerRight: new Pixel(0, 0),
                     Width: 0,
                     Height: 0
                 );
@@ -84,8 +82,8 @@ namespace WinCad
             var maxY = (int)allPoints.Max(p => p.Y);
             var minY = (int)allPoints.Min(p => p.Y);
 
-            var upperLeft = new SysPoint(minX, minY);
-            var lowerRight = new SysPoint(maxX, maxY);
+            var upperLeft = new Pixel(minX, minY);
+            var lowerRight = new Pixel(maxX, maxY);
 
             return
             (

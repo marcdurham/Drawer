@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using SysPoint = System.Drawing.Point;
-using SysSize = System.Drawing.Size;
+//using SysPoint = System.Drawing.Point;
+//using SysSize = System.Drawing.Size;
 
 namespace WinCad
 {
@@ -45,9 +45,9 @@ namespace WinCad
         /// <summary>
         /// SysPoint is an alias for System.Drawing.Point
         /// </summary>
-        public SysPoint SysPointFrom(Point point)
+        public Pixel PixelFrom(Point point)
         {
-            return new SysPoint(
+            return new Pixel(
                 x: session.PanningOffset.X 
                     + session.ZoomOffset.X
                     + (int)(point.X * session.ZoomFactor), 
@@ -56,27 +56,27 @@ namespace WinCad
                     + (int)(point.Y * session.ZoomFactor));
         }
 
-        public Point PointFrom(SysPoint point)
+        public Point PointFrom(Pixel pixel)
         {
             return new Point(
-                x: (point.X - session.PanningOffset.X - session.ZoomOffset.X) 
+                x: (pixel.X - session.PanningOffset.X - session.ZoomOffset.X) 
                     / session.ZoomFactor, 
-                y: (point.Y - session.PanningOffset.Y - session.ZoomOffset.Y) 
+                y: (pixel.Y - session.PanningOffset.Y - session.ZoomOffset.Y) 
                     / session.ZoomFactor);
         }
 
-        public SysSize SysSizeFrom(Size size)
+        public Size PixelSizeFrom(Size size)
         {
-            return new SysSize(
+            return new Size( 
                 width: (int)(size.Width * session.ZoomFactor),
                 height: (int)(size.Height * session.ZoomFactor));
         }
 
-        public Size SizeFrom(SysSize size)
+        public Size SizeFrom(Size size)
         {
             return new Size(
-                width: size.Width / session.ZoomFactor, 
-                height: size.Height / session.ZoomFactor);
+                width: (int)(size.Width / session.ZoomFactor), 
+                height: (int)(size.Height / session.ZoomFactor));
         }
 
         static Image FromFile(string file)
@@ -114,12 +114,12 @@ namespace WinCad
 
         void RenderGrip(Graphics graphics, Grip grip)
         {
-            var corner = SysPointFrom(
+            var corner = PixelFrom(
                 new Point(
                     x: grip.Center.X,
                     y: grip.Center.Y));
 
-            var sysCorner = new SysPoint(
+            var sysCorner = new Pixel(
                 x: corner.X - grip.Radius,
                 y: corner.Y - grip.Radius);
 
@@ -127,7 +127,7 @@ namespace WinCad
                 new Pen(grip.Color),
                 new Rectangle(
                     location: sysCorner,
-                    size: new SysSize(grip.Radius * 2, grip.Radius * 2)));
+                    size: new Size(grip.Radius * 2, grip.Radius * 2)));
         }
 
         void RenderPolyline(Graphics graphics, Polyline pline)
@@ -136,16 +136,16 @@ namespace WinCad
             {
                 graphics.DrawLine(
                     new Pen(pline.Color) { Width = pline.Width },
-                    SysPointFrom(pline.Vertices[i - 1]),
-                    SysPointFrom(pline.Vertices[i]));
+                    PixelFrom(pline.Vertices[i - 1]),
+                    PixelFrom(pline.Vertices[i]));
             }
         }
 
         Rectangle RectangleFrom(Box box)
         {
             return new Rectangle(
-                location: SysPointFrom(box.FirstCorner), 
-                size: SysSizeFrom(box.Size));
+                location: PixelFrom(box.FirstCorner), 
+                size: PixelSizeFrom(box.Size));
         }
     }
 }

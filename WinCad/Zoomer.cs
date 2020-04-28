@@ -115,7 +115,7 @@ namespace WinCad
     public class ZoomBox
     {
         public double ZoomFactor { get; set; }
-        public SysPoint PanningOffset { get; set; } = new SysPoint();
-        public SysPoint ZoomOffset { get; set; } = new SysPoint();
+        public Offset PanningOffset { get; set; } = new Offset();
+        public Offset ZoomOffset { get; set; } = new Offset();
     }
 }

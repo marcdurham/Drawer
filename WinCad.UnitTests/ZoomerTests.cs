@@ -1,6 +1,4 @@
 ﻿using Xunit;
-using SysSize = System.Drawing.Size;
-using SysPoint = System.Drawing.Point;
 
 namespace WinCad.UnitTests
 {
@@ -12,7 +10,7 @@ namespace WinCad.UnitTests
             var zoomer = new Zoomer(padding: 0);
 
             var actual = zoomer.ZoomExtents(
-                new SysSize(0,0), 
+                new Size(0,0), 
                 new Canvas());
 
             Assert.Equal(0.0, actual.ZoomFactor);
@@ -77,7 +75,7 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size100_OffCenter_FactorHalf()
         {
             AssertFactor(
-                offset: new SysPoint(-50, -50),
+                offset: new Offset(-50, -50),
                 factor: 0.5,
                 width: 100,
                 height: 100,
@@ -91,11 +89,11 @@ namespace WinCad.UnitTests
             int height,
             params Point[] points)
         {
-            AssertFactor(new SysPoint(), expectedFactor, width, height, points);
+            AssertFactor(new Offset(), expectedFactor, width, height, points);
         }
 
         void AssertFactor(
-            SysPoint offset,
+            Offset offset,
             double factor, 
             int width, 
             int height, 
@@ -110,7 +108,7 @@ namespace WinCad.UnitTests
             canvas.CurrentLayer.Polylines.Add(pline);
 
             var actual = zoomer.ZoomExtents(
-              new SysSize(width, height),
+              new Size(width, height),
               canvas);
 
             Assert.Equal(offset, actual.PanningOffset);

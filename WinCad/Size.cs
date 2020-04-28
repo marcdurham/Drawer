@@ -40,5 +40,10 @@ namespace WinCad
         {
             return !(left == right);
         }
+
+        public override string ToString()
+        {
+            return $"{Width},{Height}";
+        }
     }
 }

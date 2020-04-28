@@ -22,7 +22,7 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size200x100_Factor1()
         {
             AssertFactor(
-                factor: 1.0,
+                expectedFactor: 1.0,
                 width: 200,
                 height: 100,
                 new Point(0, 0),
@@ -33,7 +33,7 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size200x100_SmallestFactorWidth()
         {
             AssertFactor(
-                factor: 0.5,
+                expectedFactor: 0.5,
                 width: 100,
                 height: 100,
                 new Point(0, 0),
@@ -44,7 +44,7 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size200x100_SmallestFactorHeight()
         {
             AssertFactor(
-                factor: 0.5,
+                expectedFactor: 0.5,
                 width: 100,
                 height: 100,
                 new Point(0, 0),
@@ -55,7 +55,7 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size100_FactorHalf()
         {
             AssertFactor(
-                factor: 0.5,
+                expectedFactor: 0.5,
                 width: 100,
                 height: 100,
                 new Point(0, 0),
@@ -66,7 +66,7 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size100_FactorDouble()
         {
             AssertFactor(
-                factor: 2.0, 
+                expectedFactor: 2.0, 
                 width: 100, 
                 height: 100, 
                 new Point(0, 0), 
@@ -86,12 +86,12 @@ namespace WinCad.UnitTests
         }
 
         void AssertFactor(
-            double factor,
+            double expectedFactor,
             int width,
             int height,
             params Point[] points)
         {
-            AssertFactor(new SysPoint(), factor, width, height, points);
+            AssertFactor(new SysPoint(), expectedFactor, width, height, points);
         }
 
         void AssertFactor(

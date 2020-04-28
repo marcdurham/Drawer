@@ -75,8 +75,8 @@ namespace WinCad.UnitTests
         public void ZoomExtents_Size100_OffCenter_FactorHalf()
         {
             AssertFactor(
-                offset: new Offset(-50, -50),
-                factor: 0.5,
+                expectedOffset: new Offset(-50, -50),
+                expectedFactor: 0.5,
                 width: 100,
                 height: 100,
                 new Point(-100, -100),
@@ -93,8 +93,8 @@ namespace WinCad.UnitTests
         }
 
         void AssertFactor(
-            Offset offset,
-            double factor, 
+            Offset expectedOffset,
+            double expectedFactor, 
             int width, 
             int height, 
             params Point[] points)
@@ -111,8 +111,8 @@ namespace WinCad.UnitTests
               new Size(width, height),
               canvas);
 
-            Assert.Equal(offset, actual.PanningOffset);
-            Assert.Equal(factor, actual.ZoomFactor);
+            Assert.Equal(expectedOffset, actual.PanningOffset);
+            Assert.Equal(expectedFactor, actual.ZoomFactor);
         }
     }
 }

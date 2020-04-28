@@ -74,7 +74,7 @@ namespace WinCad.UnitTests
         [Fact]
         public void ZoomExtents_Size100_OffCenter_FactorHalf()
         {
-            AssertFactor(
+            AssertOffsetFactor(
                 expectedOffset: new Offset(-50, -50),
                 expectedFactor: 0.5,
                 width: 100,
@@ -83,17 +83,30 @@ namespace WinCad.UnitTests
                 new Point(100, 100));
         }
 
-        void AssertFactor(
-            double expectedFactor,
-            int width,
-            int height,
-            params Point[] points)
+        void AssertOffsetFactor(
+          Offset expectedOffset,
+          double expectedFactor,
+          int width,
+          int height,
+          params Point[] points)
         {
-            AssertFactor(new Offset(), expectedFactor, width, height, points);
+            var zoomer = new Zoomer(padding: 0);
+            var canvas = new Canvas();
+            var pline = new Polyline();
+            foreach (var point in points)
+                pline.Vertices.Add(point);
+
+            canvas.CurrentLayer.Polylines.Add(pline);
+
+            var actual = zoomer.ZoomExtents(
+              new Size(width, height),
+              canvas);
+
+            Assert.Equal(expectedOffset, actual.PanningOffset);
+            Assert.Equal(expectedFactor, actual.ZoomFactor);
         }
 
         void AssertFactor(
-            Offset expectedOffset,
             double expectedFactor, 
             int width, 
             int height, 
@@ -111,8 +124,28 @@ namespace WinCad.UnitTests
               new Size(width, height),
               canvas);
 
-            Assert.Equal(expectedOffset, actual.PanningOffset);
             Assert.Equal(expectedFactor, actual.ZoomFactor);
+        }
+
+        void AssertOffset(
+            Offset expectedOffset,
+            int width,
+            int height,
+            params Point[] points)
+        {
+            var zoomer = new Zoomer(padding: 0);
+            var canvas = new Canvas();
+            var pline = new Polyline();
+            foreach (var point in points)
+                pline.Vertices.Add(point);
+
+            canvas.CurrentLayer.Polylines.Add(pline);
+
+            var actual = zoomer.ZoomExtents(
+              new Size(width, height),
+              canvas);
+
+            Assert.Equal(expectedOffset, actual.PanningOffset);
         }
     }
 }

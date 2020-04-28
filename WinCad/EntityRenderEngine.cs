@@ -42,9 +42,6 @@ namespace WinCad
             }
         }
 
-        /// <summary>
-        /// SysPoint is an alias for System.Drawing.Point
-        /// </summary>
         public Pixel PixelFrom(Point point)
         {
             return new Pixel(

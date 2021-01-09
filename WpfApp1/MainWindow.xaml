@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Content="+" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="28" Click="Button_Click_1"/>
-        <Button Content="-" Margin="43,10,730,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <Viewport3D Name="myViewport3D"/>
+        <Button Content="+" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="28" Click="zoomIn_Click"/>
+        <Button Content="-" Margin="43,10,730,0" VerticalAlignment="Top" Click="zoomOut_Click"/>
+        <Viewport3D Name="myViewport3D" MouseMove="myViewport3D_MouseMove"/>
     </Grid>
 </Window>

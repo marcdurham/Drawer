@@ -125,6 +125,7 @@ namespace WpfApp1
             var myRotateTransform3D = new RotateTransform3D();
             var myAxisAngleRotation3d = new AxisAngleRotation3D();
             myAxisAngleRotation3d.Axis = new Vector3D(0, 3, 0);
+            rotation = 40;
             myAxisAngleRotation3d.Angle = 40;
             myRotateTransform3D.Rotation = myAxisAngleRotation3d;
             myGeometryModel.Transform = myRotateTransform3D;
@@ -147,7 +148,7 @@ namespace WpfApp1
             myViewport3D.MouseDown += HitTest;
         }
 
-        public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
+        public void HitTest(object sender, MouseButtonEventArgs args)
         {
             Point mouseposition = args.GetPosition(myViewport3D);
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
@@ -159,7 +160,19 @@ namespace WpfApp1
             VisualTreeHelper.HitTest(myViewport3D, null, HTResult, pointparams);
         }
 
-        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
+        private void myViewport3D_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point mouseposition = e.GetPosition(myViewport3D);
+            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
+            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+
+            //test for a result in the Viewport3D
+            VisualTreeHelper.HitTest(myViewport3D, null, MouseMoveResult, pointparams);
+        }
+
+        public HitTestResultBehavior HTResult(HitTestResult rawresult)
         {
             MessageBox.Show(rawresult.ToString());
             var rayResult = rawresult as RayHitTestResult;
@@ -180,15 +193,48 @@ namespace WpfApp1
             return HitTestResultBehavior.Continue;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private int rotation = 0;
+        public HitTestResultBehavior MouseMoveResult(HitTestResult rawresult)
+        {
+            //MessageBox.Show("MouseMove:" + rawresult.ToString());
+            var rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
+            {
+                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+
+                if (rayMeshResult != null)
+                {
+                    var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+
+                    // Apply a transform to the object. In this sample, a rotation transform is applied,
+                    // rendering the 3D object rotated.
+                    var myRotateTransform3D = new RotateTransform3D();
+                    var myAxisAngleRotation3d = new AxisAngleRotation3D();
+                    myAxisAngleRotation3d.Axis = new Vector3D(0, 3, 0);
+                    myAxisAngleRotation3d.Angle = rotation++;
+                    myRotateTransform3D.Rotation = myAxisAngleRotation3d;
+                    hitgeo.Transform = myRotateTransform3D;
+
+                   
+                    // UpdateResultInfo(rayMeshResult);
+                    // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
+                }
+            }
+
+            return HitTestResultBehavior.Continue;
+        }
+
+        private void zoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z + 1);
+        }
+
+        private void zoomIn_Click(object sender, RoutedEventArgs e)
         {
             myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z - 1);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z + 1);
-        }
 
         //// Add a cylinder.
         //private void AddCylinder(

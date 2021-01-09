@@ -126,7 +126,7 @@ namespace WpfApp1
             var myAxisAngleRotation3d = new AxisAngleRotation3D();
             myAxisAngleRotation3d.Axis = new Vector3D(0, 3, 0);
             rotation = 40;
-            myAxisAngleRotation3d.Angle = 40;
+            //myAxisAngleRotation3d.Angle = 40;
             myRotateTransform3D.Rotation = myAxisAngleRotation3d;
             myGeometryModel.Transform = myRotateTransform3D;
 
@@ -163,6 +163,7 @@ namespace WpfApp1
         private void myViewport3D_MouseMove(object sender, MouseEventArgs e)
         {
             Point mouseposition = e.GetPosition(myViewport3D);
+            statusButton.Content = $"M:{mouseposition.X},{mouseposition.Y}";
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
             Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
             PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
@@ -206,17 +207,9 @@ namespace WpfApp1
                 if (rayMeshResult != null)
                 {
                     var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    statusButton2.Content = $"3D:{rayMeshResult.PointHit.X:F4},{rayMeshResult.PointHit.Y:F4},{rayMeshResult.PointHit.Z:F4}";
 
-                    // Apply a transform to the object. In this sample, a rotation transform is applied,
-                    // rendering the 3D object rotated.
-                    var myRotateTransform3D = new RotateTransform3D();
-                    var myAxisAngleRotation3d = new AxisAngleRotation3D();
-                    myAxisAngleRotation3d.Axis = new Vector3D(0, 3, 0);
-                    myAxisAngleRotation3d.Angle = rotation++;
-                    myRotateTransform3D.Rotation = myAxisAngleRotation3d;
-                    hitgeo.Transform = myRotateTransform3D;
 
-                   
                     // UpdateResultInfo(rayMeshResult);
                     // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }

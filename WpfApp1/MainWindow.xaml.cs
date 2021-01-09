@@ -21,6 +21,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        Stack<Point3D> clicks = new Stack<Point3D>();
         //Viewport3D myViewport3D;
         PerspectiveCamera myPCamera = new PerspectiveCamera();
 
@@ -117,7 +118,8 @@ namespace WpfApp1
             myHorizontalGradient.GradientStops.Add(new GradientStop(Colors.LimeGreen, 1.0));
 
             // Define material and apply to the mesh geometries.
-            var myMaterial = new DiffuseMaterial(myHorizontalGradient);
+            //var myMaterial = new DiffuseMaterial(myHorizontalGradient);
+            var myMaterial = new EmissiveMaterial(Brushes.Yellow);
             myGeometryModel.Material = myMaterial;
 
             // Apply a transform to the object. In this sample, a rotation transform is applied,
@@ -175,7 +177,7 @@ namespace WpfApp1
 
         public HitTestResultBehavior HTResult(HitTestResult rawresult)
         {
-            MessageBox.Show(rawresult.ToString());
+            //MessageBox.Show(rawresult.ToString());
             var rayResult = rawresult as RayHitTestResult;
             
             if (rayResult != null)
@@ -185,7 +187,8 @@ namespace WpfApp1
                 if (rayMeshResult != null)
                 {
                     var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-
+                    clicks.Push(rayMeshResult.PointHit);
+                    DrawThing(rayMeshResult.PointHit);
                    // UpdateResultInfo(rayMeshResult);
                    // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }
@@ -226,6 +229,153 @@ namespace WpfApp1
         private void zoomIn_Click(object sender, RoutedEventArgs e)
         {
             myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z - 1);
+        }
+
+
+        private void DrawThing(Point3D point)
+        {
+            var myModel3DGroup = new Model3DGroup();
+            var myGeometryModel = new GeometryModel3D();
+            var myModelVisual3D = new ModelVisual3D();
+
+            // The geometry specifes the shape of the 3D plane. In this sample, a flat sheet
+            // is created.
+            var myMeshGeometry3D = new MeshGeometry3D();
+
+            var myDirectionalLight = new DirectionalLight();
+            myDirectionalLight.Color = Colors.White;
+            myDirectionalLight.Direction = new Vector3D(-0.61, -0.5, -0.61);
+
+            myModel3DGroup.Children.Add(myDirectionalLight);
+
+
+            // Create a collection of normal vectors for the MeshGeometry3D.
+            var myNormalCollection = new Vector3DCollection();
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myMeshGeometry3D.Normals = myNormalCollection;
+
+            // Create a collection of vertex positions for the MeshGeometry3D.
+            var myPositionCollection = new Point3DCollection();
+            myPositionCollection.Add(point);
+            myPositionCollection.Add(new Point3D(0,0,0.5));
+            myPositionCollection.Add(new Point3D(0.1, 0.1, 0.5));
+            myMeshGeometry3D.Positions = myPositionCollection;
+
+            // Create a collection of texture coordinates for the MeshGeometry3D.
+            var myTextureCoordinatesCollection = new PointCollection();
+            myTextureCoordinatesCollection.Add(new Point(0, 0));
+            myTextureCoordinatesCollection.Add(new Point(3, 0));
+            myTextureCoordinatesCollection.Add(new Point(3, 3));
+
+            myMeshGeometry3D.TextureCoordinates = myTextureCoordinatesCollection;
+
+            // Create a collection of triangle indices for the MeshGeometry3D.
+            var myTriangleIndicesCollection = new Int32Collection();
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(2);
+            myMeshGeometry3D.TriangleIndices = myTriangleIndicesCollection;
+
+            // Apply the mesh to the geometry model.
+            myGeometryModel.Geometry = myMeshGeometry3D;
+
+            // The material specifies the material applied to the 3D object. In this sample a
+
+            // Define material and apply to the mesh geometries.
+            //var myMaterial = new DiffuseMaterial(myHorizontalGradient);
+            var myMaterial = new DiffuseMaterial(Brushes.Red);
+            myGeometryModel.Material = myMaterial;
+
+            // Add the geometry model to the model group.
+            myModel3DGroup.Children.Add(myGeometryModel);
+
+            // Add the group of models to the ModelVisual3d.
+            myModelVisual3D.Content = myModel3DGroup;
+
+
+            //
+            myViewport3D.Children.Add(myModelVisual3D);
+        }
+
+        private void goButton_Click(object sender, RoutedEventArgs e)
+        {
+            var myModel3DGroup = new Model3DGroup();
+            var myGeometryModel = new GeometryModel3D();
+            var myModelVisual3D = new ModelVisual3D();
+
+            // The geometry specifes the shape of the 3D plane. In this sample, a flat sheet
+            // is created.
+            var myMeshGeometry3D = new MeshGeometry3D();
+
+            var myDirectionalLight = new DirectionalLight();
+            myDirectionalLight.Color = Colors.White;
+            myDirectionalLight.Direction = new Vector3D(-0.61, -0.5, -0.61);
+
+            myModel3DGroup.Children.Add(myDirectionalLight);
+
+
+            // Create a collection of normal vectors for the MeshGeometry3D.
+            var myNormalCollection = new Vector3DCollection();
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myNormalCollection.Add(new Vector3D(0, 0, 1));
+            myMeshGeometry3D.Normals = myNormalCollection;
+
+            // Create a collection of vertex positions for the MeshGeometry3D.
+            var myPositionCollection = new Point3DCollection();
+            myPositionCollection.Add(new Point3D(-1.5, -1.6, 0.25));
+            myPositionCollection.Add(new Point3D(-1.6, -1.5, 0.25));
+            myPositionCollection.Add(new Point3D(1.5, 1.6, 0.75));
+
+            myPositionCollection.Add(new Point3D(1.5, 1.6, 0.75));
+            myPositionCollection.Add(new Point3D(1.6, 1.5, 0.75));
+            myPositionCollection.Add(new Point3D(-1.6, -1.5, 0.25));
+            myMeshGeometry3D.Positions = myPositionCollection;
+
+            // Create a collection of texture coordinates for the MeshGeometry3D.
+            var myTextureCoordinatesCollection = new PointCollection();
+            myTextureCoordinatesCollection.Add(new Point(0, 0));
+            myTextureCoordinatesCollection.Add(new Point(3, 0));
+            myTextureCoordinatesCollection.Add(new Point(3, 3));
+            myTextureCoordinatesCollection.Add(new Point(3, 3));
+            myTextureCoordinatesCollection.Add(new Point(0, 3));
+            myTextureCoordinatesCollection.Add(new Point(0, 0));
+            myMeshGeometry3D.TextureCoordinates = myTextureCoordinatesCollection;
+
+            // Create a collection of triangle indices for the MeshGeometry3D.
+            var myTriangleIndicesCollection = new Int32Collection();
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(2);
+            myTriangleIndicesCollection.Add(3);
+            myTriangleIndicesCollection.Add(4);
+            myTriangleIndicesCollection.Add(5);
+            myMeshGeometry3D.TriangleIndices = myTriangleIndicesCollection;
+
+            // Apply the mesh to the geometry model.
+            myGeometryModel.Geometry = myMeshGeometry3D;
+
+            // The material specifies the material applied to the 3D object. In this sample a
+
+            // Define material and apply to the mesh geometries.
+            //var myMaterial = new DiffuseMaterial(myHorizontalGradient);
+            var myMaterial = new DiffuseMaterial(Brushes.Red);
+            myGeometryModel.Material = myMaterial;
+
+          // Add the geometry model to the model group.
+            myModel3DGroup.Children.Add(myGeometryModel);
+
+            // Add the group of models to the ModelVisual3d.
+            myModelVisual3D.Content = myModel3DGroup;
+
+
+            //
+            myViewport3D.Children.Add(myModelVisual3D);
         }
 
 

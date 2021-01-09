@@ -248,34 +248,35 @@ namespace WpfApp1
 
             myModel3DGroup.Children.Add(myDirectionalLight);
 
-
-            // Create a collection of normal vectors for the MeshGeometry3D.
-            var myNormalCollection = new Vector3DCollection();
-            myNormalCollection.Add(new Vector3D(0, 0, 1));
-            myNormalCollection.Add(new Vector3D(0, 0, 1));
-            myNormalCollection.Add(new Vector3D(0, 0, 1));
-            myMeshGeometry3D.Normals = myNormalCollection;
-
             // Create a collection of vertex positions for the MeshGeometry3D.
             var myPositionCollection = new Point3DCollection();
-            myPositionCollection.Add(point);
-            myPositionCollection.Add(new Point3D(0,0,0.5));
-            myPositionCollection.Add(new Point3D(0.1, 0.1, 0.5));
+            var center = new Point3D(point.X, point.Y, 0.5);
+
+
+            myPositionCollection.Add(new Point3D(point.X, point.Y, -0.75));
+            myPositionCollection.Add(new Point3D(0.0, 0.0, -0.75));
+            myPositionCollection.Add(new Point3D(0.3, 0.0, -0.75));
+            myPositionCollection.Add(new Point3D(0.3, 0.0, -0.70));
             myMeshGeometry3D.Positions = myPositionCollection;
-
-            // Create a collection of texture coordinates for the MeshGeometry3D.
-            var myTextureCoordinatesCollection = new PointCollection();
-            myTextureCoordinatesCollection.Add(new Point(0, 0));
-            myTextureCoordinatesCollection.Add(new Point(3, 0));
-            myTextureCoordinatesCollection.Add(new Point(3, 3));
-
-            myMeshGeometry3D.TextureCoordinates = myTextureCoordinatesCollection;
 
             // Create a collection of triangle indices for the MeshGeometry3D.
             var myTriangleIndicesCollection = new Int32Collection();
             myTriangleIndicesCollection.Add(0);
             myTriangleIndicesCollection.Add(1);
             myTriangleIndicesCollection.Add(2);
+
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(3);
+
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(2);
+            myTriangleIndicesCollection.Add(3);
+
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(2);
+            myTriangleIndicesCollection.Add(3);
+
             myMeshGeometry3D.TriangleIndices = myTriangleIndicesCollection;
 
             // Apply the mesh to the geometry model.
@@ -376,6 +377,27 @@ namespace WpfApp1
 
             //
             myViewport3D.Children.Add(myModelVisual3D);
+        }
+
+        private void upButton_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(myPCamera.Position.X, myPCamera.Position.Y + 1, myPCamera.Position.Z);
+        }
+
+        private void downButton_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(myPCamera.Position.X, myPCamera.Position.Y - 1, myPCamera.Position.Z);
+        }
+
+        private void tiltUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.LookDirection = new Vector3D(myPCamera.LookDirection.X, myPCamera.LookDirection.Y + 0.05, myPCamera.LookDirection.Z);
+        }
+
+        private void tiltDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.LookDirection = new Vector3D(myPCamera.LookDirection.X, myPCamera.LookDirection.Y - 0.05, myPCamera.LookDirection.Z);
+            
         }
 
 

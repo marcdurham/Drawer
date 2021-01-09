@@ -17,5 +17,9 @@
             <Button Name="statusButton" Content="Ready" Width="100"/>
             <Button Name="statusButton2" Content="3D" Width="500"/>
         </StatusBar>
+        <Button Content="Up" HorizontalAlignment="Left" Margin="99,10,0,0" VerticalAlignment="Top" Width="31" Click="upButton_Click"/>
+        <Button Content="Down" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.582,-0.372" Click="downButton_Click"/>
+        <Button Content="TUp" HorizontalAlignment="Left" Margin="184,10,0,0" VerticalAlignment="Top" Click="tiltUpButton_Click"/>
+        <Button Content="TDown" HorizontalAlignment="Left" Margin="229,10,0,0" VerticalAlignment="Top" Click="tiltDownButton_Click"/>
     </Grid>
 </Window>

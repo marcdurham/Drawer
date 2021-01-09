@@ -21,20 +21,21 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        Viewport3D myViewport3D;
+        //Viewport3D myViewport3D;
+        PerspectiveCamera myPCamera = new PerspectiveCamera();
 
         public MainWindow()
         {
             InitializeComponent();
             // Declare scene objects.
-            myViewport3D = new Viewport3D();
+            ////myViewport3D = new Viewport3D();
             var myModel3DGroup = new Model3DGroup();
             var myGeometryModel = new GeometryModel3D();
             var myModelVisual3D = new ModelVisual3D();
             // Defines the camera used to view the 3D object. In order to view the 3D object,
             // the camera must be positioned and pointed such that the object is within view
             // of the camera.
-            var myPCamera = new PerspectiveCamera();
+            //var myPCamera = new PerspectiveCamera();
 
             // Specify where in the 3D scene the camera is.
             myPCamera.Position = new Point3D(0, 0, 2);
@@ -121,8 +122,8 @@ namespace WpfApp1
 
             // Apply a transform to the object. In this sample, a rotation transform is applied,
             // rendering the 3D object rotated.
-            RotateTransform3D myRotateTransform3D = new RotateTransform3D();
-            AxisAngleRotation3D myAxisAngleRotation3d = new AxisAngleRotation3D();
+            var myRotateTransform3D = new RotateTransform3D();
+            var myAxisAngleRotation3d = new AxisAngleRotation3D();
             myAxisAngleRotation3d.Axis = new Vector3D(0, 3, 0);
             myAxisAngleRotation3d.Angle = 40;
             myRotateTransform3D.Rotation = myAxisAngleRotation3d;
@@ -141,9 +142,9 @@ namespace WpfApp1
             myViewport3D.Children.Add(myModelVisual3D);
 
             // Apply the viewport to the page so it will be rendered.
-            this.Content = myViewport3D;
-
-            this.MouseDown += HitTest;
+            //this.Content = myViewport3D;
+            //this.MouseDown += HitTest;
+            myViewport3D.MouseDown += HitTest;
         }
 
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
@@ -161,15 +162,15 @@ namespace WpfApp1
         public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
         {
             MessageBox.Show(rawresult.ToString());
-            RayHitTestResult rayResult = rawresult as RayHitTestResult;
-
+            var rayResult = rawresult as RayHitTestResult;
+            
             if (rayResult != null)
             {
                 RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
 
                 if (rayMeshResult != null)
                 {
-                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
 
                    // UpdateResultInfo(rayMeshResult);
                    // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
@@ -177,6 +178,16 @@ namespace WpfApp1
             }
 
             return HitTestResultBehavior.Continue;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z - 1);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z + 1);
         }
 
         //// Add a cylinder.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +16,23 @@ using System.Windows.Shapes;
 
 namespace WpfApp2
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    public class Thing
+    {
+        public Thing(int id, DependencyObject obj)
+        {
+            Id = id;
+            Object = obj;
+        }
+
+        public int Id { get; private set; }
+        public string Name { get; set; }
+        public DependencyObject Object { get; private set; }
+    }
+
     public partial class MainWindow : Window
     {
+        List<Thing> Things = new List<Thing>();
+
         Polyline theLine;
         public MainWindow()
         {
@@ -27,6 +40,8 @@ namespace WpfApp2
             theLine = new Polyline();
             theLine.Points.Add(
                 new Point(0, 0));
+
+            Things.Add(new Thing(1, theLine));
             myCanvas.Children.Add(theLine);
         }
 
@@ -35,6 +50,7 @@ namespace WpfApp2
         {
             // Retrieve the coordinate of the mouse position.
             Point pt = e.GetPosition((UIElement)sender);
+            Debug.WriteLine($"Point clicked at {pt.X}, {pt.Y}");
 
             // Perform the hit test against a given portion of the visual object tree.
             HitTestResult result = VisualTreeHelper.HitTest(myCanvas, pt);
@@ -42,10 +58,30 @@ namespace WpfApp2
             if (result != null)
             {
                 // Perform action on hit visual object.
-
+                var line = result.VisualHit as Line;
+                
+                if (line != null)
+                {
+                    line.Stroke = Brushes.Red;
+                    Debug.WriteLine($"  Line was clicked");
+                    Debug.WriteLine($"  Searching {Things.Count} things...");
+                    foreach(var thing in Things)
+                    {
+                        if(ReferenceEquals(line, thing.Object))
+                        {
+                            Debug.WriteLine($"  --Found it Id: {thing.Id}");
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"  Not a line was clicked");
+                }
             }
             else
             {
+                Debug.WriteLine($"  The result was null");
                 theLine.Points.Add(pt);
             }
         }

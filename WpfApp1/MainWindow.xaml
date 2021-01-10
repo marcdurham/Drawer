@@ -18,6 +18,7 @@
             <Button Name="statusButton" Content="Ready" Width="300"/>
             <Button Name="statusButton2" Content="3D" Width="300"/>
             <Label Name="statusMouseMiddleDownPointLabel" Content="Label" Width="200"/>
+            <Label Name="panOffsetLabel" Content="Label" Width="200"/>
         </StatusBar>
         <Button Content="Up" HorizontalAlignment="Left" Margin="99,10,0,0" VerticalAlignment="Top" Width="31" Click="upButton_Click"/>
         <Button Content="Down" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.582,-0.372" Click="downButton_Click"/>

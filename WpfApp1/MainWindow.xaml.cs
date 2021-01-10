@@ -163,6 +163,29 @@ namespace WpfApp1
             return HitTestResultBehavior.Continue;
         }
 
+        public HitTestResultBehavior MiddleButtonHTResult(HitTestResult rawresult)
+        {
+            var rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
+            {
+                var rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+
+                if (rayMeshResult != null)
+                {
+                    //var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+
+                    if (DrawMode == DrawMode.Panning)
+                    {
+                        mouseMiddleDownPoint = rayMeshResult.PointHit;
+                        statusMouseMiddleDownPointLabel.Content = $"MMDP:{rayMeshResult.PointHit.X:F4},{rayMeshResult.PointHit.Y:F4}";
+                    }
+                }
+            }
+
+            return HitTestResultBehavior.Continue;
+        }
+
         void DrawPipeSegment(Point3D start, Point3D end, Brush brush)
         {
             var myModel3DGroup = new Model3DGroup();
@@ -183,7 +206,7 @@ namespace WpfApp1
             // Create a collection of vertex positions for the MeshGeometry3D.
             var myPositionCollection = new Point3DCollection();
 
-            double width = 0.05;
+            double width = 0.005;
             double halfWidth = width / 2;
             //myPositionCollection.Add(new Point3D(start.X, start.Y, 0.5));
 
@@ -305,6 +328,14 @@ namespace WpfApp1
                             hitgeo.BackMaterial = new DiffuseMaterial(Brushes.Blue);
 
                         }
+                    }
+
+                    if(DrawMode == DrawMode.Panning)
+                    {
+                        double xo = mouseMiddleDownPoint.X - rayResult.PointHit.X;
+                        double yo = mouseMiddleDownPoint.Y - rayResult.PointHit.Y;
+                        panOffsetLabel.Content = $"Offset:{xo:F3},{yo:F3}";
+                        myPCamera.Position = new Point3D(myPCamera.Position.X + xo, myPCamera.Position.Y + yo, myPCamera.Position.Z);
                     }
                     
 
@@ -612,9 +643,11 @@ namespace WpfApp1
             {
                 Point mouseposition = e.GetPosition(myViewport3D);
                 Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+                Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+                var pointparams = new PointHitTestParameters(mouseposition);
+                //var rayparams = new RayHitTestParameters(testpoint3D, testdirection);
 
-                mouseMiddleDownPoint = testpoint3D;
-                statusMouseMiddleDownPointLabel.Content = $"MMDP:{testpoint3D.X:F4},{testpoint3D.Y:F4}";
+                VisualTreeHelper.HitTest(myViewport3D, null, MiddleButtonHTResult, pointparams);
             }
         }
 

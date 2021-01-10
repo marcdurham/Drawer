@@ -63,17 +63,23 @@ namespace WpfApp1
             RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
 
             //test for a result in the Viewport3D
-            VisualTreeHelper.HitTest(myViewport3D, null, HTResult, pointparams);
+            if (args.LeftButton == MouseButtonState.Pressed)
+            {
+                VisualTreeHelper.HitTest(myViewport3D, null, HTResult, pointparams);
+            }
         }
 
         private void myViewport3D_MouseMove(object sender, MouseEventArgs e)
         {
             Point mouseposition = e.GetPosition(myViewport3D);
             statusButton.Content = $"M:{mouseposition.X},{mouseposition.Y}";
+
+
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
             Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
             PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
             RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+
 
             //test for a result in the Viewport3D
             VisualTreeHelper.HitTest(myViewport3D, null, MouseMoveResult, pointparams);
@@ -138,6 +144,8 @@ namespace WpfApp1
                     var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
                     statusButton2.Content = $"3D:{rayMeshResult.PointHit.X:F4},{rayMeshResult.PointHit.Y:F4},{rayMeshResult.PointHit.Z:F4}";
                     
+                    //if()
+
                     if (DrawMode == DrawMode.Create)
                     { 
                         Cursor = Cursors.Cross;
@@ -440,6 +448,27 @@ namespace WpfApp1
             DrawMode = DrawMode.Delete;
             modeLabel.Content = "Delete";
             Cursor = Cursors.Arrow;
+        }
+
+        private void border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(e.MiddleButton == MouseButtonState.Pressed)
+            {
+                DrawMode = DrawMode.Panning;
+                modeLabel.Content = "Panning";
+            }
+
+           
+        }
+
+        private void border_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (DrawMode == DrawMode.Panning && e.MiddleButton == MouseButtonState.Released)
+            {
+                // TODO: Keep track of the previous mode?
+                DrawMode = DrawMode.Create;
+                modeLabel.Content = "Create";
+            }
         }
 
 

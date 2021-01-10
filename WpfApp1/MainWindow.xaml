@@ -10,7 +10,7 @@
         <Button Content="+" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="28" Click="zoomIn_Click"/>
         <Button Content="-" Margin="43,10,730,0" VerticalAlignment="Top" Click="zoomOut_Click"/>
         <Button Content="Go" HorizontalAlignment="Left" Margin="75,10,0,0" VerticalAlignment="Top" Click="goButton_Click"/>
-        <Border MouseMove="myViewport3D_MouseMove" Background="Beige" Margin="0,49,0,0">
+        <Border Name="border" MouseMove="myViewport3D_MouseMove" Background="Beige" Margin="0,49,0,0" MouseDown="border_MouseDown" MouseUp="border_MouseUp">
             <Viewport3D Name="myViewport3D" />
         </Border>
         <StatusBar VerticalAlignment="Bottom">

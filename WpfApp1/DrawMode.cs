@@ -10,6 +10,7 @@ namespace WpfApp1
     {
         Create,
         Select,
-        Delete
+        Delete,
+        Panning
     }
 }

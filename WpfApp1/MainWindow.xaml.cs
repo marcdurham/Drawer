@@ -25,7 +25,7 @@ namespace WpfApp1
         CubeCollection cubes = new CubeCollection();
         Stack<Point3D> clicks = new Stack<Point3D>();
         //Viewport3D myViewport3D;
-        PerspectiveCamera myPCamera = new PerspectiveCamera();
+        OrthographicCamera myPCamera = new OrthographicCamera();
         ModelVisual3D paper;
         Point3D mouseMiddleDownPoint;
 
@@ -40,7 +40,7 @@ namespace WpfApp1
             myPCamera.LookDirection = new Vector3D(0, 0, -1);
 
             // Define camera's horizontal field of view in degrees.
-            myPCamera.FieldOfView = 60;
+            //myPCamera.FieldOfView = 60;
 
             myViewport3D.Camera = myPCamera;
             paper = PaperBuilder.GetPaper();
@@ -173,11 +173,12 @@ namespace WpfApp1
             myDirectionalLight.Direction = new Vector3D(-0.61, -0.5, -0.61);
 
             myModel3DGroup.Children.Add(myDirectionalLight);
-
+            var myAmbientLight = new AmbientLight(Colors.White);
+            myModel3DGroup.Children.Add(myAmbientLight);
             // Create a collection of vertex positions for the MeshGeometry3D.
             var myPositionCollection = new Point3DCollection();
 
-            double width = 0.1;
+            double width = 0.05;
             double halfWidth = width / 2;
             //myPositionCollection.Add(new Point3D(start.X, start.Y, 0.5));
 
@@ -193,14 +194,18 @@ namespace WpfApp1
             {
                 myPositionCollection.Add(new Point3D(start.X + xOffset, start.Y - yOffset, 0.5));
                 myPositionCollection.Add(new Point3D(start.X - xOffset, start.Y + yOffset, 0.5));
+                myPositionCollection.Add(new Point3D(end.X + xOffset, end.Y - yOffset, 0.5));
+                myPositionCollection.Add(new Point3D(end.X - xOffset, end.Y + yOffset, 0.5));
             }
             else
             {
                 myPositionCollection.Add(new Point3D(start.X - xOffset, start.Y - yOffset, 0.5));
                 myPositionCollection.Add(new Point3D(start.X + xOffset, start.Y + yOffset, 0.5));
+                myPositionCollection.Add(new Point3D(end.X - xOffset, end.Y - yOffset, 0.5));
+                myPositionCollection.Add(new Point3D(end.X + xOffset, end.Y + yOffset, 0.5));
             }
 
-            myPositionCollection.Add(new Point3D(end.X, end.Y, 0.5));
+            //myPositionCollection.Add(new Point3D(end.X, end.Y, 0.5));
             myMeshGeometry3D.Positions = myPositionCollection;
 
             // Create a collection of triangle indices for the MeshGeometry3D.
@@ -208,6 +213,10 @@ namespace WpfApp1
             myTriangleIndicesCollection.Add(0);
             myTriangleIndicesCollection.Add(1);
             myTriangleIndicesCollection.Add(2);
+
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(2);
+            myTriangleIndicesCollection.Add(3);
 
             myMeshGeometry3D.TriangleIndices = myTriangleIndicesCollection;
 
@@ -219,6 +228,8 @@ namespace WpfApp1
             // Define material and apply to the mesh geometries.
             //var myMaterial = new DiffuseMaterial(myHorizontalGradient);
             var myMaterial = new DiffuseMaterial(brush);
+            
+            //var myMaterial = new EmissiveMaterial(brush);
             myGeometryModel.Material = myMaterial;
             myGeometryModel.BackMaterial = myMaterial;
 
@@ -227,10 +238,11 @@ namespace WpfApp1
 
             // Add the group of models to the ModelVisual3d.
             myModelVisual3D.Content = myModel3DGroup;
-
+            
 
             //
             myViewport3D.Children.Add(myModelVisual3D);
+     
 
         }
 

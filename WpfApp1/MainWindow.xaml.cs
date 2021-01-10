@@ -176,17 +176,35 @@ namespace WpfApp1
 
             // Create a collection of vertex positions for the MeshGeometry3D.
             var myPositionCollection = new Point3DCollection();
-            
 
             double width = 0.1;
-            myPositionCollection.Add(new Point3D(start.X, start.Y, start.Z));
-            myPositionCollection.Add(new Point3D(start.X + width, start.Y - width, start.Z));
-            myPositionCollection.Add(new Point3D(end.X, end.Y, end.Z));
+            double halfWidth = width / 2;
+            //myPositionCollection.Add(new Point3D(start.X, start.Y, 0.5));
+
+            double xd = start.X - end.X;
+            double yd = start.Y - end.Y;
+            double ratio = halfWidth / Math.Sqrt(Math.Pow(xd, 2) + Math.Pow(yd, 2));
+            double xOffset = ratio * Math.Abs(yd);
+            double yOffset = ratio * Math.Abs(xd);
+            double realRatio = xd / yd;
+
+
+            if (realRatio > 0)
+            {
+                myPositionCollection.Add(new Point3D(start.X + xOffset, start.Y - yOffset, 0.5));
+                myPositionCollection.Add(new Point3D(start.X - xOffset, start.Y + yOffset, 0.5));
+            }
+            else
+            {
+                myPositionCollection.Add(new Point3D(start.X - xOffset, start.Y - yOffset, 0.5));
+                myPositionCollection.Add(new Point3D(start.X + xOffset, start.Y + yOffset, 0.5));
+            }
+
+            myPositionCollection.Add(new Point3D(end.X, end.Y, 0.5));
             myMeshGeometry3D.Positions = myPositionCollection;
 
             // Create a collection of triangle indices for the MeshGeometry3D.
             var myTriangleIndicesCollection = new Int32Collection();
-            // top
             myTriangleIndicesCollection.Add(0);
             myTriangleIndicesCollection.Add(1);
             myTriangleIndicesCollection.Add(2);
@@ -215,6 +233,9 @@ namespace WpfApp1
             myViewport3D.Children.Add(myModelVisual3D);
 
         }
+
+
+
         private int rotation = 0;
         private Point3D startPipePoint;
         public HitTestResultBehavior MouseMoveResult(HitTestResult rawresult)

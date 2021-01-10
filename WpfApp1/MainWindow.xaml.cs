@@ -16,11 +16,41 @@ using System.Windows.Shapes;
 
 namespace WpfApp1
 {
+    public class CubeCollection
+    {
+        Dictionary<Visual3D, Cube> Map { get; set; } = new Dictionary<Visual3D, Cube>();
+
+        public void Add(Visual3D visual)
+        {
+            Map.Add(visual, new Cube { Visual = visual });
+        }
+
+        public bool Remove(Visual3D visual)
+        {
+            return Map.Remove(visual);
+        }
+
+        public bool Remove(Cube cube)
+        {
+            return Remove(cube.Visual);
+        }
+
+        public int Count { get { return Map.Count; } }
+    }
+
+    public class Cube
+    {
+        public Visual3D Visual { get; set; }
+        public Point3D Point { get; set; }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        DrawMode DrawMode;
+        CubeCollection cubes = new CubeCollection();
         Stack<Point3D> clicks = new Stack<Point3D>();
         //Viewport3D myViewport3D;
         PerspectiveCamera myPCamera = new PerspectiveCamera();
@@ -57,6 +87,12 @@ namespace WpfApp1
             myDirectionalLight.Direction = new Vector3D(-0.61, -0.5, -0.61);
 
             myModel3DGroup.Children.Add(myDirectionalLight);
+
+            var myDirectionalLight2 = new DirectionalLight();
+            myDirectionalLight2.Color = Colors.White;
+            myDirectionalLight2.Direction = new Vector3D(0.5, 0.61, 0.61);
+
+            myModel3DGroup.Children.Add(myDirectionalLight2);
 
             // The geometry specifes the shape of the 3D plane. In this sample, a flat sheet
             // is created.
@@ -187,8 +223,30 @@ namespace WpfApp1
                 if (rayMeshResult != null)
                 {
                     var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    
                     clicks.Push(rayMeshResult.PointHit);
-                    DrawThing(rayMeshResult.PointHit);
+
+                    if (DrawMode == DrawMode.Create)
+                    {
+                        DrawThing(rayMeshResult.PointHit, Brushes.Red);
+                    }
+                    else if(DrawMode == DrawMode.Select)
+                    {
+                        if (cubes.Remove(rayMeshResult.VisualHit))
+                        {
+                            myViewport3D.Children.Remove(rayMeshResult.VisualHit);
+                        }
+
+                        DrawThing(rayMeshResult.PointHit, Brushes.Blue);
+                    }
+                    else if(DrawMode == DrawMode.Delete)
+                    {
+                        if (cubes.Remove(rayMeshResult.VisualHit))
+                        {
+                            myViewport3D.Children.Remove(rayMeshResult.VisualHit);
+                        }
+                       
+                    }
                    // UpdateResultInfo(rayMeshResult);
                    // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }
@@ -205,14 +263,28 @@ namespace WpfApp1
 
             if (rayResult != null)
             {
-                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+                var rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
 
                 if (rayMeshResult != null)
                 {
                     var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
                     statusButton2.Content = $"3D:{rayMeshResult.PointHit.X:F4},{rayMeshResult.PointHit.Y:F4},{rayMeshResult.PointHit.Z:F4}";
+                    
+                    if (DrawMode == DrawMode.Create)
+                    { 
+                        Cursor = Cursors.Cross;
+                    }
+                    else if (DrawMode == DrawMode.Delete)
+                    {
+                        Cursor = Cursors.Arrow;
+                    }
+                    else if (DrawMode == DrawMode.Select)
+                    {
+                        Cursor = Cursors.Arrow;
+                        
+                    }
 
-
+                    
                     // UpdateResultInfo(rayMeshResult);
                     // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }
@@ -232,7 +304,7 @@ namespace WpfApp1
         }
 
 
-        private void DrawThing(Point3D point)
+        private void DrawThing(Point3D point, Brush brush)
         {
             var myModel3DGroup = new Model3DGroup();
             var myGeometryModel = new GeometryModel3D();
@@ -252,30 +324,73 @@ namespace WpfApp1
             var myPositionCollection = new Point3DCollection();
             var center = new Point3D(point.X, point.Y, 0.5);
 
+            double width = 0.05;
+            myPositionCollection.Add(new Point3D(center.X + width, center.Y + width, center.Z + width));
+            myPositionCollection.Add(new Point3D(center.X + width, center.Y - width, center.Z + width));
+            myPositionCollection.Add(new Point3D(center.X - width, center.Y + width, center.Z + width));
+            myPositionCollection.Add(new Point3D(center.X - width, center.Y - width, center.Z + width));
 
-            myPositionCollection.Add(new Point3D(point.X, point.Y, -0.75));
-            myPositionCollection.Add(new Point3D(0.0, 0.0, -0.75));
-            myPositionCollection.Add(new Point3D(0.3, 0.0, -0.75));
-            myPositionCollection.Add(new Point3D(0.3, 0.0, -0.70));
+            myPositionCollection.Add(new Point3D(center.X + width, center.Y + width, center.Z - width));
+            myPositionCollection.Add(new Point3D(center.X + width, center.Y - width, center.Z - width));
+            myPositionCollection.Add(new Point3D(center.X - width, center.Y + width, center.Z - width));
+            myPositionCollection.Add(new Point3D(center.X - width, center.Y - width, center.Z - width));
             myMeshGeometry3D.Positions = myPositionCollection;
 
             // Create a collection of triangle indices for the MeshGeometry3D.
             var myTriangleIndicesCollection = new Int32Collection();
+            // top
             myTriangleIndicesCollection.Add(0);
-            myTriangleIndicesCollection.Add(1);
             myTriangleIndicesCollection.Add(2);
-
-            myTriangleIndicesCollection.Add(0);
             myTriangleIndicesCollection.Add(1);
-            myTriangleIndicesCollection.Add(3);
 
             myTriangleIndicesCollection.Add(1);
             myTriangleIndicesCollection.Add(2);
             myTriangleIndicesCollection.Add(3);
 
+            // bottom
+            myTriangleIndicesCollection.Add(4);
+            myTriangleIndicesCollection.Add(6);
+            myTriangleIndicesCollection.Add(5);
+
+            myTriangleIndicesCollection.Add(5);
+            myTriangleIndicesCollection.Add(6);
+            myTriangleIndicesCollection.Add(7);
+
+            // left
             myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(4);
+            myTriangleIndicesCollection.Add(5);
+
+            myTriangleIndicesCollection.Add(5);
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(1);
+
+            // right
             myTriangleIndicesCollection.Add(2);
             myTriangleIndicesCollection.Add(3);
+            myTriangleIndicesCollection.Add(6);
+
+            myTriangleIndicesCollection.Add(6);
+            myTriangleIndicesCollection.Add(3);
+            myTriangleIndicesCollection.Add(7);
+
+            // front
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(3);
+            myTriangleIndicesCollection.Add(7);
+
+            myTriangleIndicesCollection.Add(7);
+            myTriangleIndicesCollection.Add(5);
+            myTriangleIndicesCollection.Add(1);
+
+            // back
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(2);
+            myTriangleIndicesCollection.Add(4);
+
+            myTriangleIndicesCollection.Add(4);
+            myTriangleIndicesCollection.Add(2);
+            myTriangleIndicesCollection.Add(6);
 
             myMeshGeometry3D.TriangleIndices = myTriangleIndicesCollection;
 
@@ -286,7 +401,7 @@ namespace WpfApp1
 
             // Define material and apply to the mesh geometries.
             //var myMaterial = new DiffuseMaterial(myHorizontalGradient);
-            var myMaterial = new DiffuseMaterial(Brushes.Red);
+            var myMaterial = new DiffuseMaterial(brush);
             myGeometryModel.Material = myMaterial;
 
             // Add the geometry model to the model group.
@@ -298,6 +413,7 @@ namespace WpfApp1
 
             //
             myViewport3D.Children.Add(myModelVisual3D);
+            cubes.Add(myModelVisual3D);
         }
 
         private void goButton_Click(object sender, RoutedEventArgs e)
@@ -398,6 +514,64 @@ namespace WpfApp1
         {
             myPCamera.LookDirection = new Vector3D(myPCamera.LookDirection.X, myPCamera.LookDirection.Y - 0.05, myPCamera.LookDirection.Z);
             
+        }
+
+        private void panLeft_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(myPCamera.Position.X - 1, myPCamera.Position.Y, myPCamera.Position.Z);
+        }
+
+        private void panRight_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(myPCamera.Position.X + 1, myPCamera.Position.Y, myPCamera.Position.Z);
+        }
+
+        private void tiltLeft_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.LookDirection = new Vector3D(myPCamera.LookDirection.X + 0.05, myPCamera.LookDirection.Y, myPCamera.LookDirection.Z);
+        }
+
+        private void tiltRight_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.LookDirection = new Vector3D(myPCamera.LookDirection.X - 0.05, myPCamera.LookDirection.Y, myPCamera.LookDirection.Z);
+        }
+
+        private void resetCamera_Click(object sender, RoutedEventArgs e)
+        {
+            myPCamera.Position = new Point3D(0, 0, 2);
+            myPCamera.LookDirection = new Vector3D(0, 0, -2);
+        }
+
+        private void deleteLast_Click(object sender, RoutedEventArgs e)
+        {
+            //if(cubes.Count == 0)
+            //{
+            //    return;
+            //}
+
+            //myViewport3D.Children.Remove(cubes.Last());
+            //cubes.Remove(cubes.Last());
+        }
+
+        private void modeCreate_Click(object sender, RoutedEventArgs e)
+        {
+            DrawMode = DrawMode.Create;
+            modeLabel.Content = "Create";
+            Cursor = Cursors.Cross;
+        }
+
+        private void modeSelect_Click(object sender, RoutedEventArgs e)
+        {
+            DrawMode = DrawMode.Select;
+            modeLabel.Content = "Select";
+            Cursor = Cursors.Arrow;
+        }
+
+        private void modeDelete_Click(object sender, RoutedEventArgs e)
+        {
+            DrawMode = DrawMode.Delete;
+            modeLabel.Content = "Delete";
+            Cursor = Cursors.Arrow;
         }
 
 

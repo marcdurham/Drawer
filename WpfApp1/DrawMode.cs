@@ -11,6 +11,8 @@ namespace WpfApp1
         Create,
         Select,
         Delete,
-        Panning
+        Panning,
+        PipeStart,
+        PipeContinue
     }
 }

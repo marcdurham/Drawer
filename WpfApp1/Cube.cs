@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
 namespace WpfApp1
@@ -13,7 +9,12 @@ namespace WpfApp1
 
         public void Add(Visual3D visual)
         {
-            Map.Add(visual, new Cube { Visual = visual });
+            Map.Add(visual, new Cube(visual));
+        }
+
+        public void Add(Cube cube)
+        {
+            Map.Add(cube.Visual, cube);
         }
 
         public bool Remove(Visual3D visual)
@@ -31,6 +32,11 @@ namespace WpfApp1
 
     public class Cube
     {
+        public Cube(Visual3D visual)
+        {
+            Visual = visual;
+        }
+
         public Visual3D Visual { get; set; }
         public Point3D Point { get; set; }
     }

@@ -27,6 +27,7 @@ namespace WpfApp1
         //Viewport3D myViewport3D;
         PerspectiveCamera myPCamera = new PerspectiveCamera();
         ModelVisual3D paper;
+        Point3D mouseMiddleDownPoint;
 
         public MainWindow()
         {
@@ -72,19 +73,34 @@ namespace WpfApp1
         private void myViewport3D_MouseMove(object sender, MouseEventArgs e)
         {
             Point mouseposition = e.GetPosition(myViewport3D);
-            statusButton.Content = $"M:{mouseposition.X},{mouseposition.Y}";
+            
 
 
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+
+
             Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
-            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
-            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+            var pointparams = new PointHitTestParameters(mouseposition);
+            
+            var rayparams = new RayHitTestParameters(testpoint3D, testdirection);
 
+            if(DrawMode == DrawMode.PipeStart)
+            {
+                //double xDiff = myPCamera.Position.X
+                //myPCamera.Position = new Point3D(testpoint3D.X, testpoint3D.Y, myPCamera.Position.Z);
 
+                
+                //floater.Visual.Transform = new 
+                //myViewport3D.Children.Add(floater.Visual);
+            }
+
+            statusButton.Content = $"M:{mouseposition.X},{mouseposition.Y}/{rayparams.Origin.X:F2},{rayparams.Origin.Y:F2}";
+            
             //test for a result in the Viewport3D
             VisualTreeHelper.HitTest(myViewport3D, null, MouseMoveResult, pointparams);
+           
         }
-
+        private Cube floater;
         public HitTestResultBehavior HTResult(HitTestResult rawresult)
         {
             //MessageBox.Show(rawresult.ToString());
@@ -121,15 +137,86 @@ namespace WpfApp1
                         }
                        
                     }
-                   // UpdateResultInfo(rayMeshResult);
-                   // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
+                    else if (DrawMode == DrawMode.PipeStart)
+                    {
+                        startPipePoint = rayResult.PointHit;
+                        DrawMode = DrawMode.PipeContinue;
+                        modeLabel.Content = "PipeContinue";
+                    }
+                    else if (DrawMode == DrawMode.PipeContinue)
+                    {
+                        //DrawThing(startPipePoint, Brushes.Green);
+                        //DrawThing(rayResult.PointHit, Brushes.Yellow);
+                        DrawPipeSegment(startPipePoint, rayResult.PointHit, Brushes.Blue);
+                        startPipePoint = rayResult.PointHit;
+                    }
+                    // UpdateResultInfo(rayMeshResult);
+                    // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }
             }
 
             return HitTestResultBehavior.Continue;
         }
 
+        void DrawPipeSegment(Point3D start, Point3D end, Brush brush)
+        {
+            var myModel3DGroup = new Model3DGroup();
+            var myGeometryModel = new GeometryModel3D();
+            var myModelVisual3D = new ModelVisual3D();
+
+            // The geometry specifes the shape of the 3D plane. In this sample, a flat sheet
+            // is created.
+            var myMeshGeometry3D = new MeshGeometry3D();
+
+            var myDirectionalLight = new DirectionalLight();
+            myDirectionalLight.Color = Colors.White;
+            myDirectionalLight.Direction = new Vector3D(-0.61, -0.5, -0.61);
+
+            myModel3DGroup.Children.Add(myDirectionalLight);
+
+            // Create a collection of vertex positions for the MeshGeometry3D.
+            var myPositionCollection = new Point3DCollection();
+            
+
+            double width = 0.1;
+            myPositionCollection.Add(new Point3D(start.X, start.Y, start.Z));
+            myPositionCollection.Add(new Point3D(start.X + width, start.Y - width, start.Z));
+            myPositionCollection.Add(new Point3D(end.X, end.Y, end.Z));
+            myMeshGeometry3D.Positions = myPositionCollection;
+
+            // Create a collection of triangle indices for the MeshGeometry3D.
+            var myTriangleIndicesCollection = new Int32Collection();
+            // top
+            myTriangleIndicesCollection.Add(0);
+            myTriangleIndicesCollection.Add(1);
+            myTriangleIndicesCollection.Add(2);
+
+            myMeshGeometry3D.TriangleIndices = myTriangleIndicesCollection;
+
+            // Apply the mesh to the geometry model.
+            myGeometryModel.Geometry = myMeshGeometry3D;
+
+            // The material specifies the material applied to the 3D object. In this sample a
+
+            // Define material and apply to the mesh geometries.
+            //var myMaterial = new DiffuseMaterial(myHorizontalGradient);
+            var myMaterial = new DiffuseMaterial(brush);
+            myGeometryModel.Material = myMaterial;
+            myGeometryModel.BackMaterial = myMaterial;
+
+            // Add the geometry model to the model group.
+            myModel3DGroup.Children.Add(myGeometryModel);
+
+            // Add the group of models to the ModelVisual3d.
+            myModelVisual3D.Content = myModel3DGroup;
+
+
+            //
+            myViewport3D.Children.Add(myModelVisual3D);
+
+        }
         private int rotation = 0;
+        private Point3D startPipePoint;
         public HitTestResultBehavior MouseMoveResult(HitTestResult rawresult)
         {
             //MessageBox.Show("MouseMove:" + rawresult.ToString());
@@ -159,8 +246,8 @@ namespace WpfApp1
                         Cursor = Cursors.Arrow;
                         
                     }
-
                     
+
                     // UpdateResultInfo(rayMeshResult);
                     // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }
@@ -180,7 +267,7 @@ namespace WpfApp1
         }
 
 
-        private void DrawThing(Point3D point, Brush brush)
+        private Cube DrawThing(Point3D point, Brush brush)
         {
             var myModel3DGroup = new Model3DGroup();
             var myGeometryModel = new GeometryModel3D();
@@ -289,7 +376,10 @@ namespace WpfApp1
 
             //
             myViewport3D.Children.Add(myModelVisual3D);
-            cubes.Add(myModelVisual3D);
+
+            var cube = new Cube(myModelVisual3D);
+            cubes.Add(cube);
+            return cube;
         }
 
         private void goButton_Click(object sender, RoutedEventArgs e)
@@ -458,7 +548,14 @@ namespace WpfApp1
                 modeLabel.Content = "Panning";
             }
 
-           
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                Point mouseposition = e.GetPosition(myViewport3D);
+                Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+
+                mouseMiddleDownPoint = testpoint3D;
+                statusMouseMiddleDownPointLabel.Content = $"MMDP:{testpoint3D.X:F4},{testpoint3D.Y:F4}";
+            }
         }
 
         private void border_MouseUp(object sender, MouseButtonEventArgs e)
@@ -468,7 +565,16 @@ namespace WpfApp1
                 // TODO: Keep track of the previous mode?
                 DrawMode = DrawMode.Create;
                 modeLabel.Content = "Create";
+
+                mouseMiddleDownPoint = new Point3D();
+                statusMouseMiddleDownPointLabel.Content = $"MMDP:<None>";
             }
+        }
+
+        private void drawPipeButton_Click(object sender, RoutedEventArgs e)
+        {
+            DrawMode = DrawMode.PipeStart;
+            modeLabel.Content = "PipeStart";
         }
 
 

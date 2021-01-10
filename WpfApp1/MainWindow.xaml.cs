@@ -29,16 +29,19 @@ namespace WpfApp1
         OrthographicCamera myPCamera = new OrthographicCamera();
         ModelVisual3D paper;
         Point3D mouseMiddleDownPoint;
+        double originalWidth;
 
         public MainWindow()
         {
             InitializeComponent();
 
             // Specify where in the 3D scene the camera is.
-            myPCamera.Position = new Point3D(0, 0, 2);
+            myPCamera.Position = new Point3D(0, 0, 20);
 
             // Specify the direction that the camera is pointing.
-            myPCamera.LookDirection = new Vector3D(0, 0, -1);
+            myPCamera.LookDirection = new Vector3D(0, 0, -100);
+            originalWidth = myPCamera.Width;
+            System.Diagnostics.Debug.WriteLine($"Camera Width: {myPCamera.Width}");
 
             // Define camera's horizontal field of view in degrees.
             //myPCamera.FieldOfView = 60;
@@ -349,12 +352,15 @@ namespace WpfApp1
 
         private void zoomOut_Click(object sender, RoutedEventArgs e)
         {
-            myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z + 1);
+            //myPCamera.Position = new Point3D(myPCamera.Position.X, myPCamera.Position.Y, myPCamera.Position.Z + 1);
+            myPCamera.Width *= 1.5;
         }
 
         private void zoomIn_Click(object sender, RoutedEventArgs e)
         {
-            myPCamera.Position = new Point3D(0, 0, myPCamera.Position.Z - 1);
+            //myPCamera.Position = new Point3D(myPCamera.Position.X, myPCamera.Position.Y, myPCamera.Position.Z - 1);
+            myPCamera.Width *= 0.75;
+            
         }
 
 
@@ -597,6 +603,7 @@ namespace WpfApp1
         {
             myPCamera.Position = new Point3D(0, 0, 2);
             myPCamera.LookDirection = new Vector3D(0, 0, -2);
+            myPCamera.Width = originalWidth;
         }
 
         private void deleteLast_Click(object sender, RoutedEventArgs e)
@@ -668,6 +675,31 @@ namespace WpfApp1
         {
             DrawMode = DrawMode.PipeStart;
             modeLabel.Content = "PipeStart";
+        }
+
+        private void border_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            panOffsetLabel.Content = $"{e.Delta:F3}";
+
+            double newWidth = myPCamera.Width + ((e.Delta / 30) * 0.75);
+            if (newWidth >= 0.1 && newWidth < 10.0)
+            {
+                myPCamera.Width = newWidth;
+            }
+            else if(newWidth <= 0.1 && newWidth < 10.0)
+            {
+                myPCamera.Width = 0.1;
+            }
+            else if (newWidth >= 0.1 && newWidth > 10.0)
+            {
+                myPCamera.Width = 10.0;
+            }
+            else 
+            {
+                myPCamera.Width = 1.0;
+            }
+
+            modeLabel.Content = $"Width:{myPCamera.Width:F4}";
         }
 
 

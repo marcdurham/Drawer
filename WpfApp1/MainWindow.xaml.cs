@@ -23,6 +23,7 @@ namespace WpfApp1
     {
         DrawMode DrawMode;
         CubeCollection cubes = new CubeCollection();
+        PipeSegmentCollection pipeSegments = new PipeSegmentCollection();
         Stack<Point3D> clicks = new Stack<Point3D>();
         //Viewport3D myViewport3D;
         OrthographicCamera myPCamera = new OrthographicCamera();
@@ -135,7 +136,11 @@ namespace WpfApp1
                         {
                             myViewport3D.Children.Remove(rayMeshResult.VisualHit);
                         }
-                       
+                        if (pipeSegments.Remove(rayMeshResult.VisualHit))
+                        {
+                            myViewport3D.Children.Remove(rayMeshResult.VisualHit);
+                        }
+
                     }
                     else if (DrawMode == DrawMode.PipeStart)
                     {
@@ -242,8 +247,9 @@ namespace WpfApp1
 
             //
             myViewport3D.Children.Add(myModelVisual3D);
-     
 
+            var segment = new PipeSegment(myModelVisual3D);
+            pipeSegments.Add(segment);
         }
 
 
@@ -263,8 +269,9 @@ namespace WpfApp1
                 {
                     var hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
                     statusButton2.Content = $"3D:{rayMeshResult.PointHit.X:F4},{rayMeshResult.PointHit.Y:F4},{rayMeshResult.PointHit.Z:F4}";
-                    
+
                     //if()
+                   
 
                     if (DrawMode == DrawMode.Create)
                     { 
@@ -274,10 +281,30 @@ namespace WpfApp1
                     {
                         Cursor = Cursors.Arrow;
                     }
-                    else if (DrawMode == DrawMode.Select)
+                    
+                    if (DrawMode == DrawMode.Select)
                     {
                         Cursor = Cursors.Arrow;
-                        
+                        foreach(var segment in pipeSegments.Map)
+                        {
+                         //   segment.Value.Visual.Mat
+                         
+                        }
+                        if(pipeSegments.Contains(rayMeshResult.VisualHit))
+                        {
+                            hitgeo.Material = new DiffuseMaterial(Brushes.AliceBlue);
+                            hitgeo.BackMaterial = new DiffuseMaterial(Brushes.AliceBlue);
+
+                        }
+                    }
+                    else
+                    {
+                        if (pipeSegments.Contains(rayMeshResult.VisualHit))
+                        {
+                            hitgeo.Material = new DiffuseMaterial(Brushes.Blue);
+                            hitgeo.BackMaterial = new DiffuseMaterial(Brushes.Blue);
+
+                        }
                     }
                     
 

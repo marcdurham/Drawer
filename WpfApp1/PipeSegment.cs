@@ -3,16 +3,16 @@ using System.Windows.Media.Media3D;
 
 namespace WpfApp1
 {
-    public class CubeCollection
+    public class PipeSegmentCollection
     {
-        Dictionary<Visual3D, Cube> Map { get; set; } = new Dictionary<Visual3D, Cube>();
+        public Dictionary<Visual3D, PipeSegment> Map { get; set; } = new Dictionary<Visual3D, PipeSegment>();
 
         public void Add(Visual3D visual)
         {
-            Map.Add(visual, new Cube(visual));
+            Map.Add(visual, new PipeSegment(visual));
         }
 
-        public void Add(Cube cube)
+        public void Add(PipeSegment cube)
         {
             Map.Add(cube.Visual, cube);
         }
@@ -22,21 +22,22 @@ namespace WpfApp1
             return Map.Remove(visual);
         }
 
-        public bool Remove(Cube cube)
+        public bool Remove(PipeSegment cube)
         {
             return Remove(cube.Visual);
         }
 
         public int Count { get { return Map.Count; } }
+
         public bool Contains(Visual3D visual)
         {
             return Map.ContainsKey(visual);
         }
     }
 
-    public class Cube
+    public class PipeSegment
     {
-        public Cube(Visual3D visual)
+        public PipeSegment(Visual3D visual)
         {
             Visual = visual;
         }

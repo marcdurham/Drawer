@@ -30,6 +30,9 @@ namespace WpfApp1
         ModelVisual3D paper;
         Point3D mouseMiddleDownPoint;
         double originalWidth;
+        Pipe newPipe;
+        PipeCollection pipes = new PipeCollection();
+        Pipe selectedPipe;
 
         public MainWindow()
         {
@@ -77,15 +80,9 @@ namespace WpfApp1
         private void myViewport3D_MouseMove(object sender, MouseEventArgs e)
         {
             Point mouseposition = e.GetPosition(myViewport3D);
-            
-
-
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
-
-
             Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
             var pointparams = new PointHitTestParameters(mouseposition);
-            
             var rayparams = new RayHitTestParameters(testpoint3D, testdirection);
 
             if(DrawMode == DrawMode.PipeStart)
@@ -96,6 +93,29 @@ namespace WpfApp1
                 
                 //floater.Visual.Transform = new 
                 //myViewport3D.Children.Add(floater.Visual);
+            }
+            else if(DrawMode == DrawMode.Select || DrawMode == DrawMode.Delete)
+            {
+                // Clear selections
+                pipes.ResetColor();
+                pipes.Reset();
+                //foreach (var segment in pipeSegments.Map)
+                //{
+                //    var pipe = pipes.Get(segment.Value);
+                //    if (pipe != null && !pipe.IsSelected)
+                //    {
+                //        var brush = pipe.Brush;
+                //        if(pipe.IsSelected)
+                //        {
+                //            brush = Brushes.Green;
+                //        }
+
+                //        segment.Value.Model.Material = new DiffuseMaterial(segment.Value.Brush);
+                //        segment.Value.Model.BackMaterial = new DiffuseMaterial(segment.Value.Brush);
+                //    }
+
+                //}
+
             }
 
             statusButton.Content = $"M:{mouseposition.X},{mouseposition.Y}/{rayparams.Origin.X:F2},{rayparams.Origin.Y:F2}";
@@ -112,7 +132,7 @@ namespace WpfApp1
             
             if (rayResult != null)
             {
-                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+                var rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
 
                 if (rayMeshResult != null)
                 {
@@ -129,9 +149,19 @@ namespace WpfApp1
                         if (cubes.Remove(rayMeshResult.VisualHit))
                         {
                             myViewport3D.Children.Remove(rayMeshResult.VisualHit);
+                            DrawThing(rayMeshResult.PointHit, Brushes.Blue);
                         }
 
-                        DrawThing(rayMeshResult.PointHit, Brushes.Blue);
+                        var segment = pipeSegments.Get(rayMeshResult.VisualHit);
+
+                        if (segment != null)
+                        {
+                            var pipe = pipes.Get(segment);
+                            if (pipe != null)
+                            {
+                                pipe.IsSelected = !pipe.IsSelected;
+                            }
+                        }
                     }
                     else if(DrawMode == DrawMode.Delete)
                     {
@@ -143,20 +173,22 @@ namespace WpfApp1
                         {
                             myViewport3D.Children.Remove(rayMeshResult.VisualHit);
                         }
-
                     }
                     else if (DrawMode == DrawMode.PipeStart)
                     {
                         startPipePoint = rayResult.PointHit;
                         DrawMode = DrawMode.PipeContinue;
+                        newPipe = new Pipe();
+                        pipes.Add(newPipe);
                         modeLabel.Content = "PipeContinue";
                     }
                     else if (DrawMode == DrawMode.PipeContinue)
                     {
                         //DrawThing(startPipePoint, Brushes.Green);
                         //DrawThing(rayResult.PointHit, Brushes.Yellow);
-                        DrawPipeSegment(startPipePoint, rayResult.PointHit, Brushes.Blue);
+                        var segment = DrawPipeSegment(startPipePoint, rayResult.PointHit, Brushes.Red);
                         startPipePoint = rayResult.PointHit;
+                        newPipe.Add(segment);
                     }
                     // UpdateResultInfo(rayMeshResult);
                     // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
@@ -189,7 +221,7 @@ namespace WpfApp1
             return HitTestResultBehavior.Continue;
         }
 
-        void DrawPipeSegment(Point3D start, Point3D end, Brush brush)
+        PipeSegment DrawPipeSegment(Point3D start, Point3D end, Brush brush)
         {
             var myModel3DGroup = new Model3DGroup();
             var myGeometryModel = new GeometryModel3D();
@@ -209,7 +241,7 @@ namespace WpfApp1
             // Create a collection of vertex positions for the MeshGeometry3D.
             var myPositionCollection = new Point3DCollection();
 
-            double width = 0.005;
+            double width = 0.05;
             double halfWidth = width / 2;
             //myPositionCollection.Add(new Point3D(start.X, start.Y, 0.5));
 
@@ -274,8 +306,11 @@ namespace WpfApp1
             //
             myViewport3D.Children.Add(myModelVisual3D);
 
-            var segment = new PipeSegment(myModelVisual3D);
+            var segment = new PipeSegment(myModelVisual3D, myGeometryModel);
+            segment.Brush = brush;
             pipeSegments.Add(segment);
+
+            return segment;
         }
 
 
@@ -285,6 +320,7 @@ namespace WpfApp1
         public HitTestResultBehavior MouseMoveResult(HitTestResult rawresult)
         {
             //MessageBox.Show("MouseMove:" + rawresult.ToString());
+
             var rayResult = rawresult as RayHitTestResult;
 
             if (rayResult != null)
@@ -308,30 +344,39 @@ namespace WpfApp1
                         Cursor = Cursors.Arrow;
                     }
                     
-                    if (DrawMode == DrawMode.Select)
+                    if (DrawMode == DrawMode.Select || DrawMode == DrawMode.Delete)
                     {
                         Cursor = Cursors.Arrow;
-                        foreach(var segment in pipeSegments.Map)
-                        {
-                         //   segment.Value.Visual.Mat
-                         
-                        }
-                        if(pipeSegments.Contains(rayMeshResult.VisualHit))
-                        {
-                            hitgeo.Material = new DiffuseMaterial(Brushes.AliceBlue);
-                            hitgeo.BackMaterial = new DiffuseMaterial(Brushes.AliceBlue);
 
-                        }
-                    }
-                    else
-                    {
                         if (pipeSegments.Contains(rayMeshResult.VisualHit))
                         {
+                            //System.Diagnostics.Debug.WriteLine("Setting hovered object to AliceBlue...");
                             hitgeo.Material = new DiffuseMaterial(Brushes.Blue);
                             hitgeo.BackMaterial = new DiffuseMaterial(Brushes.Blue);
 
+                            var segment = pipeSegments.Get(rayMeshResult.VisualHit);
+
+                            if (segment != null)
+                            {
+                                var pipe = pipes.Get(segment);
+                                if (pipe.Contains(segment))
+                                {
+                                    // IsHovered
+                                    pipe.IsHovered = true;
+                                }
+                            }
                         }
                     }
+                    //else
+                    //{
+                    //    if (pipeSegments.Contains(rayMeshResult.VisualHit))
+                    //    {
+                    //        System.Diagnostics.Debug.WriteLine("Setting hovered object to Blue...");
+                    //        hitgeo.Material = new DiffuseMaterial(Brushes.Blue);
+                    //        hitgeo.BackMaterial = new DiffuseMaterial(Brushes.Blue);
+
+                    //    }
+                    //}
 
                     if(DrawMode == DrawMode.Panning)
                     {
@@ -346,6 +391,7 @@ namespace WpfApp1
                     // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
                 }
             }
+           
 
             return HitTestResultBehavior.Continue;
         }

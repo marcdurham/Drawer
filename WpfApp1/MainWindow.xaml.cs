@@ -301,21 +301,16 @@ namespace WpfApp1
 
             // Add the group of models to the ModelVisual3d.
             myModelVisual3D.Content = myModel3DGroup;
-            
 
-            //
             myViewport3D.Children.Add(myModelVisual3D);
 
-            var segment = new PipeSegment(myModelVisual3D, myGeometryModel);
+            var segment = new PipeSegment(myModelVisual3D, myGeometryModel, start, end);
             segment.Brush = brush;
             pipeSegments.Add(segment);
 
             return segment;
         }
 
-
-
-        private int rotation = 0;
         private Point3D startPipePoint;
         public HitTestResultBehavior MouseMoveResult(HitTestResult rawresult)
         {
@@ -728,21 +723,21 @@ namespace WpfApp1
             panOffsetLabel.Content = $"{e.Delta:F3}";
 
             double newWidth = myPCamera.Width + ((e.Delta / 30) * 0.75);
-            if (newWidth >= 0.1 && newWidth < 10.0)
+            if (newWidth >= 0.1 && newWidth < 100.0)
             {
                 myPCamera.Width = newWidth;
             }
-            else if(newWidth <= 0.1 && newWidth < 10.0)
+            else if(newWidth <= 0.1 && newWidth < 100.0)
             {
                 myPCamera.Width = 0.1;
             }
-            else if (newWidth >= 0.1 && newWidth > 10.0)
+            else if (newWidth >= 0.1 && newWidth > 100.0)
             {
-                myPCamera.Width = 10.0;
+                myPCamera.Width = 100.0;
             }
             else 
             {
-                myPCamera.Width = 1.0;
+                myPCamera.Width = 100.0;
             }
 
             modeLabel.Content = $"Width:{myPCamera.Width:F4}";

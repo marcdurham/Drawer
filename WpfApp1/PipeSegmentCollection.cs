@@ -11,11 +11,6 @@ namespace WpfApp1
     {
         public Dictionary<Visual3D, PipeSegment> Map { get; set; } = new Dictionary<Visual3D, PipeSegment>();
 
-        public void Add(Visual3D visual, GeometryModel3D model)
-        {
-            Map.Add(visual, new PipeSegment(visual, model));
-        }
-
         public void Add(PipeSegment cube)
         {
             Map.Add(cube.Visual, cube);

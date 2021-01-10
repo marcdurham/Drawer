@@ -45,7 +45,12 @@ namespace WpfApp1
         {
             foreach (var segment in segments)
             {
-                if (IsHovered)
+                if (IsHovered && IsSelected)
+                {
+                    segment.Model.Material = new DiffuseMaterial(Brushes.BlueViolet);
+                    segment.Model.BackMaterial = new DiffuseMaterial(Brushes.BlueViolet);
+                }
+                else if (IsHovered)
                 {
                     segment.Model.Material = new DiffuseMaterial(Brushes.CornflowerBlue);
                     segment.Model.BackMaterial = new DiffuseMaterial(Brushes.CornflowerBlue);

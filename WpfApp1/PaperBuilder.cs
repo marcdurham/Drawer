@@ -58,13 +58,15 @@ namespace WpfApp1
             myMeshGeometry3D.Normals = myNormalCollection;
 
             // Create a collection of vertex positions for the MeshGeometry3D.
+            double width = 100.0;
+            double halfWidth = width / 2;
             var myPositionCollection = new Point3DCollection();
-            myPositionCollection.Add(new Point3D(-0.5, -0.5, 0.5));
-            myPositionCollection.Add(new Point3D(0.5, -0.5, 0.5));
-            myPositionCollection.Add(new Point3D(0.5, 0.5, 0.5));
-            myPositionCollection.Add(new Point3D(0.5, 0.5, 0.5));
-            myPositionCollection.Add(new Point3D(-0.5, 0.5, 0.5));
-            myPositionCollection.Add(new Point3D(-0.5, -0.5, 0.5));
+            myPositionCollection.Add(new Point3D(-halfWidth, -halfWidth, 0.5));
+            myPositionCollection.Add(new Point3D(halfWidth, -halfWidth, 0.5));
+            myPositionCollection.Add(new Point3D(halfWidth, halfWidth, 0.5));
+            myPositionCollection.Add(new Point3D(halfWidth, halfWidth, 0.5));
+            myPositionCollection.Add(new Point3D(-halfWidth, halfWidth, 0.5));
+            myPositionCollection.Add(new Point3D(-halfWidth, -halfWidth, 0.5));
             myMeshGeometry3D.Positions = myPositionCollection;
 
             // Create a collection of texture coordinates for the MeshGeometry3D.

@@ -49,5 +49,10 @@ namespace WpfApp1
                 pipe.IsHovered = false;
             }
         }
+
+        public List<Pipe> All()
+        {
+            return pipes;
+        }
     }
 }

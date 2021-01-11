@@ -34,5 +34,7 @@
         <Button Name="modeSelect" Content="Select" HorizontalAlignment="Left" Margin="556,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Click="modeSelect_Click"/>
         <Button Name="modeDelete" Content="Delete" HorizontalAlignment="Left" Margin="596,10,0,0" VerticalAlignment="Top" Click="modeDelete_Click"/>
         <Button Name="drawPipeButton" Content="Pipe" HorizontalAlignment="Left" Margin="639,10,0,0" VerticalAlignment="Top" Click="drawPipeButton_Click"/>
+        <Button Name="openFileButton" Content="Open File" HorizontalAlignment="Left" Margin="671,10,0,0" VerticalAlignment="Top" Click="openFileButton_Click"/>
+        <Button Name="saveFileButton" Content="Save" HorizontalAlignment="Left" Margin="730,10,0,0" VerticalAlignment="Top" Click="saveFileButton_Click"/>
     </Grid>
 </Window>

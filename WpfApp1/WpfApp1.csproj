@@ -6,4 +6,12 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WinCad\WinCad.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IxMilia.Dxf" Version="0.7.5" />
+  </ItemGroup>
+
 </Project>

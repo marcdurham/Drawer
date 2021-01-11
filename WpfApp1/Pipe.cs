@@ -67,5 +67,10 @@ namespace WpfApp1
                 }
             }
         }
+
+        public List<PipeSegment> Segments()
+        {
+            return segments;
+        }
     }
 }

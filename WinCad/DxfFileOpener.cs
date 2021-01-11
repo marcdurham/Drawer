@@ -10,7 +10,7 @@ namespace WinCad
 {
     public class DxfFileOpener
     {
-        internal static Canvas OpenFile(string file)
+        public static Canvas OpenFile(string file)
         {
             var canvas = new Canvas();
 

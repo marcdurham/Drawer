@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+//using WinCad;
+using System.IO;
+using IxMilia.Dxf;
+using IxMilia.Dxf.Entities;
 
 namespace WpfApp1
 {
@@ -241,7 +246,7 @@ namespace WpfApp1
             // Create a collection of vertex positions for the MeshGeometry3D.
             var myPositionCollection = new Point3DCollection();
 
-            double width = 0.05;
+            double width = 1.00;
             double halfWidth = width / 2;
             //myPositionCollection.Add(new Point3D(start.X, start.Y, 0.5));
 
@@ -723,24 +728,177 @@ namespace WpfApp1
             panOffsetLabel.Content = $"{e.Delta:F3}";
 
             double newWidth = myPCamera.Width + ((e.Delta / 30) * 0.75);
-            if (newWidth >= 0.1 && newWidth < 100.0)
+            double maxWidth = 100_000.0;
+            if (newWidth >= 0.1 && newWidth < maxWidth)
             {
                 myPCamera.Width = newWidth;
             }
-            else if(newWidth <= 0.1 && newWidth < 100.0)
+            else if(newWidth <= 0.1 && newWidth < maxWidth)
             {
                 myPCamera.Width = 0.1;
             }
-            else if (newWidth >= 0.1 && newWidth > 100.0)
+            else if (newWidth >= 0.1 && newWidth > maxWidth)
             {
-                myPCamera.Width = 100.0;
+                myPCamera.Width = maxWidth;
             }
             else 
             {
-                myPCamera.Width = 100.0;
+                myPCamera.Width = maxWidth;
             }
 
             modeLabel.Content = $"Width:{myPCamera.Width:F4}";
+        }
+
+        private void openFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            var result = dialog.ShowDialog();
+
+            if (!string.IsNullOrWhiteSpace(dialog.FileName))
+            {
+                paper = PaperBuilder.GetPaper();
+                myViewport3D.Children.Clear();
+                myViewport3D.Children.Add(paper);
+
+                var dxfFile = DxfFile.Load(dialog.FileName);
+
+                foreach (DxfEntity entity in dxfFile.Entities)
+                {
+                    if (entity.Layer.ToUpper().StartsWith("PIPE"))
+                    {
+                        switch (entity.EntityType)
+                        {
+                            case DxfEntityType.Polyline:
+                                DrawPolyline((DxfPolyline)entity);
+                                break;
+                            case DxfEntityType.LwPolyline:
+                                DrawLwPolyline((DxfLwPolyline)entity);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DrawPolyline(DxfPolyline pline)
+        {
+            var nPipe = new Pipe();
+            bool firstPoint = true;
+            DxfVertex lastPoint = null;
+
+            foreach (DxfVertex vertex in pline.Vertices)
+            {
+                if (!firstPoint && lastPoint != null)
+                {
+                    var segment = DrawPipeSegment(
+                       start: new Point3D(lastPoint.Location.X, lastPoint.Location.Y, 0.5),
+                       end: new Point3D(vertex.Location.X, vertex.Location.Y, 0.5),
+                       brush: Brushes.Brown);
+
+                    nPipe.Add(segment);
+                }
+
+                firstPoint = false;
+                lastPoint = vertex;
+            }
+
+            pipes.Add(nPipe);
+        }
+
+
+
+        private void DrawLwPolyline(DxfLwPolyline pline)
+        {
+            var nPipe = new Pipe();
+            bool firstPoint = true;
+            DxfLwPolylineVertex lastPoint = null;
+
+            foreach (DxfLwPolylineVertex vertex in pline.Vertices)
+            {
+                if (!firstPoint && lastPoint != null)
+                {
+                    var segment = DrawPipeSegment(
+                       start: new Point3D(lastPoint.X, lastPoint.Y, 0.5),
+                       end: new Point3D(vertex.X, vertex.Y, 0.5),
+                       brush: Brushes.Brown);
+
+                    nPipe.Add(segment);
+                }
+
+                firstPoint = false;
+                lastPoint = vertex;
+            }
+
+            pipes.Add(nPipe);
+        }
+
+        private void OpenWithOldDxf(OpenFileDialog dialog)
+        {
+            var canvas = WinCad.DxfFileOpener.OpenFile(dialog.FileName);
+
+            foreach (var layer in canvas.Layers)
+            {
+                foreach (var poly in layer.Polylines)
+                {
+                    var nPipe = new Pipe();
+                    bool firstPoint = true;
+                    WinCad.Point lastPoint = null;
+
+                    foreach (var pt in poly.Points())
+                    {
+                        if (!firstPoint && lastPoint != null)
+                        {
+                            var segment = DrawPipeSegment(
+                                start: new Point3D(lastPoint.X, lastPoint.Y, 0.5),
+                                end: new Point3D(pt.X, pt.Y, 0.5),
+                                brush: Brushes.Brown);
+
+                            nPipe.Add(segment);
+                        }
+
+                        firstPoint = false;
+                        lastPoint = pt;
+                    }
+
+                    pipes.Add(nPipe);
+                }
+            }
+        }
+
+        private void saveFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            dialog.ShowDialog();
+
+            if (!string.IsNullOrWhiteSpace(dialog.FileName))
+            {
+                var canvas = new WinCad.Canvas();
+                var layer = new WinCad.Layer();
+                canvas.Layers.Add(layer);
+
+                foreach(Pipe pipe in pipes.All())
+                {
+                    var pline = new WinCad.Polyline();
+                    pline.Vertices.Add(
+                        new WinCad.Point(
+                            x: pipe.Segments().First().Start.X,
+                            y: pipe.Segments().First().Start.Y));
+
+                    foreach (var segment in pipe.Segments())
+                    {
+                        pline.Vertices.Add(
+                            new WinCad.Point(
+                                x: segment.End.X,
+                                y: segment.End.Y));
+                    }
+
+                    layer.Polylines.Add(pline);
+                }
+
+
+
+                WinCad.DxfFileSaver.SaveAs(canvas, dialog.FileName);
+            }
         }
 
 

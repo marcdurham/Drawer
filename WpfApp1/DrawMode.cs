@@ -13,6 +13,8 @@ namespace WpfApp1
         Delete,
         Panning,
         PipeStart,
-        PipeContinue
+        PipeContinue,
+        ZoomBoxStarting,
+        ZoomBoxEnding
     }
 }

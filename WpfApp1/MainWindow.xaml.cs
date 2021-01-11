@@ -34,10 +34,12 @@ namespace WpfApp1
         OrthographicCamera myPCamera = new OrthographicCamera();
         ModelVisual3D paper;
         Point3D mouseMiddleDownPoint;
+        Point3D mouseZoomBoxStart;
         double originalWidth;
         Pipe newPipe;
         PipeCollection pipes = new PipeCollection();
         Pipe selectedPipe;
+
 
         public MainWindow()
         {
@@ -194,6 +196,33 @@ namespace WpfApp1
                         var segment = DrawPipeSegment(startPipePoint, rayResult.PointHit, Brushes.Red);
                         startPipePoint = rayResult.PointHit;
                         newPipe.Add(segment);
+                    }
+                    else if(DrawMode == DrawMode.ZoomBoxStarting)
+                    {
+                        mouseZoomBoxStart = rayMeshResult.PointHit;
+                        DrawMode = DrawMode.ZoomBoxEnding;
+                    }
+                    else if (DrawMode == DrawMode.ZoomBoxEnding)
+                    {
+                        var upperLeft = mouseZoomBoxStart;
+                        var upperRight = new Point3D(rayMeshResult.PointHit.X, mouseZoomBoxStart.Y, 0.5);
+                        var bottomRight = rayMeshResult.PointHit;
+                        var bottomLeft = new Point3D(mouseZoomBoxStart.X, rayMeshResult.PointHit.Y, 0.5);
+
+                        var rectanglePipe = new Pipe();
+                        
+                        var top = DrawPipeSegment(upperLeft, upperRight, Brushes.Crimson);
+                        var left = DrawPipeSegment(upperRight, bottomRight, Brushes.Crimson);
+                        var bottom = DrawPipeSegment(bottomRight, bottomLeft, Brushes.Crimson);
+                        var right = DrawPipeSegment(bottomLeft, upperLeft, Brushes.Crimson);
+                        rectanglePipe.Add(top);
+                        rectanglePipe.Add(left);
+                        rectanglePipe.Add(bottom);
+                        rectanglePipe.Add(right);
+
+                        pipes.Add(rectanglePipe);
+                        
+                        DrawMode = DrawMode.Select;
                     }
                     // UpdateResultInfo(rayMeshResult);
                     // UpdateMaterial(hitgeo, (side1GeometryModel3D.Material as MaterialGroup));
@@ -899,6 +928,11 @@ namespace WpfApp1
 
                 WinCad.DxfFileSaver.SaveAs(canvas, dialog.FileName);
             }
+        }
+
+        private void boxZoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            DrawMode = DrawMode.ZoomBoxStarting;
         }
 
 

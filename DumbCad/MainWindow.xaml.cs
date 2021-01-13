@@ -157,6 +157,11 @@ namespace DumbCad
                 viewPort.InvalidateVisual();
             }
         }
+
+        private void selectButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetMode(DrawMode.Select);
+        }
     }
 
     public class Circle

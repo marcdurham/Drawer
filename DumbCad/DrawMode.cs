@@ -8,8 +8,9 @@ namespace DumbCad
 {
     public enum DrawMode
     {
-        CircleStart,
         Ready,
-        CircleFinish
+        Select,
+        CircleStart,
+        CircleFinish,
     }
 }

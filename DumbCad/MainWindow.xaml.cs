@@ -23,8 +23,15 @@ namespace DumbCad
     {
         DrawMode mode = DrawMode.Ready;
 
-        SKPaint paint = new SKPaint()
+        SKPaint paintCircleFinished = new SKPaint()
         {
+            Style = SKPaintStyle.Fill,
+            Color = SKColors.Brown
+        };
+
+        SKPaint paintCircleStarting = new SKPaint()
+        {
+            Style = SKPaintStyle.Stroke,
             Color = SKColors.Blue
         };
 
@@ -53,7 +60,12 @@ namespace DumbCad
 
             foreach (var circle in Circles)
             {
-                canvas.DrawCircle(circle.Location, circle.Radius, paint);
+                canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
+            }
+
+            if(mode == DrawMode.CircleFinish && circleStarting != null)
+            {
+                canvas.DrawCircle(circleStarting.Location, circleStarting.Radius, paintCircleStarting);
             }
         }
 
@@ -73,18 +85,21 @@ namespace DumbCad
                     Location = new SKPoint((float)point.X, (float)point.Y)
                 };
 
-                mode = DrawMode.CircleFinish;
+                SetMode(DrawMode.CircleFinish);
 
                 viewPort.InvalidateVisual();
             }
             else if(mode == DrawMode.CircleFinish)
             {
                 var point = e.GetPosition(viewPort);
-                circleStarting.Radius = 30f;
-                Circles.Add(circleStarting);
+                if (circleStarting.Radius > 0)
+                {
+                    Circles.Add(circleStarting);
+                }
+
                 circleStarting = null;
 
-                mode = DrawMode.CircleStart;
+                SetMode(DrawMode.CircleStart);
 
                 viewPort.InvalidateVisual();
             }
@@ -92,7 +107,28 @@ namespace DumbCad
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
         {
-            mode = DrawMode.CircleStart;
+            SetMode(DrawMode.CircleStart);
+        }
+
+        void SetMode(DrawMode mode)
+        {
+            this.mode = mode;
+            this.modeLabel.Content = mode.ToString();
+        }
+
+        private void viewPort_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(mode == DrawMode.CircleFinish && circleStarting != null)
+            {
+                var point = e.GetPosition(viewPort);
+                float radius = (float)Math.Sqrt(
+                    Math.Pow(circleStarting.Location.X - point.X, 2) +
+                    Math.Pow(circleStarting.Location.Y - point.Y, 2));
+
+
+                circleStarting.Radius = radius;
+                viewPort.InvalidateVisual();
+            }
         }
     }
 

@@ -25,28 +25,31 @@ namespace DumbCad
 
         SKPaint paintCircleFinished = new SKPaint()
         {
-            Style = SKPaintStyle.Fill,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 1f,
             Color = SKColors.Brown
         };
 
         SKPaint paintCircleStarting = new SKPaint()
         {
             Style = SKPaintStyle.Stroke,
+            StrokeWidth = 2f,
             Color = SKColors.Blue
         };
 
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
+        SKPoint circleFinishingPoint = new SKPoint();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            SetMode(DrawMode.Ready);
         }
 
         private void goButton_Click(object sender, RoutedEventArgs e)
         {
-            Circles.Add(new Circle { Location = new SKPoint(x: 1f, y: 2f), Radius = 20f });
-
             viewPort.InvalidateVisual();
         }
 
@@ -66,6 +69,19 @@ namespace DumbCad
             if(mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 canvas.DrawCircle(circleStarting.Location, circleStarting.Radius, paintCircleStarting);
+                canvas.DrawPoint(circleStarting.Location, paintCircleStarting.Color);
+                canvas.DrawRect(
+                    x: circleStarting.Location.X,
+                    y: circleStarting.Location.Y,
+                    w: 2f,
+                    h: 2f,
+                    paintCircleStarting);
+
+                canvas.DrawLine(
+                    circleStarting.Location,
+                    //new SKPoint(circleStarting.Location.X, circleStarting.Location.Y+circleStarting.Radius),
+                    circleFinishingPoint,
+                    paintCircleStarting);
             }
         }
 
@@ -76,22 +92,23 @@ namespace DumbCad
 
         private void viewPort_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            ClickAt(e.GetPosition(viewPort));
+        }
+
+        private void ClickAt(Point point)
+        {
             if (mode == DrawMode.CircleStart)
             {
-                var point = e.GetPosition(viewPort);
-
                 circleStarting = new Circle()
                 {
                     Location = new SKPoint((float)point.X, (float)point.Y)
                 };
 
                 SetMode(DrawMode.CircleFinish);
-
-                viewPort.InvalidateVisual();
+                Cursor = Cursors.Cross;
             }
-            else if(mode == DrawMode.CircleFinish)
+            else if (mode == DrawMode.CircleFinish)
             {
-                var point = e.GetPosition(viewPort);
                 if (circleStarting.Radius > 0)
                 {
                     Circles.Add(circleStarting);
@@ -100,7 +117,7 @@ namespace DumbCad
                 circleStarting = null;
 
                 SetMode(DrawMode.CircleStart);
-
+                Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
         }
@@ -121,12 +138,22 @@ namespace DumbCad
             if(mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 var point = e.GetPosition(viewPort);
+                circleFinishingPoint = new SKPoint((float)point.X, (float)point.Y);
                 float radius = (float)Math.Sqrt(
                     Math.Pow(circleStarting.Location.X - point.X, 2) +
                     Math.Pow(circleStarting.Location.Y - point.Y, 2));
 
 
                 circleStarting.Radius = radius;
+                viewPort.InvalidateVisual();
+            }
+        }
+
+        private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if(mode == DrawMode.CircleFinish)
+            {
+                SetMode(DrawMode.CircleStart);
                 viewPort.InvalidateVisual();
             }
         }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DumbCad
+namespace DumbCad.Entities
 {
     public class Polyline : Entity
     {

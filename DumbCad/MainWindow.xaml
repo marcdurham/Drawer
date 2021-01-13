@@ -1,0 +1,41 @@
+﻿<Window x:Class="DumbCad.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
+        xmlns:local="clr-namespace:DumbCad"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ToolBarTray Background="DarkGray" Height="30" VerticalAlignment="Top">
+            <ToolBar Name="MyToolbar" Width="200" Height="30" >
+                <Button Name ="goButton" Content="Go" Click="goButton_Click" />
+                <Button Content="Close" />
+                <Button Background="LightSkyBlue" Content="Exit" />
+            </ToolBar>
+        </ToolBarTray>
+        <skia:SKElement
+            Name="viewPort"
+            Grid.Row="1"
+            PaintSurface="viewPort_PaintSurface" />
+        
+        <StatusBar VerticalAlignment="Bottom" Grid.ColumnSpan="1" Grid.Row="2">
+            <Label Name="modeLabelPrefix" Content="Mode:"/>
+            <Label Name="modeLabel" Content="Ready" FontWeight="Bold" />
+            <Button Name="statusButton" Content="Ready" Width="300"/>
+            <Button Name="statusButton2" Content="3D" Width="300"/>
+            <Label Name="statusMouseMiddleDownPointLabel" Content="Ready" Width="200"/>
+            <Label Name="panOffsetLabel" Content="Zoom/Pan" Width="200"/>
+        </StatusBar>
+        
+    </Grid>
+</Window>

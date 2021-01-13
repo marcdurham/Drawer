@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinCad", "WinCad\WinCad.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinCad.UnitTests", "WinCad.UnitTests\WinCad.UnitTests.csproj", "{48A46B42-8754-401C-AEE2-EB6B253A7718}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{8D414D06-9D99-4FF0-8D00-0F2D964E066D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{8D414D06-9D99-4FF0-8D00-0F2D964E066D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp2", "WpfApp2\WpfApp2.csproj", "{42EE16D6-A838-4678-82D0-E266CF1B5FA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp2", "WpfApp2\WpfApp2.csproj", "{42EE16D6-A838-4678-82D0-E266CF1B5FA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DumbCad", "DumbCad\DumbCad.csproj", "{5BCDA5B8-2988-4FCC-B573-26F81AFD5498}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{42EE16D6-A838-4678-82D0-E266CF1B5FA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42EE16D6-A838-4678-82D0-E266CF1B5FA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42EE16D6-A838-4678-82D0-E266CF1B5FA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BCDA5B8-2988-4FCC-B573-26F81AFD5498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BCDA5B8-2988-4FCC-B573-26F81AFD5498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BCDA5B8-2988-4FCC-B573-26F81AFD5498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BCDA5B8-2988-4FCC-B573-26F81AFD5498}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,5 +12,7 @@ namespace DumbCad
         Select,
         CircleStart,
         CircleFinish,
+        PolylineStart,
+        PolylineFinish,
     }
 }

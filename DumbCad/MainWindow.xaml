@@ -21,6 +21,7 @@
                 <Button Name ="goButton" Content="Go" Click="goButton_Click" />
                 <Button Name ="selectButton" Content="Select" Click="selectButton_Click" />
                 <Button Name="drawCircleButton" Content="Circle" Click="drawCircleButton_Click" />
+                <Button Name="drawPolylineButton" Content="Polyline" Click="drawPolylineButton_Click" />
                 <Button Name="zoomInButton" Content="Zoom In" Click="zoomInButton_Click" />
                 <Button Name="zoomOutButton" Content="Zoom Out" Click="zoomOutButton_Click" />
             </ToolBar>

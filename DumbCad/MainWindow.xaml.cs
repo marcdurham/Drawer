@@ -13,6 +13,7 @@ namespace DumbCad
     {
         DrawMode mode = DrawMode.Ready;
         float zoomFactor = 1f;
+        List<SKPath> paths = new List<SKPath>();
 
         SKPaint paintCircleFinished = new SKPaint()
         {
@@ -31,6 +32,8 @@ namespace DumbCad
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
         SKPoint circleFinishingPoint = new SKPoint();
+        SKPoint polylineStarting = new SKPoint();
+        SKPath polylineFinishing = new SKPath();
 
         public MainWindow()
         {
@@ -57,7 +60,12 @@ namespace DumbCad
                 canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
             }
 
-            if(mode == DrawMode.CircleFinish && circleStarting != null)
+            foreach(var path in paths)
+            {
+                canvas.DrawPath(path, paintCircleFinished);
+            }
+
+            if (mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 canvas.DrawCircle(circleStarting.Location, circleStarting.Radius, paintCircleStarting);
                 canvas.DrawRect(
@@ -71,6 +79,10 @@ namespace DumbCad
                     circleStarting.Location,
                     circleFinishingPoint,
                     paintCircleStarting);
+            }
+            else if (mode == DrawMode.PolylineFinish)
+            {
+                canvas.DrawPath(polylineFinishing, paintCircleStarting);
             }
         }
 
@@ -109,6 +121,24 @@ namespace DumbCad
                 Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
+            else if (mode == DrawMode.PolylineStart)
+            {
+                polylineStarting = new SKPoint((float)point.X, (float)point.Y);
+
+                SetMode(DrawMode.PolylineFinish);
+                Cursor = Cursors.Cross;
+                viewPort.InvalidateVisual();
+            }
+            else if (mode == DrawMode.PolylineFinish)
+            {
+                var newPoint = new SKPoint((float)point.X, (float)point.Y);
+                polylineFinishing.AddPoly(new SKPoint[] { polylineStarting, newPoint });
+                //paths.Add(polylineFinishing);
+                coordinatesLabel.Content = $"Paths: {paths.Count}";
+                polylineStarting = newPoint;
+
+                viewPort.InvalidateVisual();
+            }
         }
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
@@ -128,10 +158,17 @@ namespace DumbCad
             {
                 var point = e.GetPosition(viewPort);
                 circleFinishingPoint = new SKPoint((float)point.X, (float)point.Y);
-                float radius = (float)Math.Sqrt(
-                    Math.Pow(circleStarting.Location.X - point.X, 2) +
-                    Math.Pow(circleStarting.Location.Y - point.Y, 2));
+                float radius = (float)Geometry.Distance(circleStarting.Location, circleFinishingPoint);
 
+                circleStarting.Radius = radius;
+                viewPort.InvalidateVisual();
+            }
+            else if(mode == DrawMode.PolylineFinish)
+            {
+                var point = e.GetPosition(viewPort);
+                polylineFinishing.
+                circleFinishingPoint = new SKPoint((float)point.X, (float)point.Y);
+                float radius = (float)Geometry.Distance(circleStarting.Location, circleFinishingPoint);
 
                 circleStarting.Radius = radius;
                 viewPort.InvalidateVisual();
@@ -146,6 +183,24 @@ namespace DumbCad
             if(mode == DrawMode.CircleFinish)
             {
                 SetMode(DrawMode.CircleStart);
+                viewPort.InvalidateVisual();
+            }
+            else if(mode == DrawMode.CircleFinish)
+            {
+                SetMode(DrawMode.Ready);
+                viewPort.InvalidateVisual();
+            }
+            else if (mode == DrawMode.PolylineFinish)
+            {
+                paths.Add(polylineFinishing);
+                polylineFinishing = new SKPath();
+
+                SetMode(DrawMode.PolylineStart);
+                viewPort.InvalidateVisual();
+            }
+            else if (mode == DrawMode.PolylineStart)
+            {
+                SetMode(DrawMode.Ready);
                 viewPort.InvalidateVisual();
             }
         }
@@ -165,6 +220,11 @@ namespace DumbCad
         {
             zoomFactor *= 0.5f;
             viewPort.InvalidateVisual();
+        }
+
+        private void drawPolylineButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetMode(DrawMode.PolylineStart);
         }
     }
 

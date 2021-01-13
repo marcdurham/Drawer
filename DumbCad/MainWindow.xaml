@@ -19,14 +19,15 @@
         <ToolBarTray Background="DarkGray" Height="30" VerticalAlignment="Top">
             <ToolBar Name="MyToolbar" Width="200" Height="30" >
                 <Button Name ="goButton" Content="Go" Click="goButton_Click" />
-                <Button Content="Close" />
+                <Button Name="drawCircleButton" Content="Circle" Click="drawCircleButton_Click" />
                 <Button Background="LightSkyBlue" Content="Exit" />
             </ToolBar>
         </ToolBarTray>
         <skia:SKElement
             Name="viewPort"
             Grid.Row="1"
-            PaintSurface="viewPort_PaintSurface" />
+            PaintSurface="viewPort_PaintSurface" MouseLeftButtonUp="viewPort_MouseLeftButtonUp" MouseLeftButtonDown="viewPort_MouseLeftButtonDown" 
+            />
         
         <StatusBar VerticalAlignment="Bottom" Grid.ColumnSpan="1" Grid.Row="2">
             <Label Name="modeLabelPrefix" Content="Mode:"/>

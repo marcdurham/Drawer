@@ -1,18 +1,8 @@
 ﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DumbCad
 {
@@ -22,6 +12,7 @@ namespace DumbCad
     public partial class MainWindow : Window
     {
         DrawMode mode = DrawMode.Ready;
+        float zoomFactor = 1f;
 
         SKPaint paintCircleFinished = new SKPaint()
         {
@@ -55,11 +46,11 @@ namespace DumbCad
 
         private void viewPort_PaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.ff")}: Painting Surface...");
             var surface = e.Surface;
             var canvas = surface.Canvas;
 
             canvas.Clear(SKColors.Beige);
+            canvas.Scale(zoomFactor);
 
             foreach (var circle in Circles)
             {
@@ -69,7 +60,6 @@ namespace DumbCad
             if(mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 canvas.DrawCircle(circleStarting.Location, circleStarting.Radius, paintCircleStarting);
-                canvas.DrawPoint(circleStarting.Location, paintCircleStarting.Color);
                 canvas.DrawRect(
                     x: circleStarting.Location.X,
                     y: circleStarting.Location.Y,
@@ -79,7 +69,6 @@ namespace DumbCad
 
                 canvas.DrawLine(
                     circleStarting.Location,
-                    //new SKPoint(circleStarting.Location.X, circleStarting.Location.Y+circleStarting.Radius),
                     circleFinishingPoint,
                     paintCircleStarting);
             }
@@ -147,6 +136,9 @@ namespace DumbCad
                 circleStarting.Radius = radius;
                 viewPort.InvalidateVisual();
             }
+
+            var cursorLocation = e.GetPosition(viewPort);
+            cursorLocationLabel.Content = $"Cursor: {cursorLocation.X:F3},{cursorLocation.Y:F3}";
         }
 
         private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -161,6 +153,18 @@ namespace DumbCad
         private void selectButton_Click(object sender, RoutedEventArgs e)
         {
             SetMode(DrawMode.Select);
+        }
+
+        private void zoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+            zoomFactor *= 2f;
+            viewPort.InvalidateVisual();
+        }
+
+        private void zoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            zoomFactor *= 0.5f;
+            viewPort.InvalidateVisual();
         }
     }
 

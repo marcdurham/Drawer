@@ -17,11 +17,12 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <ToolBarTray Background="DarkGray" Height="30" VerticalAlignment="Top">
-            <ToolBar Name="MyToolbar" Width="200" Height="30" >
+            <ToolBar Name="MyToolbar" Height="30" >
                 <Button Name ="goButton" Content="Go" Click="goButton_Click" />
                 <Button Name ="selectButton" Content="Select" Click="selectButton_Click" />
                 <Button Name="drawCircleButton" Content="Circle" Click="drawCircleButton_Click" />
-                <Button Background="LightSkyBlue" Content="Exit" />
+                <Button Name="zoomInButton" Content="Zoom In" Click="zoomInButton_Click" />
+                <Button Name="zoomOutButton" Content="Zoom Out" Click="zoomOutButton_Click" />
             </ToolBar>
         </ToolBarTray>
         <skia:SKElement
@@ -33,10 +34,8 @@
         <StatusBar VerticalAlignment="Bottom" Grid.ColumnSpan="1" Grid.Row="2">
             <Label Name="modeLabelPrefix" Content="Mode:"/>
             <Label Name="modeLabel" Content="Ready" FontWeight="Bold" />
-            <Button Name="statusButton" Content="Ready" Width="300"/>
-            <Button Name="statusButton2" Content="3D" Width="300"/>
-            <Label Name="statusMouseMiddleDownPointLabel" Content="Ready" Width="200"/>
-            <Label Name="panOffsetLabel" Content="Zoom/Pan" Width="200"/>
+            <Label Name="cursorLocationLabel" Content="No Cursor Detected" Width="150"/>
+            <Label Name="coordinatesLabel" Content="No Cursor Detected" Width="150"/>
         </StatusBar>
         
     </Grid>

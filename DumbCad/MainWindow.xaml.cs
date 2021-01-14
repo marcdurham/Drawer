@@ -188,6 +188,9 @@ namespace DumbCad
 
             var cursorLocation = e.GetPosition(viewPort);
             cursorLocationLabel.Content = $"Cursor: {cursorLocation.X:F3},{cursorLocation.Y:F3}";
+            var coordX = cursorLocation.X / zoomFactor;
+            var coordY = cursorLocation.Y / zoomFactor;
+            coordinatesLabel.Content = $"Coordinates: {coordX:F3}, {coordY:F3}";
         }
 
         private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

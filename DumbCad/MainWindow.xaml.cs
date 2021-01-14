@@ -14,6 +14,8 @@ namespace DumbCad
         DrawMode mode = DrawMode.Ready;
         float zoomFactor = 1f;
         List<SKPath> paths = new List<SKPath>();
+        int xCenter = 0;
+        int yCenter = 0;
 
         SKPaint paintCircleFinished = new SKPaint()
         {
@@ -54,7 +56,17 @@ namespace DumbCad
             var canvas = surface.Canvas;
 
             canvas.Clear(SKColors.Beige);
-            canvas.Scale(zoomFactor);
+            //canvas.Scale(zoomFactor);
+            canvas.Scale(zoomFactor, -zoomFactor);
+            xCenter = e.Info.Width/2;
+            yCenter = e.Info.Height/2;
+            
+            //canvas.Translate(-xCenter, -yCenter);
+            //SKMatrix matrix = SKMatrix.CreateTranslation(-xCenter, -yCenter);
+            //var rotation = SKMatrix44.CreateIdentity();
+            //rotation.PostConcat(SKMatrix44.CreateRotationDegrees(1f, 0, 0, 180f));
+            //matrix.PostConcat(rotation.Matrix);
+            //canvas.SetMatrix(matrix);
 
             foreach (var circle in Circles)
             {
@@ -100,7 +112,7 @@ namespace DumbCad
 
         private void ClickAt(Point point)
         {
-            var worldPoint = new SKPoint((float)point.X/zoomFactor, (float)point.Y/zoomFactor);
+            SKPoint worldPoint = WorldPointFrom(point);
             if (mode == DrawMode.CircleStart)
             {
                 circleStarting = new Circle()
@@ -144,6 +156,24 @@ namespace DumbCad
             }
         }
 
+        private Point PointFrom(SKPoint point)
+        {
+            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
+
+            return new Point(
+                x: (float)(point.X - 0) * zoomFactorNoZero,
+                y: (float)-(point.Y - 0) * zoomFactorNoZero);
+        }
+
+        private SKPoint WorldPointFrom(Point point)
+        {
+            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
+
+            return new SKPoint(
+                x: (float)(point.X + 0) / zoomFactorNoZero, 
+                y: (float)-(point.Y + 0) / zoomFactorNoZero);
+        }
+
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
         {
             SetMode(DrawMode.CircleStart);
@@ -158,7 +188,7 @@ namespace DumbCad
         private void viewPort_MouseMove(object sender, MouseEventArgs e)
         {
             var screenPoint = e.GetPosition(viewPort);
-            var worldPoint = new SKPoint((float)screenPoint.X/zoomFactor, (float)screenPoint.Y/zoomFactor);
+            var worldPoint = WorldPointFrom(screenPoint);
             if (mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 circleFinishingPoint = worldPoint;

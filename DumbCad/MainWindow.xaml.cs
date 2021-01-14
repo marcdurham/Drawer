@@ -100,11 +100,12 @@ namespace DumbCad
 
         private void ClickAt(Point point)
         {
+            var worldPoint = new SKPoint((float)point.X/zoomFactor, (float)point.Y/zoomFactor);
             if (mode == DrawMode.CircleStart)
             {
                 circleStarting = new Circle()
                 {
-                    Location = new SKPoint((float)point.X, (float)point.Y)
+                    Location = worldPoint
                 };
 
                 SetMode(DrawMode.CircleFinish);
@@ -125,7 +126,7 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineStart)
             {
-                polylineStarting = new SKPoint((float)point.X, (float)point.Y);
+                polylineStarting = worldPoint;
                 polylineNextSegment = new SKPath();
 
                 SetMode(DrawMode.PolylineFinish);
@@ -134,11 +135,10 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                var newPoint = new SKPoint((float)point.X, (float)point.Y);
-                polylineFinishing.AddPoly(new SKPoint[] { polylineStarting, newPoint });
+                polylineFinishing.AddPoly(new SKPoint[] { polylineStarting, worldPoint });
                 //paths.Add(polylineFinishing);
                 coordinatesLabel.Content = $"Paths: {paths.Count}";
-                polylineStarting = newPoint;
+                polylineStarting = worldPoint;
 
                 viewPort.InvalidateVisual();
             }
@@ -157,10 +157,11 @@ namespace DumbCad
 
         private void viewPort_MouseMove(object sender, MouseEventArgs e)
         {
+            var screenPoint = e.GetPosition(viewPort);
+            var worldPoint = new SKPoint((float)screenPoint.X/zoomFactor, (float)screenPoint.Y/zoomFactor);
             if (mode == DrawMode.CircleFinish && circleStarting != null)
             {
-                var point = e.GetPosition(viewPort);
-                circleFinishingPoint = new SKPoint((float)point.X, (float)point.Y);
+                circleFinishingPoint = worldPoint;
                 float radius = (float)Geometry.Distance(circleStarting.Location, circleFinishingPoint);
 
                 circleStarting.Radius = radius;
@@ -174,23 +175,17 @@ namespace DumbCad
             {
                 coordinatesLabel.Content = $"Paths: {paths.Count}";
 
-                var point = e.GetPosition(viewPort);
-                var skPoint = new SKPoint((float)point.X, (float)point.Y);
-
                 var lastPoint = polylineFinishing.PointCount == 0
                     ? polylineStarting
                     : polylineFinishing.Points[polylineFinishing.PointCount - 1];
 
                 polylineNextSegment = new SKPath();
-                polylineNextSegment.AddPoly(new SKPoint[] { lastPoint, skPoint });
+                polylineNextSegment.AddPoly(new SKPoint[] { lastPoint, worldPoint });
                 viewPort.InvalidateVisual();
             }
 
-            var cursorLocation = e.GetPosition(viewPort);
-            cursorLocationLabel.Content = $"Cursor: {cursorLocation.X:F3},{cursorLocation.Y:F3}";
-            var coordX = cursorLocation.X / zoomFactor;
-            var coordY = cursorLocation.Y / zoomFactor;
-            coordinatesLabel.Content = $"Coordinates: {coordX:F3}, {coordY:F3}";
+            cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
+            coordinatesLabel.Content = $"Coordinates: {worldPoint.X:F3}, {worldPoint.Y:F3}";
         }
 
         private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -200,7 +195,7 @@ namespace DumbCad
                 SetMode(DrawMode.CircleStart);
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.CircleFinish)
+            else if(mode == DrawMode.CircleStart)
             {
                 SetMode(DrawMode.Ready);
                 viewPort.InvalidateVisual();

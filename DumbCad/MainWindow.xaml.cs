@@ -34,6 +34,7 @@ namespace DumbCad
         SKPoint circleFinishingPoint = new SKPoint();
         SKPoint polylineStarting = new SKPoint();
         SKPath polylineFinishing = new SKPath();
+        SKPath polylineNextSegment = new SKPath();
 
         public MainWindow()
         {
@@ -83,6 +84,7 @@ namespace DumbCad
             else if (mode == DrawMode.PolylineFinish)
             {
                 canvas.DrawPath(polylineFinishing, paintCircleStarting);
+                canvas.DrawPath(polylineNextSegment, paintCircleStarting);
             }
         }
 
@@ -124,6 +126,7 @@ namespace DumbCad
             else if (mode == DrawMode.PolylineStart)
             {
                 polylineStarting = new SKPoint((float)point.X, (float)point.Y);
+                polylineNextSegment = new SKPath();
 
                 SetMode(DrawMode.PolylineFinish);
                 Cursor = Cursors.Cross;
@@ -154,7 +157,7 @@ namespace DumbCad
 
         private void viewPort_MouseMove(object sender, MouseEventArgs e)
         {
-            if(mode == DrawMode.CircleFinish && circleStarting != null)
+            if (mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 var point = e.GetPosition(viewPort);
                 circleFinishingPoint = new SKPoint((float)point.X, (float)point.Y);
@@ -163,14 +166,23 @@ namespace DumbCad
                 circleStarting.Radius = radius;
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.PolylineFinish)
+            else if (mode == DrawMode.PolylineStart)
             {
-                var point = e.GetPosition(viewPort);
-                polylineFinishing.
-                circleFinishingPoint = new SKPoint((float)point.X, (float)point.Y);
-                float radius = (float)Geometry.Distance(circleStarting.Location, circleFinishingPoint);
+                coordinatesLabel.Content = $"Paths: {paths.Count}";
+            }
+            else if (mode == DrawMode.PolylineFinish)
+            {
+                coordinatesLabel.Content = $"Paths: {paths.Count}";
 
-                circleStarting.Radius = radius;
+                var point = e.GetPosition(viewPort);
+                var skPoint = new SKPoint((float)point.X, (float)point.Y);
+
+                var lastPoint = polylineFinishing.PointCount == 0
+                    ? polylineStarting
+                    : polylineFinishing.Points[polylineFinishing.PointCount - 1];
+
+                polylineNextSegment = new SKPath();
+                polylineNextSegment.AddPoly(new SKPoint[] { lastPoint, skPoint });
                 viewPort.InvalidateVisual();
             }
 
@@ -192,16 +204,22 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                paths.Add(polylineFinishing);
+                if (polylineFinishing.PointCount > 0)
+                {
+                    paths.Add(polylineFinishing);
+                }
+
                 polylineFinishing = new SKPath();
 
                 SetMode(DrawMode.PolylineStart);
                 viewPort.InvalidateVisual();
+                coordinatesLabel.Content = $"Paths: {paths.Count}";
             }
             else if (mode == DrawMode.PolylineStart)
             {
                 SetMode(DrawMode.Ready);
                 viewPort.InvalidateVisual();
+                coordinatesLabel.Content = $"Paths: {paths.Count}";
             }
         }
 

@@ -14,8 +14,6 @@ namespace DumbCad
         DrawMode mode = DrawMode.Ready;
         float zoomFactor = 1f;
         List<SKPath> paths = new List<SKPath>();
-        int xCenter = 0;
-        int yCenter = 0;
 
         SKPaint paintCircleFinished = new SKPaint()
         {
@@ -37,6 +35,10 @@ namespace DumbCad
         SKPoint polylineStarting = new SKPoint();
         SKPath polylineFinishing = new SKPath();
         SKPath polylineNextSegment = new SKPath();
+        int xCenter = 0;
+        int yCenter = 0;
+        SKPoint panStart = new SKPoint();
+        SKPoint panOffset = new SKPoint();
 
         public MainWindow()
         {
@@ -60,7 +62,9 @@ namespace DumbCad
             canvas.Scale(zoomFactor, -zoomFactor);
             xCenter = e.Info.Width/2;
             yCenter = e.Info.Height/2;
-            
+
+            canvas.Translate(panOffset.X, panOffset.Y);
+
             //canvas.Translate(-xCenter, -yCenter);
             //SKMatrix matrix = SKMatrix.CreateTranslation(-xCenter, -yCenter);
             //var rotation = SKMatrix44.CreateIdentity();
@@ -154,6 +158,25 @@ namespace DumbCad
 
                 viewPort.InvalidateVisual();
             }
+            else if(mode == DrawMode.PanStart)
+            {
+                panOffset = WorldPointFrom(new Point());
+                panStart = WorldPointFrom(point);
+                SetMode(DrawMode.PanFinish);
+                panOffsetLabel.Content = $"Move mouse";
+                viewPort.InvalidateVisual();
+            }
+            else if (mode == DrawMode.PanFinish)
+            {
+                var p = WorldPointFrom(point);
+                panOffset = new SKPoint(
+                    x: p.X - panStart.X,
+                    y: p.Y - panStart.Y);
+
+                SetMode(DrawMode.PanStart);
+                panOffsetLabel.Content = $"Click start point";
+                viewPort.InvalidateVisual();
+            }
         }
 
         private Point PointFrom(SKPoint point)
@@ -213,6 +236,16 @@ namespace DumbCad
                 polylineNextSegment.AddPoly(new SKPoint[] { lastPoint, worldPoint });
                 viewPort.InvalidateVisual();
             }
+            else if(mode == DrawMode.PanFinish)
+            {
+                panOffset = new SKPoint(
+                   x: worldPoint.X - panStart.X,
+                   y: worldPoint.Y - panStart.Y);
+
+                panOffsetLabel.Content = $"Pan Offset: {panOffset.X}, {panOffset.Y}";
+                viewPort.InvalidateVisual();
+            }
+
 
             cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
             coordinatesLabel.Content = $"Coordinates: {worldPoint.X:F3}, {worldPoint.Y:F3}";
@@ -271,6 +304,12 @@ namespace DumbCad
         private void drawPolylineButton_Click(object sender, RoutedEventArgs e)
         {
             SetMode(DrawMode.PolylineStart);
+        }
+
+        private void panButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetMode(DrawMode.PanStart);
+            Cursor = Cursors.Hand;
         }
     }
 

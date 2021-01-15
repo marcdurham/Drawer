@@ -24,6 +24,7 @@
                 <Button Name="drawPolylineButton" Content="Polyline" Click="drawPolylineButton_Click" />
                 <Button Name="zoomInButton" Content="Zoom In" Click="zoomInButton_Click" />
                 <Button Name="zoomOutButton" Content="Zoom Out" Click="zoomOutButton_Click" />
+                <Button Name="panButton" Content="Pan" Click="panButton_Click" />
             </ToolBar>
         </ToolBarTray>
         <skia:SKElement
@@ -36,7 +37,8 @@
             <Label Name="modeLabelPrefix" Content="Mode:"/>
             <Label Name="modeLabel" Content="Ready" FontWeight="Bold" />
             <Label Name="cursorLocationLabel" Content="No Cursor Detected" Width="150"/>
-            <Label Name="coordinatesLabel" Content="No Cursor Detected" Width="150"/>
+            <Label Name="coordinatesLabel" Content="No Cursor Detected" Width="250"/>
+            <Label Name="panOffsetLabel" Content="No Pan Offset" Width="150"/>
         </StatusBar>
         
     </Grid>

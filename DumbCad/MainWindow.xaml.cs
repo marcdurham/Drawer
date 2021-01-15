@@ -169,15 +169,15 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PanFinish)
             {
-                var p = WorldOffsetFrom(point);
+                //var p = WorldOffsetFrom(point);
 
-                var newOffset = new SKPoint(
-                    x: p.X - panStart.X,
-                    y: p.Y - panStart.Y);
+                //var newOffset = new SKPoint(
+                //    x: p.X - panStart.X,
+                //    y: p.Y - panStart.Y);
 
-                panOffset = new SKPoint(
-                   x: panOffset.X + newOffset.X,
-                   y: panOffset.Y + newOffset.Y);
+                //panOffset = new SKPoint(
+                //   x: panOffset.X + newOffset.X,
+                //   y: panOffset.Y + newOffset.Y);
 
                 SetMode(DrawMode.PanStart);
                 panOffsetLabel.Content = $"Click start point";
@@ -259,9 +259,11 @@ namespace DumbCad
                    x: p.X - panStart.X,
                    y: p.Y - panStart.Y);
 
-                //panOffset = new SKPoint(
-                //   x: panOffset.X + newOffset.X,
-                //   y: panOffset.Y + newOffset.Y);
+                panStart = p;
+
+                panOffset = new SKPoint(
+                   x: panOffset.X + newOffset.X,
+                   y: panOffset.Y + newOffset.Y);
 
                 startPointLabel.Content = $"PanSart: {panStart.X:F2}, {panStart.Y:F2}";
                 panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";

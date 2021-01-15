@@ -12,6 +12,7 @@ namespace DumbCad
     public partial class MainWindow : Window
     {
         DrawMode mode = DrawMode.Ready;
+        DrawMode previousMode = DrawMode.Ready;
         float zoomFactor = 1f;
         List<SKPath> paths = new List<SKPath>();
 
@@ -158,31 +159,31 @@ namespace DumbCad
 
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.PanStart)
-            {
-                panStart = WorldOffsetFrom(point);
-                SetMode(DrawMode.PanFinish);
-                panOffsetLabel.Content = $"Move mouse";
-                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
-                viewPort.InvalidateVisual();
-            }
-            else if (mode == DrawMode.PanFinish)
-            {
-                var p = WorldOffsetFrom(point);
+            //else if(mode == DrawMode.PanStart)
+            //{
+            //    panStart = WorldOffsetFrom(point);
+            //    SetMode(DrawMode.PanFinish);
+            //    panOffsetLabel.Content = $"Move mouse";
+            //    startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+            //    viewPort.InvalidateVisual();
+            //}
+            //else if (mode == DrawMode.PanFinish)
+            //{
+            //    var p = WorldOffsetFrom(point);
 
-                var newOffset = new SKPoint(
-                    x: p.X - panStart.X,
-                    y: p.Y - panStart.Y);
+            //    var newOffset = new SKPoint(
+            //        x: p.X - panStart.X,
+            //        y: p.Y - panStart.Y);
 
-                panOffset = new SKPoint(
-                   x: panOffset.X + newOffset.X,
-                   y: panOffset.Y + newOffset.Y);
+            //    panOffset = new SKPoint(
+            //       x: panOffset.X + newOffset.X,
+            //       y: panOffset.Y + newOffset.Y);
 
-                SetMode(DrawMode.PanStart);
-                panOffsetLabel.Content = $"Click start point";
-                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
-                viewPort.InvalidateVisual();
-            }
+            //    SetMode(DrawMode.PanStart);
+            //    panOffsetLabel.Content = $"Click start point";
+            //    startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+            //    viewPort.InvalidateVisual();
+            //}
             else if (mode == DrawMode.PanStartLive)
             {
                 panStart = WorldOffsetFrom(point);
@@ -370,7 +371,15 @@ namespace DumbCad
         {
            if(e.MiddleButton == MouseButtonState.Pressed)
             {
+                previousMode = mode;
+                SetMode(DrawMode.PanFinishLive);
                 panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                viewPort.InvalidateVisual();
+            }
+            if (e.LeftButton == MouseButtonState.Pressed && mode == DrawMode.PanStart)
+            {
+                panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                previousMode = mode;
                 SetMode(DrawMode.PanFinishLive);
                 viewPort.InvalidateVisual();
             }
@@ -380,7 +389,12 @@ namespace DumbCad
         {
             if(e.MiddleButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
             {
-                SetMode(DrawMode.Ready);
+                SetMode(previousMode);
+                viewPort.InvalidateVisual();
+            }
+            else if (e.LeftButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
+            {
+                SetMode(previousMode);
                 viewPort.InvalidateVisual();
             }
         }

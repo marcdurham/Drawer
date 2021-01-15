@@ -368,12 +368,21 @@ namespace DumbCad
 
         private void viewPort_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           
+           if(e.MiddleButton == MouseButtonState.Pressed)
+            {
+                panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                SetMode(DrawMode.PanFinishLive);
+                viewPort.InvalidateVisual();
+            }
         }
 
         private void viewPort_MouseUp(object sender, MouseButtonEventArgs e)
         {
-         
+            if(e.MiddleButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
+            {
+                SetMode(DrawMode.Ready);
+                viewPort.InvalidateVisual();
+            }
         }
     }
 

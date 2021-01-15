@@ -111,10 +111,10 @@ namespace DumbCad
 
         private void viewPort_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ClickAt(e.GetPosition(viewPort));
+            ClickAt(e.GetPosition(viewPort), e.LeftButton == MouseButtonState.Pressed);
         }
 
-        private void ClickAt(Point point)
+        private void ClickAt(Point point, bool leftButtonDown)
         {
             SKPoint worldPoint = WorldPointFrom(point);
             if (mode == DrawMode.CircleStart)
@@ -160,21 +160,28 @@ namespace DumbCad
             }
             else if(mode == DrawMode.PanStart)
             {
-                panOffset = WorldPointFrom(new Point());
+                //panOffset = WorldPointFrom(new Point());
                 panStart = WorldPointFrom(point);
                 SetMode(DrawMode.PanFinish);
                 panOffsetLabel.Content = $"Move mouse";
+                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
                 viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.PanFinish)
             {
-                var p = WorldPointFrom(point);
+                //var p = WorldPointFrom(point);
+
+                var newOffset = new SKPoint(
+                              x: worldPoint.X - panStart.X,
+                              y: worldPoint.Y - panStart.Y);
+
                 panOffset = new SKPoint(
-                    x: p.X - panStart.X,
-                    y: p.Y - panStart.Y);
+                   x: panOffset.X + newOffset.X,
+                   y: panOffset.Y + newOffset.Y);
 
                 SetMode(DrawMode.PanStart);
                 panOffsetLabel.Content = $"Click start point";
+                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
                 viewPort.InvalidateVisual();
             }
         }
@@ -188,13 +195,13 @@ namespace DumbCad
                 y: (float)-(point.Y - 0) * zoomFactorNoZero);
         }
 
-        private SKPoint WorldPointFrom(Point point)
+        private SKPoint WorldPointFrom(Point screenPoint)
         {
             float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
 
             return new SKPoint(
-                x: (float)(point.X + 0) / zoomFactorNoZero, 
-                y: (float)-(point.Y + 0) / zoomFactorNoZero);
+                x: (float)(screenPoint.X / zoomFactorNoZero) + panOffset.X, 
+                y: (float)-(screenPoint.Y / zoomFactorNoZero) + panOffset.Y);
         }
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
@@ -238,11 +245,16 @@ namespace DumbCad
             }
             else if(mode == DrawMode.PanFinish)
             {
-                panOffset = new SKPoint(
+                var newOffset = new SKPoint(
                    x: worldPoint.X - panStart.X,
                    y: worldPoint.Y - panStart.Y);
 
-                panOffsetLabel.Content = $"Pan Offset: {panOffset.X}, {panOffset.Y}";
+                //panOffset = new SKPoint(
+                //   x: panOffset.X + newOffset.X,
+                //   y: panOffset.Y + newOffset.Y);
+
+                startPointLabel.Content = $"PanSart: {panStart.X:F2}, {panStart.Y:F2}";
+                panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";
                 viewPort.InvalidateVisual();
             }
 

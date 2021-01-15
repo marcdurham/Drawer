@@ -36,9 +36,10 @@
         <StatusBar VerticalAlignment="Bottom" Grid.ColumnSpan="1" Grid.Row="2">
             <Label Name="modeLabelPrefix" Content="Mode:"/>
             <Label Name="modeLabel" Content="Ready" FontWeight="Bold" />
-            <Label Name="cursorLocationLabel" Content="No Cursor Detected" Width="150"/>
-            <Label Name="coordinatesLabel" Content="No Cursor Detected" Width="250"/>
-            <Label Name="panOffsetLabel" Content="No Pan Offset" Width="150"/>
+            <Label Name="cursorLocationLabel" Content="No Cursor Detected" Width="auto"/>
+            <Label Name="coordinatesLabel" Content="No Cursor Detected" Width="auto"/>
+            <Label Name="startPointLabel" Content="No Start Pt" Width="auto"/>
+            <Label Name="panOffsetLabel" Content="No Pan Offset" Width="auto"/>
         </StatusBar>
         
     </Grid>

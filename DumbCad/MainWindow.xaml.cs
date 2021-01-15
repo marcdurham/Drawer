@@ -80,6 +80,7 @@ namespace DumbCad
 
             foreach(var path in paths)
             {
+                // TODO: Change path into polyline? check for click
                 canvas.DrawPath(path, paintCircleFinished);
             }
 
@@ -201,13 +202,13 @@ namespace DumbCad
             }
         }
 
-        private Point PointFrom(SKPoint point)
+        private Point PointFromWorld(SKPoint point)
         {
             float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
 
             return new Point(
-                x: (float)(point.X - 0) * zoomFactorNoZero,
-                y: (float)-(point.Y - 0) * zoomFactorNoZero);
+                x: (float)(point.X + panOffset.X) * zoomFactorNoZero,
+                y: (float)-(point.Y + panOffset.X) * zoomFactorNoZero);
         }
 
         private SKPoint WorldPointFrom(Point screenPoint)
@@ -347,12 +348,14 @@ namespace DumbCad
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
         {
             zoomFactor *= 2f;
+            zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
             viewPort.InvalidateVisual();
         }
 
         private void zoomOutButton_Click(object sender, RoutedEventArgs e)
         {
             zoomFactor *= 0.5f;
+            zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
             viewPort.InvalidateVisual();
         }
 
@@ -397,6 +400,15 @@ namespace DumbCad
                 SetMode(previousMode);
                 viewPort.InvalidateVisual();
             }
+        }
+
+        private void viewPort_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            float multiplier = 0.75f;
+            float adjustment = e.Delta < 0 ? multiplier : (1f/multiplier);
+            zoomFactor = zoomFactor * adjustment;
+            zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
+            viewPort.InvalidateVisual();
         }
     }
 

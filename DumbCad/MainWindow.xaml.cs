@@ -161,7 +161,7 @@ namespace DumbCad
             else if(mode == DrawMode.PanStart)
             {
                 //panOffset = WorldPointFrom(new Point());
-                panStart = WorldPointFrom(point);
+                panStart = WorldOffsetFrom(point);
                 SetMode(DrawMode.PanFinish);
                 panOffsetLabel.Content = $"Move mouse";
                 startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
@@ -169,11 +169,11 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PanFinish)
             {
-                //var p = WorldPointFrom(point);
+                var p = WorldOffsetFrom(point);
 
                 var newOffset = new SKPoint(
-                              x: worldPoint.X - panStart.X,
-                              y: worldPoint.Y - panStart.Y);
+                    x: p.X - panStart.X,
+                    y: p.Y - panStart.Y);
 
                 panOffset = new SKPoint(
                    x: panOffset.X + newOffset.X,
@@ -200,8 +200,17 @@ namespace DumbCad
             float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
 
             return new SKPoint(
-                x: (float)(screenPoint.X / zoomFactorNoZero) + panOffset.X, 
-                y: (float)-(screenPoint.Y / zoomFactorNoZero) + panOffset.Y);
+                x: (float)(screenPoint.X / zoomFactorNoZero) - panOffset.X, 
+                y: (float)-(screenPoint.Y / zoomFactorNoZero) - panOffset.Y);
+        }
+
+        private SKPoint WorldOffsetFrom(Point screenPoint)
+        {
+            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
+
+            return new SKPoint(
+                x: (float)(screenPoint.X / zoomFactorNoZero),
+                y: (float)-(screenPoint.Y / zoomFactorNoZero));
         }
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
@@ -245,9 +254,10 @@ namespace DumbCad
             }
             else if(mode == DrawMode.PanFinish)
             {
+                var p = WorldOffsetFrom(screenPoint);
                 var newOffset = new SKPoint(
-                   x: worldPoint.X - panStart.X,
-                   y: worldPoint.Y - panStart.Y);
+                   x: p.X - panStart.X,
+                   y: p.Y - panStart.Y);
 
                 //panOffset = new SKPoint(
                 //   x: panOffset.X + newOffset.X,

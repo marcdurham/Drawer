@@ -160,7 +160,6 @@ namespace DumbCad
             }
             else if(mode == DrawMode.PanStart)
             {
-                //panOffset = WorldPointFrom(new Point());
                 panStart = WorldOffsetFrom(point);
                 SetMode(DrawMode.PanFinish);
                 panOffsetLabel.Content = $"Move mouse";
@@ -169,17 +168,32 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PanFinish)
             {
-                //var p = WorldOffsetFrom(point);
+                var p = WorldOffsetFrom(point);
 
-                //var newOffset = new SKPoint(
-                //    x: p.X - panStart.X,
-                //    y: p.Y - panStart.Y);
+                var newOffset = new SKPoint(
+                    x: p.X - panStart.X,
+                    y: p.Y - panStart.Y);
 
-                //panOffset = new SKPoint(
-                //   x: panOffset.X + newOffset.X,
-                //   y: panOffset.Y + newOffset.Y);
+                panOffset = new SKPoint(
+                   x: panOffset.X + newOffset.X,
+                   y: panOffset.Y + newOffset.Y);
 
                 SetMode(DrawMode.PanStart);
+                panOffsetLabel.Content = $"Click start point";
+                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+                viewPort.InvalidateVisual();
+            }
+            else if (mode == DrawMode.PanStartLive)
+            {
+                panStart = WorldOffsetFrom(point);
+                SetMode(DrawMode.PanFinishLive);
+                panOffsetLabel.Content = $"Move mouse";
+                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+                viewPort.InvalidateVisual();
+            }
+            else if (mode == DrawMode.PanFinishLive)
+            {
+                SetMode(DrawMode.PanStartLive);
                 panOffsetLabel.Content = $"Click start point";
                 startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
                 viewPort.InvalidateVisual();
@@ -252,7 +266,23 @@ namespace DumbCad
                 polylineNextSegment.AddPoly(new SKPoint[] { lastPoint, worldPoint });
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.PanFinish)
+            else if (mode == DrawMode.PanFinish)
+            {
+                var p = WorldOffsetFrom(screenPoint);
+
+                var newOffset = new SKPoint(
+                   x: p.X - panStart.X,
+                   y: p.Y - panStart.Y);
+
+                  //panOffset = new SKPoint(
+                  // x: panOffset.X + newOffset.X,
+                  // y: panOffset.Y + newOffset.Y);
+
+                startPointLabel.Content = $"PanSart: {panStart.X:F2}, {panStart.Y:F2}";
+                panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";
+                viewPort.InvalidateVisual();
+            }
+            else if(mode == DrawMode.PanFinishLive)
             {
                 var p = WorldOffsetFrom(screenPoint);
                 var newOffset = new SKPoint(
@@ -334,6 +364,16 @@ namespace DumbCad
         {
             SetMode(DrawMode.PanStart);
             Cursor = Cursors.Hand;
+        }
+
+        private void viewPort_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+           
+        }
+
+        private void viewPort_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+         
         }
     }
 

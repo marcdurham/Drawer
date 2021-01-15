@@ -30,7 +30,7 @@
         <skia:SKElement
             Name="viewPort"
             Grid.Row="1"
-            PaintSurface="viewPort_PaintSurface" MouseLeftButtonUp="viewPort_MouseLeftButtonUp" MouseLeftButtonDown="viewPort_MouseLeftButtonDown" MouseMove="viewPort_MouseMove" MouseRightButtonDown="viewPort_MouseRightButtonDown" 
+            PaintSurface="viewPort_PaintSurface" MouseLeftButtonUp="viewPort_MouseLeftButtonUp" MouseLeftButtonDown="viewPort_MouseLeftButtonDown" MouseMove="viewPort_MouseMove" MouseRightButtonDown="viewPort_MouseRightButtonDown" MouseDown="viewPort_MouseDown" MouseUp="viewPort_MouseUp" 
             />
         
         <StatusBar VerticalAlignment="Bottom" Grid.ColumnSpan="1" Grid.Row="2">

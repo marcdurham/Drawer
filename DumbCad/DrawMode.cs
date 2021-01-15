@@ -16,5 +16,7 @@ namespace DumbCad
         PolylineFinish,
         PanStart,
         PanFinish,
+        PanFinishLive,
+        PanStartLive,
     }
 }

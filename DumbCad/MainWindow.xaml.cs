@@ -126,7 +126,17 @@ namespace DumbCad
         private void ClickAt(Point point, bool leftButtonDown)
         {
             SKPoint worldPoint = WorldPointFrom(point);
-            if (mode == DrawMode.CircleStart)
+            if (mode == DrawMode.Select)
+            {
+                foreach(var path in paths)
+                {
+                    if(path.Bounds.Contains(worldPoint.X, worldPoint.Y))
+                    {
+                        System.Diagnostics.Debug.WriteLine("Got one");
+                    }
+                }
+            }
+            else if (mode == DrawMode.CircleStart)
             {
                 circleStarting = new Circle()
                 {

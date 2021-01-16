@@ -64,6 +64,8 @@ namespace DumbCad
             xCenter = e.Info.Width/2;
             yCenter = e.Info.Height/2;
 
+            panOffsetLabel.Content = $"PanOffset: {panOffset.X:F3}, {panOffset.Y:F3}";
+
             canvas.Translate(panOffset.X, panOffset.Y);
 
             //canvas.Translate(-xCenter, -yCenter);
@@ -211,6 +213,15 @@ namespace DumbCad
                 y: (float)-(point.Y + panOffset.X) * zoomFactorNoZero);
         }
 
+        private SKPoint WorldOffsetFrom(Point screenPoint)
+        {
+            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
+
+            return new SKPoint(
+                x: (float)(screenPoint.X / zoomFactorNoZero) - panOffset.X,
+                y: (float)-(screenPoint.Y / zoomFactorNoZero) - panOffset.Y);
+        }
+
         private SKPoint WorldPointFrom(Point screenPoint)
         {
             float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
@@ -220,13 +231,13 @@ namespace DumbCad
                 y: (float)-(screenPoint.Y / zoomFactorNoZero) - panOffset.Y);
         }
 
-        private SKPoint WorldOffsetFrom(Point screenPoint)
+        private SKPoint WorldOffsetFrom(Point screenPoint, SKPoint worldPoint)
         {
             float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
 
             return new SKPoint(
-                x: (float)(screenPoint.X / zoomFactorNoZero),
-                y: (float)-(screenPoint.Y / zoomFactorNoZero));
+                x: (float)(screenPoint.X / zoomFactorNoZero) - worldPoint.X,
+                y: (float)-(screenPoint.Y / zoomFactorNoZero) - worldPoint.Y);
         }
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
@@ -404,10 +415,33 @@ namespace DumbCad
 
         private void viewPort_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            var screenPoint = e.GetPosition(viewPort);
+            var worldPoint = WorldPointFrom(screenPoint);
+
             float multiplier = 0.75f;
             float adjustment = e.Delta < 0 ? multiplier : (1f/multiplier);
             zoomFactor = zoomFactor * adjustment;
             zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
+
+
+            float xDelta = (float)(screenPoint.X / zoomFactor) - worldPoint.X;
+            float yDelta = (float)-(screenPoint.Y / zoomFactor) - worldPoint.Y;
+
+            System.Diagnostics.Debug.WriteLine($"xy delta: {xDelta:F4}, {yDelta:F4}");
+
+            
+
+            panOffset = new SKPoint(
+                x: xDelta,
+                y: yDelta);
+
+            viewPort.InvalidateVisual();
+        }
+
+        private void zoomResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            zoomFactor = 1.0f;
+            panOffset = new SKPoint();
             viewPort.InvalidateVisual();
         }
     }

@@ -279,7 +279,7 @@ namespace DumbCad
             }
             else if(mode == DrawMode.PanFinishLive)
             {
-                var p = WorldPointFrom(screenPoint);
+                var p = WorldOffsetFrom(screenPoint);
                 var newOffset = new SKPoint(
                    x: p.X - panStart.X,
                    y: p.Y - panStart.Y);

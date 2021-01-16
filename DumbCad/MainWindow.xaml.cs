@@ -59,7 +59,6 @@ namespace DumbCad
             var canvas = surface.Canvas;
 
             canvas.Clear(SKColors.Beige);
-            //canvas.Scale(zoomFactor);
             canvas.Scale(zoomFactor, -zoomFactor);
             xCenter = e.Info.Width/2;
             yCenter = e.Info.Height/2;
@@ -68,12 +67,18 @@ namespace DumbCad
 
             canvas.Translate(panOffset.X, panOffset.Y);
 
-            //canvas.Translate(-xCenter, -yCenter);
-            //SKMatrix matrix = SKMatrix.CreateTranslation(-xCenter, -yCenter);
-            //var rotation = SKMatrix44.CreateIdentity();
-            //rotation.PostConcat(SKMatrix44.CreateRotationDegrees(1f, 0, 0, 180f));
-            //matrix.PostConcat(rotation.Matrix);
-            //canvas.SetMatrix(matrix);
+            // Prevent entities from becoming invisible, smaller than a pixel
+            float pixelWidth = 1 / zoomFactor;
+            if(paintCircleFinished.StrokeWidth < pixelWidth)
+            {
+                paintCircleFinished.StrokeWidth = pixelWidth;
+                paintCircleStarting.StrokeWidth = pixelWidth;
+            }
+            else
+            {
+                paintCircleFinished.StrokeWidth = 1f;
+                paintCircleStarting.StrokeWidth = 1f;
+            }
 
             foreach (var circle in Circles)
             {
@@ -268,10 +273,6 @@ namespace DumbCad
                 var newOffset = new SKPoint(
                    x: p.X - panStart.X,
                    y: p.Y - panStart.Y);
-
-                  //panOffset = new SKPoint(
-                  // x: panOffset.X + newOffset.X,
-                  // y: panOffset.Y + newOffset.Y);
 
                 startPointLabel.Content = $"PanSart: {panStart.X:F2}, {panStart.Y:F2}";
                 panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";

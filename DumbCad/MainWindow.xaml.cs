@@ -297,7 +297,7 @@ namespace DumbCad
             }
             else if(mode == DrawMode.PanFinishLive)
             {
-                var p = WorldOffsetFrom(screenPoint);
+                var p = WorldPointFrom(screenPoint);
                 var newOffset = new SKPoint(
                    x: p.X - panStart.X,
                    y: p.Y - panStart.Y);
@@ -423,17 +423,9 @@ namespace DumbCad
             zoomFactor = zoomFactor * adjustment;
             zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
 
-
-            float xDelta = (float)(screenPoint.X / zoomFactor) - worldPoint.X;
-            float yDelta = (float)-(screenPoint.Y / zoomFactor) - worldPoint.Y;
-
-            System.Diagnostics.Debug.WriteLine($"xy delta: {xDelta:F4}, {yDelta:F4}");
-
-            
-
             panOffset = new SKPoint(
-                x: xDelta,
-                y: yDelta);
+                x: (float)(screenPoint.X / zoomFactor) - worldPoint.X,
+                y: (float)-(screenPoint.Y / zoomFactor) - worldPoint.Y);
 
             viewPort.InvalidateVisual();
         }

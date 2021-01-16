@@ -204,22 +204,13 @@ namespace DumbCad
             }
         }
 
-        private Point PointFromWorld(SKPoint point)
-        {
-            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
-
-            return new Point(
-                x: (float)(point.X + panOffset.X) * zoomFactorNoZero,
-                y: (float)-(point.Y + panOffset.X) * zoomFactorNoZero);
-        }
-
         private SKPoint WorldOffsetFrom(Point screenPoint)
         {
             float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
 
             return new SKPoint(
-                x: (float)(screenPoint.X / zoomFactorNoZero) - panOffset.X,
-                y: (float)-(screenPoint.Y / zoomFactorNoZero) - panOffset.Y);
+                x: (float)(screenPoint.X / zoomFactorNoZero),
+                y: (float)-(screenPoint.Y / zoomFactorNoZero));
         }
 
         private SKPoint WorldPointFrom(Point screenPoint)
@@ -229,15 +220,6 @@ namespace DumbCad
             return new SKPoint(
                 x: (float)(screenPoint.X / zoomFactorNoZero) - panOffset.X, 
                 y: (float)-(screenPoint.Y / zoomFactorNoZero) - panOffset.Y);
-        }
-
-        private SKPoint WorldOffsetFrom(Point screenPoint, SKPoint worldPoint)
-        {
-            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
-
-            return new SKPoint(
-                x: (float)(screenPoint.X / zoomFactorNoZero) - worldPoint.X,
-                y: (float)-(screenPoint.Y / zoomFactorNoZero) - worldPoint.Y);
         }
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 
-namespace DumbCad
+namespace WinCad
 {
     public class Polyline : Entity
     {

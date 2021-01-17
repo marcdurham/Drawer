@@ -50,6 +50,20 @@ namespace DumbCad
             Color = SKColors.DarkBlue
         };
 
+        SKPaint paintIsHovered = new SKPaint()
+        {
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 5f,
+            Color = SKColors.CornflowerBlue
+        };
+
+        SKPaint paintIsHoveredAndSelected = new SKPaint()
+        {
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 5f,
+            Color = SKColors.Magenta
+        };
+
         public MainWindow()
         {
             InitializeComponent();
@@ -107,19 +121,29 @@ namespace DumbCad
                     Color = color
                 };
 
-                bool selected = polyline.IsSelected;
-
-                if (selected)
+                if (polyline.IsHovered && polyline.IsSelected)
+                {
+                    canvas.DrawPath(
+                       path: polyline.Path,
+                       paint: paintIsHoveredAndSelected);
+                }
+                else if (polyline.IsHovered)
+                {
+                    canvas.DrawPath(
+                       path: polyline.Path,
+                       paint: paintIsHovered);
+                }
+                else if (polyline.IsSelected)
                 {
                     canvas.DrawPath(
                         path: polyline.Path,
-                        paint: selected ? paintIsSelected : polylinePaint);
+                        paint: paintIsSelected);
                 }
                 else
                 {
                     canvas.DrawPath(
                        path: polyline.Path,
-                       paint: selected ? paintIsSelected : polylinePaint);
+                       paint: polylinePaint);
                 }
             }
 
@@ -165,7 +189,10 @@ namespace DumbCad
             {
                 foreach (var polyline in paths) 
                 {
-                    polyline.IsNear(worldPoint, near);
+                    if(polyline.IsNear(worldPoint, near))
+                    {
+                        polyline.IsSelected = !polyline.IsSelected;
+                    }
                 }
 
                 viewPort.InvalidateVisual();
@@ -320,6 +347,22 @@ namespace DumbCad
         {
             var screenPoint = e.GetPosition(viewPort);
             var worldPoint = WorldPointFrom(screenPoint);
+            if (mode == DrawMode.Select)
+            {
+                foreach(var polyline in paths)
+                {
+                    if(polyline.IsNear(worldPoint))
+                    {
+                        polyline.IsHovered = true;
+                    }
+                    else
+                    {
+                        polyline.IsHovered = false;
+                    }
+                }
+
+                viewPort.InvalidateVisual();
+            }
             if (mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 circleFinishingPoint = worldPoint;

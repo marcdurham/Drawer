@@ -31,7 +31,6 @@ namespace DumbCad.Entities
             double b = Geometry.Distance(m, e);
             if (a <= near || b <= near)
             {
-                IsSelected = !IsSelected;
                 return true;
             }
 
@@ -52,7 +51,6 @@ namespace DumbCad.Entities
 
             if (dist <= near)
             {
-                IsSelected = !IsSelected;
                 return true;
             }
 

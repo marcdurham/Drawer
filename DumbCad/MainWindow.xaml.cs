@@ -17,7 +17,7 @@ namespace DumbCad
         DrawMode previousMode = DrawMode.Ready;
         float zoomFactor = 1f;
         //List<SKPath> paths = new List<SKPath>();
-        PolylineCollection paths = new PolylineCollection();
+        PolylineViewCollection paths = new PolylineViewCollection();
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
         SKPoint circleFinishingPoint = new SKPoint();
@@ -83,14 +83,9 @@ namespace DumbCad
                 canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
             }
 
-            foreach(var entity in paths)
+            foreach(var polyline in paths)
             {
-                // TODO: Change path into polyline? check for click
-                var polyline = entity as Polyline;
-                if (polyline != null)
-                {
-                    canvas.DrawPath(polyline.Visual as SKPath, paintCircleFinished);
-                }
+                canvas.DrawPath(polyline.Path, paintCircleFinished);
             }
 
             if (mode == DrawMode.CircleFinish && circleStarting != null)
@@ -132,8 +127,7 @@ namespace DumbCad
             {
                 foreach(var polyline in paths)
                 {
-                    var path = polyline.Visual as SKPath 
-                        ?? throw new ArgumentNullException(nameof(polyline.Visual));
+                    var path = polyline.Path;
 
                     if(path.Bounds.Contains(worldPoint.X, worldPoint.Y))
                     {

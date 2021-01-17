@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿using SkiaSharp;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace DumbCad.Entities
 {
-    public class PolylineCollection : IEnumerable<Polyline>
+    public class PolylineViewCollection : IEnumerable<PolylineView>
     {
-        List<Polyline> polylines = new List<Polyline>();
+        List<PolylineView> polylines = new List<PolylineView>();
 
-        public IEnumerator<Polyline> GetEnumerator()
+        public IEnumerator<PolylineView> GetEnumerator()
         {
             return polylines.GetEnumerator();
         }
@@ -19,16 +20,16 @@ namespace DumbCad.Entities
 
         public int Count { get { return polylines.Count; } }
 
-        public void Add(Polyline polyline)
+        public void Add(PolylineView polyline)
         {
             polylines.Add(polyline);
         }
 
-        public void Add(object visual)
+        public void Add(SKPath path)
         {
-            var polyline = new Polyline
+            var polyline = new PolylineView
             {
-                Visual = visual,
+                Path = path,
             };
 
             polylines.Add(polyline);

@@ -2,6 +2,7 @@
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -159,6 +160,7 @@ namespace DumbCad
             SKPoint worldPoint = WorldPointFrom(point);
             if (mode == DrawMode.Select)
             {
+                int p = 0;
                 foreach(var polyline in paths)
                 {
                     var path = polyline.Path;
@@ -167,11 +169,17 @@ namespace DumbCad
                     {
                         for (int i = 0; i < path.Points.Length; i += 2)
                         {
-                            CheckSegment(worldPoint, path.Points[i], path);
+                            Debug.WriteLine($"Poly: {p} Seg: {i}");
+                            if(CheckSegment(worldPoint, path.Points[i], path.Points[i+1], path))
+                            {
+                                break;
+                            }
                         }
 
-                        CheckSegment(worldPoint, path.Points.Last(), path);
+                        //CheckSegment(worldPoint, path.Points.Last(), path);
                     }
+
+                    p++;
                 }
 
                 viewPort.InvalidateVisual();
@@ -259,19 +267,51 @@ namespace DumbCad
             }
         }
 
-        private void CheckSegment(SKPoint m, SKPoint b, SKPath path)
+        private bool CheckSegment(SKPoint m, SKPoint s, SKPoint e, SKPath path)
         {
-            var dist = Geometry.Distance(m, b);
+            double a = Geometry.Distance(m, s);
+            double b = Geometry.Distance(m, e);
             //System.Diagnostics.Debug.WriteLine($"  Vertex {i-1}: {path.Points[i-1].X:F3}, {path.Points[i-1].Y:F3}");
             //System.Diagnostics.Debug.WriteLine($"  Vertex {i}: {path.Points[i].X:F3}, {path.Points[i].Y:F3} Distance: {dist:F3} {dist <= 5f}");
-            if (dist <= 5.0f)
+            if (a <= 5.0f || b <= 5.0f)
             {
+                Debug.WriteLine($"  Selected by end point a: {a:F3} b: {b:F3}");
                 paths.Select(path);
+                return true;
             }
 
             // H * Sin Theta = Opposite
             // Inverse Cos
+            double c = Geometry.Distance(s, e);
+            double cosB = (Math.Pow(a, 2) + Math.Pow(c, 2) - Math.Pow(b, 2)) / (2 * a * c);
+            double B = Math.Acos(cosB);
 
+            double cosA = (Math.Pow(b, 2) + Math.Pow(c, 2) - Math.Pow(a, 2)) / (2 * b * c);
+            double A = Math.Acos(cosA);
+
+
+            if (A <= 0 || A > (Math.PI / 2) || B <= 0 || B > (Math.PI / 2))
+            {
+                //Debug.WriteLine($"  Return by Angle: A:{A} B:{B}");
+                return false;
+            }
+
+            double dist = a * Math.Sin(B);
+
+            if (dist <= 5.0f)
+            {
+                //Debug.WriteLine($"  Selected by distance: {dist:F3} B angle: {B:F2} cosB: {cosB:F4}");
+               // Debug.WriteLine($"  Selected by distance: {dist:F3} A angle: {A:F2} cosA: {cosA:F4}");
+                paths.Select(path);
+                return true;
+            }
+            //else 
+            //{
+               // Debug.WriteLine($"  NOT Selected by distance: {dist:F3} angle: {B:F2} cosB: {cosB:F4}");
+                //Debug.WriteLine($"  NOT Selected by distance: {dist:F3} angle: {A:F2} cosA: {cosA:F4}");
+           // }
+
+            return false;
         }
 
         private SKPoint WorldOffsetFrom(Point screenPoint)

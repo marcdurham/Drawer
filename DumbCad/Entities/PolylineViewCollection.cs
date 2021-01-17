@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ namespace DumbCad.Entities
     public class PolylineViewCollection : IEnumerable<PolylineView>
     {
         List<PolylineView> polylines = new List<PolylineView>();
+        Dictionary<SKPath, PolylineView> map = new Dictionary<SKPath, PolylineView>();
 
         public IEnumerator<PolylineView> GetEnumerator()
         {
@@ -22,7 +24,18 @@ namespace DumbCad.Entities
 
         public void Add(PolylineView polyline)
         {
+            if (polyline.Path == null)
+            {
+                throw new ArgumentNullException(nameof(polyline.Path));
+            }
+
+            if (map.ContainsKey(polyline.Path))
+            {
+                throw new Exception($"{nameof(Polyline)} key ({nameof(SKPath)}) already exists!");
+            }
+
             polylines.Add(polyline);
+            map.Add(polyline.Path, polyline);
         }
 
         public void Add(SKPath path)
@@ -30,9 +43,20 @@ namespace DumbCad.Entities
             var polyline = new PolylineView
             {
                 Path = path,
+                Polyline = new Polyline() {  Color = Color.Red }
             };
 
-            polylines.Add(polyline);
+            Add(polyline);
+        }
+
+        public Polyline GetPolyline(SKPath path)
+        {
+            return map[path].Polyline;
+        }
+
+        public void Select(SKPath path) 
+        {
+            map[path].IsSelected = !map[path].IsSelected;
         }
     }
 }

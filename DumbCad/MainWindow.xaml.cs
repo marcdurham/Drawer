@@ -2,6 +2,7 @@
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Point = System.Windows.Point;
@@ -39,6 +40,13 @@ namespace DumbCad
             Style = SKPaintStyle.Stroke,
             StrokeWidth = 2f,
             Color = SKColors.Blue
+        };
+
+        SKPaint paintIsSelected = new SKPaint()
+        {
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 3f,
+            Color = SKColors.DarkBlue
         };
 
         public MainWindow()
@@ -85,7 +93,33 @@ namespace DumbCad
 
             foreach(var polyline in paths)
             {
-                canvas.DrawPath(polyline.Path, paintCircleFinished);
+                var color = new SKColor(
+                    red: polyline.Polyline.Color.R,
+                    green: polyline.Polyline.Color.G,
+                    blue: polyline.Polyline.Color.B,
+                    alpha: polyline.Polyline.Color.A);
+
+                var polylinePaint = new SKPaint()
+                {
+                    Style = SKPaintStyle.Stroke,
+                    StrokeWidth = 1f,
+                    Color = color
+                };
+
+                bool selected = polyline.IsSelected;
+
+                if (selected)
+                {
+                    canvas.DrawPath(
+                        path: polyline.Path,
+                        paint: selected ? paintIsSelected : polylinePaint);
+                }
+                else
+                {
+                    canvas.DrawPath(
+                       path: polyline.Path,
+                       paint: selected ? paintIsSelected : polylinePaint);
+                }
             }
 
             if (mode == DrawMode.CircleFinish && circleStarting != null)
@@ -129,25 +163,18 @@ namespace DumbCad
                 {
                     var path = polyline.Path;
 
-                    if(path.Bounds.Contains(worldPoint.X, worldPoint.Y))
+                    //if(path.Bounds.Contains(worldPoint.X, worldPoint.Y))
                     {
-                        //System.Diagnostics.Debug.WriteLine($"Path {paths.IndexOf(path)} Checking...");
-
                         for (int i = 0; i < path.Points.Length; i += 2)
                         {
-                            //var a = path.Points[i - 1];
-                            var b = path.Points[i];
-                            var m = worldPoint;
-                            var dist = Geometry.Distance(m, b);
-                            //System.Diagnostics.Debug.WriteLine($"  Vertex {i-1}: {path.Points[i-1].X:F3}, {path.Points[i-1].Y:F3}");
-                            System.Diagnostics.Debug.WriteLine($"  Vertex {i}: {path.Points[i].X:F3}, {path.Points[i].Y:F3} Distance: {dist:F3} {dist <= 5f}");
-                            //if(dist <= 5.0f)
-                            //{
-                            //    System.Diagnostics.Debug.WriteLine("  Got one");
-                            //}
+                            CheckSegment(worldPoint, path.Points[i], path);
                         }
+
+                        CheckSegment(worldPoint, path.Points.Last(), path);
                     }
                 }
+
+                viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.CircleStart)
             {
@@ -230,6 +257,21 @@ namespace DumbCad
                 startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
                 viewPort.InvalidateVisual();
             }
+        }
+
+        private void CheckSegment(SKPoint m, SKPoint b, SKPath path)
+        {
+            var dist = Geometry.Distance(m, b);
+            //System.Diagnostics.Debug.WriteLine($"  Vertex {i-1}: {path.Points[i-1].X:F3}, {path.Points[i-1].Y:F3}");
+            //System.Diagnostics.Debug.WriteLine($"  Vertex {i}: {path.Points[i].X:F3}, {path.Points[i].Y:F3} Distance: {dist:F3} {dist <= 5f}");
+            if (dist <= 5.0f)
+            {
+                paths.Select(path);
+            }
+
+            // H * Sin Theta = Opposite
+            // Inverse Cos
+
         }
 
         private SKPoint WorldOffsetFrom(Point screenPoint)

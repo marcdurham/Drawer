@@ -1,5 +1,4 @@
 ﻿using SkiaSharp;
-using System.Collections.Generic;
 
 namespace DumbCad.Entities
 {
@@ -7,5 +6,7 @@ namespace DumbCad.Entities
     {
         public Polyline Polyline { get; set; }
         public SKPath Path { get; set; }
+        public bool IsSelected { get; set; }
+        public bool IsHovered { get; set; }
     }
 }

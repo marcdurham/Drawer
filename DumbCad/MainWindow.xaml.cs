@@ -1,8 +1,10 @@
-﻿using SkiaSharp;
+﻿using DumbCad.Entities;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using Point = System.Windows.Point;
 
 namespace DumbCad
 {
@@ -14,7 +16,8 @@ namespace DumbCad
         DrawMode mode = DrawMode.Ready;
         DrawMode previousMode = DrawMode.Ready;
         float zoomFactor = 1f;
-        List<SKPath> paths = new List<SKPath>();
+        //List<SKPath> paths = new List<SKPath>();
+        PolylineCollection paths = new PolylineCollection();
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
         SKPoint circleFinishingPoint = new SKPoint();
@@ -80,10 +83,14 @@ namespace DumbCad
                 canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
             }
 
-            foreach(var path in paths)
+            foreach(var entity in paths)
             {
                 // TODO: Change path into polyline? check for click
-                canvas.DrawPath(path, paintCircleFinished);
+                var polyline = entity as Polyline;
+                if (polyline != null)
+                {
+                    canvas.DrawPath(polyline.Visual as SKPath, paintCircleFinished);
+                }
             }
 
             if (mode == DrawMode.CircleFinish && circleStarting != null)
@@ -123,14 +130,15 @@ namespace DumbCad
             SKPoint worldPoint = WorldPointFrom(point);
             if (mode == DrawMode.Select)
             {
-                foreach(var path in paths)
+                foreach(var polyline in paths)
                 {
+                    var path = polyline.Visual as SKPath 
+                        ?? throw new ArgumentNullException(nameof(polyline.Visual));
+
                     if(path.Bounds.Contains(worldPoint.X, worldPoint.Y))
                     {
-                        System.Diagnostics.Debug.WriteLine($"Path {paths.IndexOf(path)} Checking...");
-                        //Math.Sin()
-                        //System.Diagnostics.Debug.WriteLine($"  Vertex 0: {path.Points[0].X:F3}, {path.Points[0].Y:F3}");
-                        
+                        //System.Diagnostics.Debug.WriteLine($"Path {paths.IndexOf(path)} Checking...");
+
                         for (int i = 0; i < path.Points.Length; i += 2)
                         {
                             //var a = path.Points[i - 1];

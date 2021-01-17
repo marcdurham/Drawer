@@ -17,6 +17,7 @@ namespace DumbCad.Entities
         }
 
         public List<Point> Vertices { get; } = new List<Point>();
+        public object Visual { get; set; }
 
         public override List<Point> Points()
         {

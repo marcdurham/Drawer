@@ -1,4 +1,7 @@
 ﻿using DumbCad.Entities;
+using IxMilia.Dxf;
+using IxMilia.Dxf.Entities;
+using Microsoft.Win32;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -71,9 +74,96 @@ namespace DumbCad
             SetMode(DrawMode.Ready);
         }
 
-        private void goButton_Click(object sender, RoutedEventArgs e)
+        private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            viewPort.InvalidateVisual();
+            var dialog = new OpenFileDialog
+            {
+                Filter = "AutoCAD Drawing Exchange (DXF)|*.dxf|All Files (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrWhiteSpace(dialog.FileName))
+                {
+                    //paper = PaperBuilder.GetPaper();
+                    //myViewport3D.Children.Clear();
+                    //myViewport3D.Children.Add(paper);
+
+                    var dxfFile = DxfFile.Load(dialog.FileName);
+
+                    foreach (DxfEntity entity in dxfFile.Entities)
+                    {
+                        if (entity.Layer.ToUpper().StartsWith("PIPE"))
+                        {
+                            switch (entity.EntityType)
+                            {
+                                case DxfEntityType.Polyline:
+                                    var dxfPolyline = (DxfPolyline)entity;
+                                    var poly = new Polyline
+                                    {
+                                        Color = Color.Red
+                                    };
+
+                                    var path = new SKPath();
+                                    var skvertices = new SKPoint[dxfPolyline.Vertices.Count];
+                                    int i = 0;
+                                    foreach(var v in dxfPolyline.Vertices)
+                                    {
+                                        var vertex = new Entities.Point(
+                                            v.Location.X,
+                                            v.Location.Y);
+                                        skvertices[i] = new SKPoint((float)vertex.X, (float)vertex.Y);
+                                        poly.Vertices.Add(vertex);
+                                    }
+
+                                    path.AddPoly(skvertices, close: false);
+
+
+                                    var polyView = new PolylineView
+                                    {
+                                         Polyline = poly,
+                                         Path = path
+                                    };
+
+                                    paths.Add(polyView);
+                                    //DrawPolyline((DxfPolyline)entity);
+                                   
+
+                                    break;
+                                case DxfEntityType.LwPolyline:
+                                    // DrawLwPolyline((DxfLwPolyline)entity);
+                                    var dxfLwPolyline = (DxfLwPolyline)entity;
+                                    var poly2 = new Polyline
+                                    {
+                                        Color = Color.Red
+                                    };
+
+                                    var path2 = new SKPath();
+                                    var skvertices2 = new SKPoint[dxfLwPolyline.Vertices.Count];
+                                    int i2 = 0;
+                                    foreach (var v in dxfLwPolyline.Vertices)
+                                    {
+                                        var vertex = new Entities.Point(v.X, v.Y);
+                                        skvertices2[i2] = new SKPoint((float)vertex.X, (float)vertex.Y);
+                                        poly2.Vertices.Add(vertex);
+                                    }
+
+                                    path2.AddPoly(skvertices2, close: false);
+
+
+                                    var polyView2 = new PolylineView
+                                    {
+                                        Polyline = poly2,
+                                        Path = path2
+                                    };
+
+                                    paths.Add(polyView2);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void viewPort_PaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs e)

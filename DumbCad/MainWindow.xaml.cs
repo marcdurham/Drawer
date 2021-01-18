@@ -205,7 +205,7 @@ namespace DumbCad
                 };
 
                 SetMode(DrawMode.CircleFinish);
-                Cursor = Cursors.Cross;
+                viewPort.Cursor = Cursors.Cross;
             }
             else if (mode == DrawMode.CircleFinish)
             {
@@ -217,7 +217,7 @@ namespace DumbCad
                 circleStarting = null;
 
                 SetMode(DrawMode.CircleStart);
-                Cursor = Cursors.Cross;
+                viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.PolylineStart)
@@ -226,7 +226,7 @@ namespace DumbCad
                 polylineNextSegment = new SKPath();
 
                 SetMode(DrawMode.PolylineFinish);
-                Cursor = Cursors.Cross;
+                viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.PolylineFinish)
@@ -269,6 +269,7 @@ namespace DumbCad
                 SetMode(DrawMode.PanFinishLive);
                 panOffsetLabel.Content = $"Move mouse";
                 startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+                viewPort.Cursor = Cursors.Hand;
                 viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.PanFinishLive)
@@ -276,6 +277,7 @@ namespace DumbCad
                 SetMode(DrawMode.PanStartLive);
                 panOffsetLabel.Content = $"Click start point";
                 startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+                viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
         }
@@ -485,12 +487,13 @@ namespace DumbCad
         private void drawPolylineButton_Click(object sender, RoutedEventArgs e)
         {
             SetMode(DrawMode.PolylineStart);
+            viewPort.Cursor = Cursors.Cross;
         }
 
         private void panButton_Click(object sender, RoutedEventArgs e)
         {
             SetMode(DrawMode.PanStart);
-            Cursor = Cursors.Hand;
+            viewPort.Cursor = Cursors.Arrow;
         }
 
         private void viewPort_MouseDown(object sender, MouseButtonEventArgs e)
@@ -500,6 +503,7 @@ namespace DumbCad
                 previousMode = mode;
                 SetMode(DrawMode.PanFinishLive);
                 panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
             else if (e.LeftButton == MouseButtonState.Pressed && mode == DrawMode.PanStart)
@@ -507,6 +511,7 @@ namespace DumbCad
                 previousMode = mode;
                 SetMode(DrawMode.PanFinishLiveLeft);
                 panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
         }
@@ -516,11 +521,13 @@ namespace DumbCad
             if(e.MiddleButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
             {
                 SetMode(previousMode);
+                viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
             else if (e.LeftButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
             {
                 SetMode(previousMode);
+                viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
         }

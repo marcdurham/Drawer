@@ -18,5 +18,6 @@ namespace DumbCad
         PanFinish,
         PanFinishLive,
         PanStartLive,
+        PanFinishLiveLeft,
     }
 }

@@ -363,6 +363,7 @@ namespace DumbCad
 
                 viewPort.InvalidateVisual();
             }
+
             if (mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 circleFinishingPoint = worldPoint;
@@ -399,7 +400,8 @@ namespace DumbCad
                 panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.PanFinishLive)
+            else if((mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Pressed)
+                || (mode == DrawMode.PanFinishLiveLeft && e.LeftButton == MouseButtonState.Pressed))
             {
                 var p = WorldOffsetFrom(screenPoint);
                 var newOffset = new SKPoint(
@@ -416,9 +418,15 @@ namespace DumbCad
                 panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";
                 viewPort.InvalidateVisual();
             }
+            else if ((mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Released)
+                || (mode == DrawMode.PanFinishLiveLeft && e.LeftButton == MouseButtonState.Released))
+            {
+                SetMode(previousMode);
+                viewPort.InvalidateVisual();
+            }
 
 
-            cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
+                    cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
             coordinatesLabel.Content = $"Coordinates: {worldPoint.X:F3}, {worldPoint.Y:F3}";
         }
 
@@ -487,18 +495,18 @@ namespace DumbCad
 
         private void viewPort_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           if(e.MiddleButton == MouseButtonState.Pressed)
+            if(e.MiddleButton == MouseButtonState.Pressed)
             {
                 previousMode = mode;
                 SetMode(DrawMode.PanFinishLive);
                 panStart = WorldOffsetFrom(e.GetPosition(viewPort));
                 viewPort.InvalidateVisual();
             }
-            if (e.LeftButton == MouseButtonState.Pressed && mode == DrawMode.PanStart)
+            else if (e.LeftButton == MouseButtonState.Pressed && mode == DrawMode.PanStart)
             {
-                panStart = WorldOffsetFrom(e.GetPosition(viewPort));
                 previousMode = mode;
-                SetMode(DrawMode.PanFinishLive);
+                SetMode(DrawMode.PanFinishLiveLeft);
+                panStart = WorldOffsetFrom(e.GetPosition(viewPort));
                 viewPort.InvalidateVisual();
             }
         }

@@ -21,6 +21,7 @@ namespace DumbCad
         DrawMode previousMode = DrawMode.Ready;
         float zoomFactor = 1f;
         PolylineViewCollection polylines = new PolylineViewCollection();
+        PolylineViewCollection lines = new PolylineViewCollection();
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
         SKPoint circleFinishingPoint = new SKPoint();
@@ -95,6 +96,33 @@ namespace DumbCad
                         {
                             switch (entity.EntityType)
                             {
+                                case DxfEntityType.Line:
+                                    var dxfLine = (DxfLine)entity;
+                                    var line = new Polyline
+                                    {
+                                        Color = Color.Green,
+                                        Width = 2f
+                                    };
+
+                                    var p1 = new Entities.Point(
+                                        dxfLine.P1.X,
+                                        dxfLine.P1.Y);
+
+                                    var p2 = new Entities.Point(
+                                        dxfLine.P2.X,
+                                        dxfLine.P2.Y);
+
+                                    line.Vertices.Add(p1);
+                                    line.Vertices.Add(p2);
+
+                                    var lineView = new PolylineView
+                                    {
+                                        Polyline = line,
+                                        Path = new SKPath()
+                                    };
+
+                                    lines.Add(lineView);
+                                    break;
                                 case DxfEntityType.Polyline:
                                     var dxfPolyline = (DxfPolyline)entity;
                                     var poly = new Polyline
@@ -147,6 +175,8 @@ namespace DumbCad
                         }
                     }
                 }
+
+                viewPort.InvalidateVisual();
             }
         }
 
@@ -182,48 +212,12 @@ namespace DumbCad
 
             foreach(var polyline in polylines)
             {
-                var color = new SKColor(
-                    red: polyline.Polyline.Color.R,
-                    green: polyline.Polyline.Color.G,
-                    blue: polyline.Polyline.Color.B,
-                    alpha: polyline.Polyline.Color.A);
+                DrawPolylineToCanvas(canvas, pixelWidth, polyline);
+            }
 
-                var polylinePaint = new SKPaint()
-                {
-                    Style = SKPaintStyle.Stroke,
-                    StrokeWidth = pixelWidth,
-                    Color = color
-                };
-
-                SKPaint polyPaint = polylinePaint;
-                if (polyline.Polyline.IsHovered && polyline.Polyline.IsSelected)
-                {
-                    polyPaint = paintIsHoveredAndSelected;
-                }
-                else if (polyline.Polyline.IsHovered)
-                {
-                    polyPaint = paintIsHovered;
-                }
-                else if (polyline.Polyline.IsSelected)
-                {
-                    polyPaint = paintIsSelected;
-                }
-
-                for (int i = 1; i < polyline.Polyline.Vertices.Count; i++)
-                {
-                    var start = new SKPoint(
-                        x: (float)polyline.Polyline.Vertices[i - 1].X,
-                        y: (float)polyline.Polyline.Vertices[i - 1].Y);
-
-                    var end = new SKPoint(
-                        x: (float)polyline.Polyline.Vertices[i].X,
-                        y: (float)polyline.Polyline.Vertices[i].Y);
-
-                    canvas.DrawLine(
-                        p0: start,
-                        p1: end,
-                        paint: polyPaint);
-                }
+            foreach (var line in lines)
+            {
+                DrawPolylineToCanvas(canvas, pixelWidth*3, line);
             }
 
             if (mode == DrawMode.CircleFinish && circleStarting != null)
@@ -263,6 +257,52 @@ namespace DumbCad
                         p1: end,
                         paint: paintCircleStarting);
                 }
+            }
+        }
+
+        private void DrawPolylineToCanvas(SKCanvas canvas, float pixelWidth, PolylineView polyline)
+        {
+            var color = new SKColor(
+                red: polyline.Polyline.Color.R,
+                green: polyline.Polyline.Color.G,
+                blue: polyline.Polyline.Color.B,
+                alpha: polyline.Polyline.Color.A);
+
+            var polylinePaint = new SKPaint()
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = pixelWidth,
+                Color = color
+            };
+
+            SKPaint polyPaint = polylinePaint;
+            if (polyline.Polyline.IsHovered && polyline.Polyline.IsSelected)
+            {
+                polyPaint = paintIsHoveredAndSelected;
+            }
+            else if (polyline.Polyline.IsHovered)
+            {
+                polyPaint = paintIsHovered;
+            }
+            else if (polyline.Polyline.IsSelected)
+            {
+                polyPaint = paintIsSelected;
+            }
+
+            for (int i = 1; i < polyline.Polyline.Vertices.Count; i++)
+            {
+                var start = new SKPoint(
+                    x: (float)polyline.Polyline.Vertices[i - 1].X,
+                    y: (float)polyline.Polyline.Vertices[i - 1].Y);
+
+                var end = new SKPoint(
+                    x: (float)polyline.Polyline.Vertices[i].X,
+                    y: (float)polyline.Polyline.Vertices[i].Y);
+
+                canvas.DrawLine(
+                    p0: start,
+                    p1: end,
+                    paint: polyPaint);
             }
         }
 
@@ -632,33 +672,43 @@ namespace DumbCad
             {
                 if (!string.IsNullOrWhiteSpace(dialog.FileName))
                 {
-                    //paper = PaperBuilder.GetPaper();
-                    //myViewport3D.Children.Clear();
-                    //myViewport3D.Children.Add(paper);
-
-                    var dxfFile = new DxfFile();
-                    dxfFile.Layers.Add(new DxfLayer("PIPES"));
-                    foreach(var polyline in polylines)
-                    {
-                        var vertices = new List<DxfLwPolylineVertex>();
-                        foreach(var v in polyline.Polyline.Vertices)
-                        {
-                            vertices.Add(new DxfLwPolylineVertex { X = v.X, Y = v.Y });
-                        }
-
-                        var dxfPolyline = new DxfLwPolyline(vertices)
-                        {
-                            Layer = "PIPES",
-                            Color = DxfColor.FromIndex(3),
-                            Thickness = 3.0
-                        };
-
-                        dxfFile.Entities.Add(dxfPolyline);
-                    }
-
-                    dxfFile.Save(dialog.FileName);
+                    SaveDxfFile(dialog.FileName);
                 }
             }
+        }
+
+        private void SaveDxfFile(string fileName)
+        {
+            //paper = PaperBuilder.GetPaper();
+            //myViewport3D.Children.Clear();
+            //myViewport3D.Children.Add(paper);
+
+            var dxfFile = new DxfFile();
+            dxfFile.Header.SetDefaults();
+            dxfFile.Header.Version = DxfAcadVersion.R2000;
+            dxfFile.Layers.Add(new DxfLayer("PIPES"));
+            foreach (var polyline in polylines)
+            {
+                var vertices = new List<DxfLwPolylineVertex>();
+                foreach (var v in polyline.Polyline.Vertices)
+                {
+                    vertices.Add(new DxfLwPolylineVertex { X = v.X, Y = v.Y });
+                }
+
+                var dxfPolyline = new DxfLwPolyline(vertices)
+                {
+                    LineTypeScale = 1,
+                    IsClosed = false,
+                    Layer = "PIPES",
+                    Color = DxfColor.FromIndex(7),
+                    Thickness = 3.0
+                };
+
+                dxfFile.Entities.Add(dxfPolyline);
+            }
+
+            dxfFile.ViewPorts.Clear();
+            dxfFile.Save(fileName);
         }
     }
 

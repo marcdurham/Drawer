@@ -25,6 +25,7 @@
                 <Button Name="zoomInButton" Content="Zoom In" Click="zoomInButton_Click" />
                 <Button Name="zoomOutButton" Content="Zoom Out" Click="zoomOutButton_Click" />
                 <Button Name="zoomResetButton" Content="Zoom Reset" Click="zoomResetButton_Click" />
+                <Button Name="zoomExtentsButton" Content="Zoom Extents" Click="zoomExtentsButton_Click" />
                 <Button Name="panButton" Content="Pan" Click="panButton_Click" />
             </ToolBar>
         </ToolBarTray>

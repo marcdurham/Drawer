@@ -584,6 +584,41 @@ namespace DumbCad
             panOffset = new SKPoint();
             viewPort.InvalidateVisual();
         }
+
+        private void zoomExtentsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var screenWorldWidth = viewPort.ActualWidth / zoomFactor;
+            var screenWorldHeight = viewPort.ActualHeight / zoomFactor;
+
+            double leftMostX = 0.0;
+            double rightMostX = 0.0;
+            double topMostY = 0.0;
+            double bottomMostY = 0.0;
+            foreach (var polyline in polylines)
+            {
+                foreach(var vertex in polyline.Polyline.Vertices)
+                {
+                    if(leftMostX > vertex.X)
+                    {
+                        leftMostX = vertex.X;
+                    }
+                    if (rightMostX < vertex.X)
+                    {
+                        rightMostX = vertex.X;
+                    }
+                    if (topMostY < vertex.Y)
+                    {
+                        topMostY = vertex.Y;
+                    }
+                    if (bottomMostY > vertex.Y)
+                    {
+                        bottomMostY = vertex.Y;
+                    }
+                }
+            }
+
+
+        }
     }
 
     public class Circle

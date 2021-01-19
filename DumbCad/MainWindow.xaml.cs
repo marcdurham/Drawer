@@ -207,14 +207,9 @@ namespace DumbCad
                     // Reverse the Y since the canvas is flipped
                     y: (float)-image.Image.Location.Y);
 
-                // canvas.DrawImage(image.SkImage, p);
-
-                //var rect = new SKRect(0, 0, image.SkImage.Width, -image.SkImage.Height);
-                //canvas.DrawImage(image.SkImage, dest: rect);
-                canvas.DrawImage(image.SkImage, p);
-
-                // get garbage cans
-
+                var rect = new SKRect(p.X, p.Y, image.SkImage.Width, image.SkImage.Height);
+                canvas.DrawImage(image.SkImage, dest: rect);
+                //canvas.DrawImage(image.SkImage, p);
             }
 
             canvas.Scale(1, -1);

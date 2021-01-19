@@ -88,10 +88,10 @@ namespace DumbCad
                     //myViewport3D.Children.Add(paper);
 
                     var dxfFile = DxfFile.Load(dialog.FileName);
-
+                    
                     foreach (DxfEntity entity in dxfFile.Entities)
                     {
-                        if (entity.Layer.ToUpper().StartsWith("PIPE"))
+                        //if (entity.Layer.ToUpper().StartsWith("PIPE"))
                         {
                             switch (entity.EntityType)
                             {
@@ -99,7 +99,8 @@ namespace DumbCad
                                     var dxfPolyline = (DxfPolyline)entity;
                                     var poly = new Polyline
                                     {
-                                        Color = Color.Red
+                                        Color = Color.Red,
+                                        Width = 2f
                                     };
 
                                     foreach(var v in dxfPolyline.Vertices)
@@ -162,7 +163,7 @@ namespace DumbCad
             canvas.Translate(panOffset.X, panOffset.Y);
 
             // Prevent entities from becoming invisible, smaller than a pixel
-            float pixelWidth = 1 / zoomFactor;
+            float pixelWidth = (float)(1 / (double)zoomFactor);
             if(paintCircleFinished.StrokeWidth < pixelWidth)
             {
                 paintCircleFinished.StrokeWidth = pixelWidth;
@@ -618,6 +619,46 @@ namespace DumbCad
             }
 
 
+        }
+
+        private void saveFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "AutoCAD Drawing Exchange (DXF)|*.dxf|All Files (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrWhiteSpace(dialog.FileName))
+                {
+                    //paper = PaperBuilder.GetPaper();
+                    //myViewport3D.Children.Clear();
+                    //myViewport3D.Children.Add(paper);
+
+                    var dxfFile = new DxfFile();
+                    dxfFile.Layers.Add(new DxfLayer("PIPES"));
+                    foreach(var polyline in polylines)
+                    {
+                        var vertices = new List<DxfLwPolylineVertex>();
+                        foreach(var v in polyline.Polyline.Vertices)
+                        {
+                            vertices.Add(new DxfLwPolylineVertex { X = v.X, Y = v.Y });
+                        }
+
+                        var dxfPolyline = new DxfLwPolyline(vertices)
+                        {
+                            Layer = "PIPES",
+                            Color = DxfColor.FromIndex(3),
+                            Thickness = 3.0
+                        };
+
+                        dxfFile.Entities.Add(dxfPolyline);
+                    }
+
+                    dxfFile.Save(dialog.FileName);
+                }
+            }
         }
     }
 

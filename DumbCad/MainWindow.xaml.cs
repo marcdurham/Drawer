@@ -193,11 +193,29 @@ namespace DumbCad
             var canvas = surface.Canvas;
 
             canvas.Clear(SKColors.Beige);
-            canvas.Scale(zoomFactor, -zoomFactor);
-
             panOffsetLabel.Content = $"PanOffset: {panOffset.X:F3}, {panOffset.Y:F3}";
 
+            canvas.Scale(zoomFactor, -zoomFactor);
             canvas.Translate(panOffset.X, panOffset.Y);
+
+            canvas.Scale(1, -1);
+            foreach (var image in images)
+            {
+                var p = new SKPoint(
+                    x: (float)image.Image.Location.X,
+                    y: (float)image.Image.Location.Y);
+
+                // canvas.DrawImage(image.SkImage, p);
+
+                //var rect = new SKRect(0, 0, image.SkImage.Width, -image.SkImage.Height);
+                //canvas.DrawImage(image.SkImage, dest: rect);
+                canvas.DrawImage(image.SkImage, p);
+
+                // get garbage cans
+
+            }
+
+            canvas.Scale(1, -1);
 
             // Prevent entities from becoming invisible, smaller than a pixel
             float pixelWidth = (float)(1 / (double)zoomFactor);
@@ -212,22 +230,13 @@ namespace DumbCad
                 paintCircleStarting.StrokeWidth = 1f;
             }
 
-            foreach(var image in images)
-            {
-                var p = new SKPoint(
-                    x: (float)image.Image.Location.X,
-                    y: (float)image.Image.Location.Y);
-
-                canvas.DrawImage(image.SkImage, p);
-                
-            }
 
             foreach (var circle in Circles)
             {
                 canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
             }
 
-            foreach(var polyline in polylines)
+            foreach (var polyline in polylines)
             {
                 DrawPolylineToCanvas(canvas, pixelWidth, polyline);
             }
@@ -773,6 +782,8 @@ namespace DumbCad
             };
 
             images.Add(view);
+
+            viewPort.InvalidateVisual();
         }
     }
 

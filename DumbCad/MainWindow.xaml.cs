@@ -214,15 +214,15 @@ namespace DumbCad
                 };
 
                 SKPaint polyPaint = polylinePaint;
-                if (polyline.IsHovered && polyline.IsSelected)
+                if (polyline.Polyline.IsHovered && polyline.Polyline.IsSelected)
                 {
                     polyPaint = paintIsHoveredAndSelected;
                 }
-                else if (polyline.IsHovered)
+                else if (polyline.Polyline.IsHovered)
                 {
                     polyPaint = paintIsHovered;
                 }
-                else if (polyline.IsSelected)
+                else if (polyline.Polyline.IsSelected)
                 {
                     polyPaint = paintIsSelected;
                 }
@@ -294,6 +294,9 @@ namespace DumbCad
         private void ClickAt(Point point, bool leftButtonDown)
         {
             SKPoint worldPoint = WorldPointFrom(point);
+            Entities.Point wp = new Entities.Point(
+                x: worldPoint.X,
+                y: worldPoint.Y);
             
             // 5f is five pixels at any zoom factor
             float near = 5f / zoomFactor;
@@ -301,9 +304,9 @@ namespace DumbCad
             {
                 foreach (var polyline in paths) 
                 {
-                    if(polyline.IsNear(worldPoint, near))
+                    if(polyline.Polyline.IsNear(wp, near))
                     {
-                        polyline.IsSelected = !polyline.IsSelected;
+                        polyline.Polyline.IsSelected = !polyline.Polyline.IsSelected;
                     }
                 }
 
@@ -335,13 +338,15 @@ namespace DumbCad
             else if (mode == DrawMode.PolylineStart)
             {
                 polylineStarting = worldPoint;
-                
-                
+
+
                 //polyStarting = new Polyline()
                 //{
                 //    Color = Color.Red,
                 //    Width = 3f,
                 //};
+                polylineNextSegment = new SKPath();
+                
                 polylineViewStarting = new PolylineView
                 {
                     Path = new SKPath(),
@@ -379,12 +384,15 @@ namespace DumbCad
                         y: worldPoint.Y));
 
                 //var lastPoint = polylineViewStarting.Polyline.Vertices.Last();
-                
+
+                polylineNextSegment = new SKPath();
+                polylineNextSegment.AddPoly(new SKPoint[] { polylineStarting, worldPoint });
+
                 //////polylineNextSegment = new SKPath();
                 //////polylineNextSegment.LineTo(polylineStarting);
                 //////polylineNextSegment.LineTo(worldPoint);
-                
-                
+
+
                 //polylineNextSegment.AddPoly(new SKPoint[] { worldPoint });
 
                 // No, not added until it's finished
@@ -512,17 +520,21 @@ namespace DumbCad
         {
             var screenPoint = e.GetPosition(viewPort);
             var worldPoint = WorldPointFrom(screenPoint);
+            var wp = new Entities.Point(
+                x: worldPoint.X,
+                y: worldPoint.Y);
+
             if (mode == DrawMode.Select)
             {
                 foreach(var polyline in paths)
                 {
-                    if(polyline.IsNear(worldPoint))
+                    if(polyline.Polyline.IsNear(wp))
                     {
-                        polyline.IsHovered = true;
+                        polyline.Polyline.IsHovered = true;
                     }
                     else
                     {
-                        polyline.IsHovered = false;
+                        polyline.Polyline.IsHovered = false;
                     }
                 }
 
@@ -597,7 +609,7 @@ namespace DumbCad
             }
 
 
-                    cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
+            cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
             coordinatesLabel.Content = $"Coordinates: {worldPoint.X:F3}, {worldPoint.Y:F3}";
         }
 

@@ -16,7 +16,7 @@ namespace DumbCad.Entities
             //{
             for (int i = 0; i < Path.Points.Length; i += 2)
             {
-                if (IsNear(m, Path.Points[i], Path.Points[i + 1], Path, near))
+                if (IsNear(m, Path.Points[i], Path.Points[i + 1], near))
                 {
                     return true;
                 }
@@ -25,7 +25,7 @@ namespace DumbCad.Entities
             return false;
         }
 
-        bool IsNear(SKPoint m, SKPoint s, SKPoint e, SKPath path, float near)
+        bool IsNear(SKPoint m, SKPoint s, SKPoint e, float near)
         {
             double a = Geometry.Distance(m, s);
             double b = Geometry.Distance(m, e);

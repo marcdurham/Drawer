@@ -103,6 +103,31 @@ namespace DumbCad
                                 case DxfEntityType.Image:
                                     var dxfImage = (DxfImage)entity;
                                     // TODO: Load images
+                                    var location = new Entities.Point(
+                                        x: dxfImage.Location.X,
+                                        y: dxfImage.Location.Y);
+
+                                    var image = new Image
+                                    {
+                                        Location = location,
+                                        FilePath = dxfImage.ImageDefinition.FilePath
+                                    };
+
+                                    SKImage skImage = null;
+                                    using (var stream = new SKFileStream(image.FilePath))
+                                    {
+                                        stream.Seek(0);
+                                        var bitmap = SKBitmap.Decode(stream);
+                                        skImage = SKImage.FromBitmap(bitmap);
+                                    }
+
+                                    var imageView = new ImageView
+                                    {
+                                        Image = image,
+                                        SkImage = skImage
+                                    };
+
+                                    images.Add(imageView);
                                     break;
                                 case DxfEntityType.Line:
                                     var dxfLine = (DxfLine)entity;
@@ -199,7 +224,9 @@ namespace DumbCad
             canvas.Scale(zoomFactor, -zoomFactor);
             canvas.Translate(panOffset.X, panOffset.Y);
 
+            // Flip upside down 
             canvas.Scale(1, -1);
+
             foreach (var image in images)
             {
                 var p = new SKPoint(
@@ -212,6 +239,7 @@ namespace DumbCad
                 //canvas.DrawImage(image.SkImage, p);
             }
 
+            // Flip back up
             canvas.Scale(1, -1);
 
             // Prevent entities from becoming invisible, smaller than a pixel
@@ -755,6 +783,22 @@ namespace DumbCad
                 };
 
                 dxfFile.Entities.Add(dxfPolyline);
+            }
+
+            foreach(var image in images)
+            {
+                var dxfPoint = new DxfPoint(
+                    x: image.Image.Location.X,
+                    y: image.Image.Location.Y,
+                    z: 0);
+
+                var dxfImage = new DxfImage(image.Image.FilePath,
+                    location: dxfPoint,
+                    imageWidth: image.SkImage.Width,
+                    imageHeight: image.SkImage.Height,
+                    displaySize: new DxfVector(1, 1, 1));
+
+                dxfFile.Entities.Add(dxfImage);
             }
 
             dxfFile.ViewPorts.Clear();

@@ -102,57 +102,42 @@ namespace DumbCad
                                         Color = Color.Red
                                     };
 
-                                    var path = new SKPath();
-                                    var skvertices = new SKPoint[dxfPolyline.Vertices.Count];
-                                    int i = 0;
                                     foreach(var v in dxfPolyline.Vertices)
                                     {
                                         var vertex = new Entities.Point(
                                             v.Location.X,
                                             v.Location.Y);
-                                        skvertices[i] = new SKPoint((float)vertex.X, (float)vertex.Y);
+
                                         poly.Vertices.Add(vertex);
                                     }
-
-                                    path.AddPoly(skvertices, close: false);
-
 
                                     var polyView = new PolylineView
                                     {
                                          Polyline = poly,
-                                         Path = path
+                                         Path = new SKPath()
                                     };
 
                                     polylines.Add(polyView);
-                                    //DrawPolyline((DxfPolyline)entity);
-                                   
-
                                     break;
                                 case DxfEntityType.LwPolyline:
-                                    // DrawLwPolyline((DxfLwPolyline)entity);
                                     var dxfLwPolyline = (DxfLwPolyline)entity;
                                     var poly2 = new Polyline
                                     {
-                                        Color = Color.Red
+                                        Color = Color.Red,
+                                        Width = 3f
                                     };
 
-                                    var path2 = new SKPath();
-                                    var skvertices2 = new SKPoint[dxfLwPolyline.Vertices.Count];
-                                    int i2 = 0;
                                     foreach (var v in dxfLwPolyline.Vertices)
                                     {
                                         var vertex = new Entities.Point(v.X, v.Y);
-                                        skvertices2[i2] = new SKPoint((float)vertex.X, (float)vertex.Y);
+
                                         poly2.Vertices.Add(vertex);
                                     }
-
-                                    path2.AddPoly(skvertices2, close: false);
-
 
                                     var polyView2 = new PolylineView
                                     {
                                         Polyline = poly2,
-                                        Path = path2
+                                        Path = new SKPath()
                                     };
 
                                     polylines.Add(polyView2);
@@ -205,7 +190,7 @@ namespace DumbCad
                 var polylinePaint = new SKPaint()
                 {
                     Style = SKPaintStyle.Stroke,
-                    StrokeWidth = 1f,
+                    StrokeWidth = pixelWidth,
                     Color = color
                 };
 

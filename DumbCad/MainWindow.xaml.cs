@@ -5,7 +5,6 @@ using Microsoft.Win32;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -21,16 +20,11 @@ namespace DumbCad
         DrawMode mode = DrawMode.Ready;
         DrawMode previousMode = DrawMode.Ready;
         float zoomFactor = 1f;
-        //List<SKPath> paths = new List<SKPath>();
-        PolylineViewCollection paths = new PolylineViewCollection();
+        PolylineViewCollection polylines = new PolylineViewCollection();
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
         SKPoint circleFinishingPoint = new SKPoint();
-        SKPoint polylineStarting = new SKPoint();
-        Polyline polyStarting = new Polyline();
         PolylineView polylineViewStarting = new PolylineView();
-        SKPath polylineFinishing = new SKPath();
-        SKPath polylineNextSegment = new SKPath();
         SKPoint panStart = new SKPoint();
         SKPoint panOffset = new SKPoint();
 
@@ -68,6 +62,8 @@ namespace DumbCad
             StrokeWidth = 5f,
             Color = SKColors.Magenta
         };
+
+        public Entities.Point CursorPoint { get; private set; }
 
         public MainWindow()
         {
@@ -127,7 +123,7 @@ namespace DumbCad
                                          Path = path
                                     };
 
-                                    paths.Add(polyView);
+                                    polylines.Add(polyView);
                                     //DrawPolyline((DxfPolyline)entity);
                                    
 
@@ -159,7 +155,7 @@ namespace DumbCad
                                         Path = path2
                                     };
 
-                                    paths.Add(polyView2);
+                                    polylines.Add(polyView2);
                                     break;
                             }
                         }
@@ -198,7 +194,7 @@ namespace DumbCad
                 canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
             }
 
-            foreach(var polyline in paths)
+            foreach(var polyline in polylines)
             {
                 var color = new SKColor(
                     red: polyline.Polyline.Color.R,
@@ -261,9 +257,12 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                //canvas.DrawPath(polylineViewStarting.Path, paintCircleStarting);
-                canvas.DrawPath(polylineNextSegment, paintCircleStarting);
-                for(int i = 1; i < polylineViewStarting.Polyline.Vertices.Count; i++)
+                var lastPoint = polylineViewStarting.Polyline.Vertices.Last();
+                var st = new SKPoint((float)lastPoint.X, (float)lastPoint.Y);
+                var en = new SKPoint((float)CursorPoint.X, (float)CursorPoint.Y);
+                canvas.DrawLine(p0: st, p1: en, paint: paintCircleStarting);
+
+                for (int i = 1; i < polylineViewStarting.Polyline.Vertices.Count; i++)
                 {
                     var start = new SKPoint(
                         x: (float)polylineViewStarting.Polyline.Vertices[i - 1].X,
@@ -297,12 +296,14 @@ namespace DumbCad
             Entities.Point wp = new Entities.Point(
                 x: worldPoint.X,
                 y: worldPoint.Y);
-            
+
+            CursorPoint = wp;
+
             // 5f is five pixels at any zoom factor
             float near = 5f / zoomFactor;
             if (mode == DrawMode.Select)
             {
-                foreach (var polyline in paths) 
+                foreach (var polyline in polylines) 
                 {
                     if(polyline.Polyline.IsNear(wp, near))
                     {
@@ -337,16 +338,6 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineStart)
             {
-                polylineStarting = worldPoint;
-
-
-                //polyStarting = new Polyline()
-                //{
-                //    Color = Color.Red,
-                //    Width = 3f,
-                //};
-                polylineNextSegment = new SKPath();
-                
                 polylineViewStarting = new PolylineView
                 {
                     Path = new SKPath(),
@@ -357,17 +348,7 @@ namespace DumbCad
                     }
                 };
 
-                //*//polylineViewStarting.Path.AddPoly(new SKPoint[] { worldPoint });
-                polylineViewStarting.Polyline.Vertices.Add(
-                    new Entities.Point(
-                        x: worldPoint.X, 
-                        y: worldPoint.Y));
-                // TODO: Not yet I think
-                //paths.Add(polylineViewStarting);
-
-                // This moves as the cursor moves
-                //polylineNextSegment = new SKPath();
-                //polylineNextSegment.AddPoly(new SKPoint[] { worldPoint });
+                polylineViewStarting.Polyline.Vertices.Add(CursorPoint);
 
                 SetMode(DrawMode.PolylineFinish);
                 viewPort.Cursor = Cursors.Cross;
@@ -375,65 +356,10 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                //polylineFinishing.AddPoly(new SKPoint[] { polylineStarting, worldPoint });
-
-                //*//polylineViewStarting.Path.LineTo(worldPoint);
-                polylineViewStarting.Polyline.Vertices.Add(
-                    new Entities.Point(
-                        x: worldPoint.X,
-                        y: worldPoint.Y));
-
-                //var lastPoint = polylineViewStarting.Polyline.Vertices.Last();
-
-                polylineNextSegment = new SKPath();
-                polylineNextSegment.AddPoly(new SKPoint[] { polylineStarting, worldPoint });
-
-                //////polylineNextSegment = new SKPath();
-                //////polylineNextSegment.LineTo(polylineStarting);
-                //////polylineNextSegment.LineTo(worldPoint);
-
-
-                //polylineNextSegment.AddPoly(new SKPoint[] { worldPoint });
-
-                // No, not added until it's finished
-                //paths.Add(polylineFinishing);
-                //paths.Add(
-                //    new PolylineView
-                //    {
-                //         Polyline = polyStarting,
-                //         Path = polylineFinishing
-                //    });
-
-                coordinatesLabel.Content = $"Paths: {paths.Count}";
-                polylineStarting = worldPoint;
+                polylineViewStarting.Polyline.Vertices.Add(CursorPoint);
 
                 viewPort.InvalidateVisual();
             }
-            //else if(mode == DrawMode.PanStart)
-            //{
-            //    panStart = WorldOffsetFrom(point);
-            //    SetMode(DrawMode.PanFinish);
-            //    panOffsetLabel.Content = $"Move mouse";
-            //    startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
-            //    viewPort.InvalidateVisual();
-            //}
-            //else if (mode == DrawMode.PanFinish)
-            //{
-            //    var p = WorldOffsetFrom(point);
-
-            //    var newOffset = new SKPoint(
-            //        x: p.X - panStart.X,
-            //        y: p.Y - panStart.Y);
-
-            //    panOffset = new SKPoint(
-            //       x: panOffset.X + newOffset.X,
-            //       y: panOffset.Y + newOffset.Y);
-
-            //    SetMode(DrawMode.PanStart);
-            //    panOffsetLabel.Content = $"Click start point";
-            //    startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
-            //    viewPort.InvalidateVisual();
-            //}
             else if (mode == DrawMode.PanStartLive)
             {
                 panStart = WorldOffsetFrom(point);
@@ -451,40 +377,6 @@ namespace DumbCad
                 viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
-        }
-
-        private bool CheckSegment(SKPoint m, SKPoint s, SKPoint e, SKPath path, float near)
-        {
-            double a = Geometry.Distance(m, s);
-            double b = Geometry.Distance(m, e);
-            if (a <= near || b <= near)
-            {
-                paths.Select(path);
-                return true;
-            }
-
-            double c = Geometry.Distance(s, e);
-            double cosB = (Math.Pow(a, 2) + Math.Pow(c, 2) - Math.Pow(b, 2)) / (2 * a * c);
-            double B = Math.Acos(cosB);
-
-            double cosA = (Math.Pow(b, 2) + Math.Pow(c, 2) - Math.Pow(a, 2)) / (2 * b * c);
-            double A = Math.Acos(cosA);
-
-            double rightAngle = Math.PI / 2;
-            if (A <= 0 || A > rightAngle || B <= 0 || B > rightAngle)
-            {
-                return false;
-            }
-
-            double dist = a * Math.Sin(B);
-
-            if (dist <= near)
-            {
-                paths.Select(path);
-                return true;
-            }
-
-            return false;
         }
 
         private SKPoint WorldOffsetFrom(Point screenPoint)
@@ -520,15 +412,15 @@ namespace DumbCad
         {
             var screenPoint = e.GetPosition(viewPort);
             var worldPoint = WorldPointFrom(screenPoint);
-            var wp = new Entities.Point(
+            CursorPoint = new Entities.Point(
                 x: worldPoint.X,
                 y: worldPoint.Y);
 
             if (mode == DrawMode.Select)
             {
-                foreach(var polyline in paths)
+                foreach(var polyline in polylines)
                 {
-                    if(polyline.Polyline.IsNear(wp))
+                    if(polyline.Polyline.IsNear(CursorPoint))
                     {
                         polyline.Polyline.IsHovered = true;
                     }
@@ -551,36 +443,14 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineStart)
             {
-                coordinatesLabel.Content = $"Paths: {paths.Count}";
+                coordinatesLabel.Content = $"Paths: {polylines.Count}";
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                coordinatesLabel.Content = $"Paths: {paths.Count}";
-
-                //var lastPoint = polylineFinishing.PointCount == 0
-                //    ? polylineStarting
-                //    : polylineFinishing.Points[polylineFinishing.PointCount - 1];
-                var lastPoint = polylineViewStarting.Polyline.Vertices.Last();
-                var lp = new SKPoint((float)lastPoint.X, (float)lastPoint.Y);
-
-                polylineNextSegment = new SKPath();
-                polylineNextSegment.AddPoly(new SKPoint[] { lp, worldPoint });
-                //polylineNextSegment = new SKPath();
-                //polylineNextSegment.LineTo(polylineStarting);
-                //polylineNextSegment.LineTo(worldPoint);
-
                 viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.PanFinish)
             {
-                var p = WorldOffsetFrom(screenPoint);
-
-                var newOffset = new SKPoint(
-                   x: p.X - panStart.X,
-                   y: p.Y - panStart.Y);
-
-                startPointLabel.Content = $"PanSart: {panStart.X:F2}, {panStart.Y:F2}";
-                panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";
                 viewPort.InvalidateVisual();
             }
             else if((mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Pressed)
@@ -597,8 +467,6 @@ namespace DumbCad
                    x: panOffset.X + newOffset.X,
                    y: panOffset.Y + newOffset.Y);
 
-                startPointLabel.Content = $"PanSart: {panStart.X:F2}, {panStart.Y:F2}";
-                panOffsetLabel.Content = $"PO: {panOffset.X:F3}, {panOffset.Y:F3}/NO: {newOffset.X:F3}, {newOffset.Y:F3}";
                 viewPort.InvalidateVisual();
             }
             else if ((mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Released)
@@ -608,9 +476,8 @@ namespace DumbCad
                 viewPort.InvalidateVisual();
             }
 
-
             cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
-            coordinatesLabel.Content = $"Coordinates: {worldPoint.X:F3}, {worldPoint.Y:F3}";
+            coordinatesLabel.Content = $"Coordinates: {CursorPoint.X:F3}, {CursorPoint.Y:F3}";
         }
 
         private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -629,23 +496,16 @@ namespace DumbCad
             {
                 if (polylineViewStarting.Polyline.Vertices.Count > 0)
                 {
-                    // TODO: Maybe add that last point from polylineFinishing here?
-                    paths.Add(polylineViewStarting);
+                    polylines.Add(polylineViewStarting);
                 }
-
-                polylineFinishing = new SKPath();
-                polylineViewStarting = new PolylineView();
-                polyStarting = new Polyline();
 
                 SetMode(DrawMode.PolylineStart);
                 viewPort.InvalidateVisual();
-                coordinatesLabel.Content = $"Paths: {paths.Count}";
             }
             else if (mode == DrawMode.PolylineStart)
             {
                 SetMode(DrawMode.Ready);
                 viewPort.InvalidateVisual();
-                coordinatesLabel.Content = $"Paths: {paths.Count}";
             }
         }
 

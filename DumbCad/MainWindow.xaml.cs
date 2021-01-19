@@ -31,6 +31,7 @@ namespace DumbCad
         PolylineView polylineViewStarting = new PolylineView();
         SKPoint panStart = new SKPoint();
         SKPoint panOffset = new SKPoint();
+        string insertImagePath = string.Empty;
 
         SKPaint paintCircleFinished = new SKPaint()
         {
@@ -203,7 +204,8 @@ namespace DumbCad
             {
                 var p = new SKPoint(
                     x: (float)image.Image.Location.X,
-                    y: (float)image.Image.Location.Y);
+                    // Reverse the Y since the canvas is flipped
+                    y: (float)-image.Image.Location.Y);
 
                 // canvas.DrawImage(image.SkImage, p);
 
@@ -427,6 +429,33 @@ namespace DumbCad
                 panOffsetLabel.Content = $"Click start point";
                 startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
                 viewPort.Cursor = Cursors.SizeAll;
+                viewPort.InvalidateVisual();
+            }
+            else if(mode == DrawMode.InsertImagePoint)
+            {
+                var image = new Image
+                {
+                    Location = CursorPoint,
+                    FilePath = insertImagePath
+                };
+
+                SKImage skImage = null;
+                using (var stream = new SKFileStream(image.FilePath))
+                {
+                    stream.Seek(0);
+                    var bitmap = SKBitmap.Decode(stream);
+                    skImage = SKImage.FromBitmap(bitmap);
+                }
+
+                var view = new ImageView
+                {
+                    Image = image,
+                    SkImage = skImage
+                };
+
+                images.Add(view);
+                SetMode(DrawMode.Ready);
+
                 viewPort.InvalidateVisual();
             }
         }
@@ -755,54 +784,13 @@ namespace DumbCad
 
             if(string.IsNullOrWhiteSpace(path))
             {
+                SetMode(DrawMode.Ready);
                 return;
             }
-            
-            var location = new Entities.Point(10, -10);
-            var image = new Image
-            { 
-                Location = location,
-                FilePath = path
-            };
 
-            // open the stream
-            // TODO: Don't load this every paint!
-            SKImage skImage = null;
-            using (var stream = new SKFileStream(image.FilePath))
-            //using(MemoryStream memStream = new MemoryStream())
-            {
-                //stream.CopyToAsync(memStream).Wait();
-                stream.Seek(0);
-                //////memStream.Seek(0, SeekOrigin.Begin);
+            insertImagePath = path;
 
-                var bitmap = SKBitmap.Decode(stream);
-
-
-                // create the codec
-                ////var codec = SKCodec.Create(stream);
-
-                // we need a place to store the bytes
-                ////var bitmap = new SKBitmap(codec.Info);
-
-
-
-                // put this img in a 'View' object like ImageView
-                skImage = SKImage.FromBitmap(bitmap);
-                // decode!
-                // result should be SKCodecResult.Success, but you may get more information
-                //var result = codec.GetPixels(bitmap.Info, bitmap.GetPixels());
-                
-            }
-
-            var view = new ImageView
-            {
-                Image = image,
-                SkImage = skImage
-            };
-
-            images.Add(view);
-
-            viewPort.InvalidateVisual();
+            SetMode(DrawMode.InsertImagePoint);
         }
     }
 

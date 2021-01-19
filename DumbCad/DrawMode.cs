@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DumbCad
+﻿namespace DumbCad
 {
     public enum DrawMode
     {
@@ -19,5 +13,6 @@ namespace DumbCad
         PanFinishLive,
         PanStartLive,
         PanFinishLiveLeft,
+        InsertImagePoint
     }
 }

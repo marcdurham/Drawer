@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -22,7 +23,7 @@ namespace DumbCad
         float zoomFactor = 1f;
         PolylineViewCollection polylines = new PolylineViewCollection();
         PolylineViewCollection lines = new PolylineViewCollection();
-        List<Image> images = new List<Image>();
+        List<ImageView> images = new List<ImageView>();
 
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
@@ -213,26 +214,12 @@ namespace DumbCad
 
             foreach(var image in images)
             {
-                //var skBitmap = SKBitmap.from
-                //var myImg = ImageSource.FromFile("myImg.jpg");
-
-                // open the stream
-                var stream = new SKFileStream(image.FilePath);
-
-                // create the codec
-                var codec = SKCodec.Create(stream);
-
-                // we need a place to store the bytes
-                var bitmap = new SKBitmap(codec.Info);
-                var img = SKImage.FromBitmap(bitmap);
-                // decode!
-                // result should be SKCodecResult.Success, but you may get more information
-                //var result = codec.GetPixels(bitmap.Info, bitmap.GetPixels());
                 var p = new SKPoint(
-                   x: (float)image.Location.X,
-                   y: (float)image.Location.Y);
+                    x: (float)image.Image.Location.X,
+                    y: (float)image.Image.Location.Y);
 
-                canvas.DrawImage(img, p);
+                canvas.DrawImage(image.SkImage, p);
+                
             }
 
             foreach (var circle in Circles)
@@ -750,8 +737,42 @@ namespace DumbCad
                 FilePath = @"C:\Tests\Test.jpg"
             };
 
-            images.Add(image);
+            // open the stream
+            // TODO: Don't load this every paint!
+            SKImage skImage = null;
+            using (var stream = new SKFileStream(image.FilePath))
+            //using(MemoryStream memStream = new MemoryStream())
+            {
+                //stream.CopyToAsync(memStream).Wait();
+                stream.Seek(0);
+                //////memStream.Seek(0, SeekOrigin.Begin);
 
+                var bitmap = SKBitmap.Decode(stream);
+
+
+                // create the codec
+                ////var codec = SKCodec.Create(stream);
+
+                // we need a place to store the bytes
+                ////var bitmap = new SKBitmap(codec.Info);
+
+
+
+                // put this img in a 'View' object like ImageView
+                skImage = SKImage.FromBitmap(bitmap);
+                // decode!
+                // result should be SKCodecResult.Success, but you may get more information
+                //var result = codec.GetPixels(bitmap.Info, bitmap.GetPixels());
+                
+            }
+
+            var view = new ImageView
+            {
+                Image = image,
+                SkImage = skImage
+            };
+
+            images.Add(view);
         }
     }
 

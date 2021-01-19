@@ -22,6 +22,8 @@ namespace DumbCad
         float zoomFactor = 1f;
         PolylineViewCollection polylines = new PolylineViewCollection();
         PolylineViewCollection lines = new PolylineViewCollection();
+        List<Image> images = new List<Image>();
+
         List<Circle> Circles = new List<Circle>();
         Circle circleStarting = new Circle();
         SKPoint circleFinishingPoint = new SKPoint();
@@ -96,6 +98,10 @@ namespace DumbCad
                         {
                             switch (entity.EntityType)
                             {
+                                case DxfEntityType.Image:
+                                    var dxfImage = (DxfImage)entity;
+                                    // TODO: Load images
+                                    break;
                                 case DxfEntityType.Line:
                                     var dxfLine = (DxfLine)entity;
                                     var line = new Polyline
@@ -203,6 +209,30 @@ namespace DumbCad
             {
                 paintCircleFinished.StrokeWidth = 1f;
                 paintCircleStarting.StrokeWidth = 1f;
+            }
+
+            foreach(var image in images)
+            {
+                //var skBitmap = SKBitmap.from
+                //var myImg = ImageSource.FromFile("myImg.jpg");
+
+                // open the stream
+                var stream = new SKFileStream(image.FilePath);
+
+                // create the codec
+                var codec = SKCodec.Create(stream);
+
+                // we need a place to store the bytes
+                var bitmap = new SKBitmap(codec.Info);
+                var img = SKImage.FromBitmap(bitmap);
+                // decode!
+                // result should be SKCodecResult.Success, but you may get more information
+                //var result = codec.GetPixels(bitmap.Info, bitmap.GetPixels());
+                var p = new SKPoint(
+                   x: (float)image.Location.X,
+                   y: (float)image.Location.Y);
+
+                canvas.DrawImage(img, p);
             }
 
             foreach (var circle in Circles)
@@ -709,6 +739,19 @@ namespace DumbCad
 
             dxfFile.ViewPorts.Clear();
             dxfFile.Save(fileName);
+        }
+
+        private void insertImageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var location = new Entities.Point(10, -10);
+            var image = new Image
+            { 
+                Location = location,
+                FilePath = @"C:\Tests\Test.jpg"
+            };
+
+            images.Add(image);
+
         }
     }
 

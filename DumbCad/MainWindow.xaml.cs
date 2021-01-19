@@ -739,11 +739,30 @@ namespace DumbCad
 
         private void insertImageButton_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "JPEG Files (*.jpg)|*.jpg|All Files (*.*)|*.*"
+            };
+
+            string path = string.Empty;
+            if (dialog.ShowDialog() == true)
+            {
+                if (!string.IsNullOrWhiteSpace(dialog.FileName))
+                {
+                    path = dialog.FileName;
+                }
+            }
+
+            if(string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            
             var location = new Entities.Point(10, -10);
             var image = new Image
             { 
                 Location = location,
-                FilePath = @"C:\Tests\Test.jpg"
+                FilePath = path
             };
 
             // open the stream

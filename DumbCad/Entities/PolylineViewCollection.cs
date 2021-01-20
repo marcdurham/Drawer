@@ -58,5 +58,11 @@ namespace DumbCad.Entities
         {
             map[path].IsSelected = !map[path].IsSelected;
         }
+
+        internal void Clear()
+        {
+            polylines.Clear();
+            map.Clear();
+        }
     }
 }

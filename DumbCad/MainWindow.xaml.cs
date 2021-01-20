@@ -92,7 +92,12 @@ namespace DumbCad
                     //myViewport3D.Children.Clear();
                     //myViewport3D.Children.Add(paper);
 
+
+
                     var dxfFile = DxfFile.Load(dialog.FileName);
+
+                    this.polylines.Clear();
+                    this.images.Clear();
                     
                     foreach (DxfEntity entity in dxfFile.Entities)
                     {
@@ -120,6 +125,9 @@ namespace DumbCad
                                         var bitmap = SKBitmap.Decode(stream);
                                         skImage = SKImage.FromBitmap(bitmap);
                                     }
+
+                                    image.Width = skImage.Width;
+                                    image.Height = skImage.Height;
 
                                     var imageView = new ImageView
                                     {
@@ -234,9 +242,10 @@ namespace DumbCad
                     // Reverse the Y since the canvas is flipped
                     y: (float)-image.Image.Location.Y);
 
-                var rect = new SKRect(p.X, p.Y, image.SkImage.Width, image.SkImage.Height);
-                canvas.DrawImage(image.SkImage, dest: rect);
-                //canvas.DrawImage(image.SkImage, p);
+                //var rect = new SKRect(p.X, p.Y, image.SkImage.Width, image.SkImage.Height);
+                //canvas.DrawImage(image.SkImage, dest: rect);
+                canvas.DrawImage(image.SkImage, p);
+                //canvas.DrawImage()
             }
 
             // Flip back up
@@ -307,6 +316,26 @@ namespace DumbCad
                         p0: start,
                         p1: end,
                         paint: paintCircleStarting);
+                }
+            }
+
+            foreach (var image in images)
+            {
+                var p = new SKPoint(
+                    x: (float)image.Image.Location.X,
+                    y: (float)image.Image.Location.Y);
+
+                if (image.Image.IsSelected || image.Image.IsHovered)
+                {
+                    var topRight = new SKPoint(p.X + image.SkImage.Width, p.Y);
+                    var bottomRight = new SKPoint(p.X + image.SkImage.Width, p.Y - image.SkImage.Height);
+                    var bottomLeft = new SKPoint(p.X, p.Y - image.SkImage.Height);
+                    paintIsHovered.StrokeWidth = pixelWidth * 3;
+                    var paint = image.Image.IsSelected ? paintIsSelected : paintIsHovered;
+                    canvas.DrawLine(p, topRight, paint);
+                    canvas.DrawLine(topRight, bottomRight, paint);
+                    canvas.DrawLine(bottomRight, bottomLeft, paint);
+                    canvas.DrawLine(bottomLeft, p, paint);
                 }
             }
         }
@@ -385,6 +414,14 @@ namespace DumbCad
                     if(polyline.Polyline.IsNear(wp, near))
                     {
                         polyline.Polyline.IsSelected = !polyline.Polyline.IsSelected;
+                    }
+                }
+
+                foreach(var image in images)
+                {
+                    if(image.Image.IsNear(wp, near))
+                    {
+                        image.Image.IsSelected = !image.Image.IsSelected;
                     }
                 }
 
@@ -470,6 +507,9 @@ namespace DumbCad
                     skImage = SKImage.FromBitmap(bitmap);
                 }
 
+                image.Width = skImage.Width;
+                image.Height = skImage.Height;
+
                 var view = new ImageView
                 {
                     Image = image,
@@ -531,6 +571,18 @@ namespace DumbCad
                     else
                     {
                         polyline.Polyline.IsHovered = false;
+                    }
+                }
+
+                foreach(var image in images)
+                {
+                    if(image.Image.IsNear(CursorPoint))
+                    {
+                        image.Image.IsHovered = true;
+                    }
+                    else
+                    {
+                        image.Image.IsHovered = false;
                     }
                 }
 
@@ -794,8 +846,8 @@ namespace DumbCad
 
                 var dxfImage = new DxfImage(image.Image.FilePath,
                     location: dxfPoint,
-                    imageWidth: image.SkImage.Width,
-                    imageHeight: image.SkImage.Height,
+                    imageWidth: (int)image.Image.Width,
+                    imageHeight: (int)image.Image.Height,
                     displaySize: new DxfVector(1, 1, 1));
 
                 dxfFile.Entities.Add(dxfImage);

@@ -62,7 +62,7 @@ namespace DumbCad
         {
             var surface = e.Surface;
             var canvas = surface.Canvas;
-            painter.Paint(canvas, file, viewer.panOffset, viewer.zoomFactor, viewer.mode);
+            painter.Paint(canvas, file, viewer);
         }
 
         private void viewPort_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

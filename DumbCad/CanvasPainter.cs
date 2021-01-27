@@ -50,13 +50,13 @@ namespace DumbCad
             Color = SKColors.Magenta
         };
 
-        public void Paint(SKCanvas canvas, DrawingFile file, SKPoint panOffset, float zoomFactor, DrawMode mode)
+        public void Paint(SKCanvas canvas, DrawingFile file, Viewer viewer)
         {
             canvas.Clear(SKColors.Beige);
             //**//panOffsetLabel.Content = $"PanOffset: {panOffset.X:F3}, {panOffset.Y:F3}";
 
-            canvas.Scale(zoomFactor, -zoomFactor);
-            canvas.Translate(panOffset.X, panOffset.Y);
+            canvas.Scale(viewer.zoomFactor, - viewer.zoomFactor);
+            canvas.Translate(viewer.panOffset.X, viewer.panOffset.Y);
 
             // Flip upside down 
             canvas.Scale(1, -1);
@@ -78,7 +78,7 @@ namespace DumbCad
             canvas.Scale(1, -1);
 
             // Prevent entities from becoming invisible, smaller than a pixel
-            float pixelWidth = (float)(1 / (double)zoomFactor);
+            float pixelWidth = (float)(1 / (double) viewer.zoomFactor);
             if (paintCircleFinished.StrokeWidth < pixelWidth)
             {
                 paintCircleFinished.StrokeWidth = pixelWidth;
@@ -106,7 +106,7 @@ namespace DumbCad
                 DrawPolylineToCanvas(canvas, pixelWidth * 3, line);
             }
 
-            if (mode == DrawMode.CircleFinish && circleStarting != null)
+            if (viewer.mode == DrawMode.CircleFinish && circleStarting != null)
             {
                 canvas.DrawCircle(circleStarting.Location, circleStarting.Radius, paintCircleStarting);
                 canvas.DrawRect(
@@ -121,7 +121,7 @@ namespace DumbCad
                     circleFinishingPoint,
                     paintCircleStarting);
             }
-            else if (mode == DrawMode.PolylineFinish)
+            else if (viewer.mode == DrawMode.PolylineFinish)
             {
                 var lastPoint = polylineViewStarting.Polyline.Vertices.Last();
                 var st = new SKPoint((float)lastPoint.X, (float)lastPoint.Y);

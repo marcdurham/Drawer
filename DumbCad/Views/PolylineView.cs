@@ -1,7 +1,8 @@
-﻿using SkiaSharp;
+﻿using DumbCad.Entities;
+using SkiaSharp;
 using System;
 
-namespace DumbCad.Entities
+namespace DumbCad.Views
 {
     public class PolylineView 
     {

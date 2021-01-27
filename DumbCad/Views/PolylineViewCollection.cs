@@ -1,9 +1,10 @@
-﻿using SkiaSharp;
+﻿using DumbCad.Entities;
+using SkiaSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DumbCad.Entities
+namespace DumbCad.Views
 {
     public class PolylineViewCollection : IEnumerable<PolylineView>
     {

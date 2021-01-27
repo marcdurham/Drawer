@@ -1,11 +1,10 @@
 ﻿using DumbCad.Entities;
+using DumbCad.Views;
 using IxMilia.Dxf;
 using IxMilia.Dxf.Entities;
 using Microsoft.Win32;
 using SkiaSharp;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;

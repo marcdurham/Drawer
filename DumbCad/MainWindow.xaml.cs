@@ -481,59 +481,9 @@ namespace DumbCad
             {
                 if (!string.IsNullOrWhiteSpace(dialog.FileName))
                 {
-                    SaveDxfFile(dialog.FileName);
+                    file.SaveDxfFile(dialog.FileName);
                 }
             }
-        }
-
-        private void SaveDxfFile(string fileName)
-        {
-            //paper = PaperBuilder.GetPaper();
-            //myViewport3D.Children.Clear();
-            //myViewport3D.Children.Add(paper);
-
-            var dxfFile = new DxfFile();
-            dxfFile.Header.SetDefaults();
-            dxfFile.Header.Version = DxfAcadVersion.R2000;
-            dxfFile.Layers.Add(new DxfLayer("PIPES"));
-            foreach (var polyline in file.polylines)
-            {
-                var vertices = new List<DxfLwPolylineVertex>();
-                foreach (var v in polyline.Polyline.Vertices)
-                {
-                    vertices.Add(new DxfLwPolylineVertex { X = v.X, Y = v.Y });
-                }
-
-                var dxfPolyline = new DxfLwPolyline(vertices)
-                {
-                    LineTypeScale = 1,
-                    IsClosed = false,
-                    Layer = "PIPES",
-                    Color = DxfColor.FromIndex(7),
-                    Thickness = 3.0
-                };
-
-                dxfFile.Entities.Add(dxfPolyline);
-            }
-
-            foreach(var image in file.images)
-            {
-                var dxfPoint = new DxfPoint(
-                    x: image.Image.Location.X,
-                    y: image.Image.Location.Y,
-                    z: 0);
-
-                var dxfImage = new DxfImage(image.Image.FilePath,
-                    location: dxfPoint,
-                    imageWidth: (int)image.Image.Width,
-                    imageHeight: (int)image.Image.Height,
-                    displaySize: new DxfVector(1, 1, 1));
-
-                dxfFile.Entities.Add(dxfImage);
-            }
-
-            dxfFile.ViewPorts.Clear();
-            dxfFile.Save(fileName);
         }
 
         private void insertImageButton_Click(object sender, RoutedEventArgs e)

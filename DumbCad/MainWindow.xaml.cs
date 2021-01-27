@@ -5,7 +5,6 @@ using IxMilia.Dxf.Entities;
 using Microsoft.Win32;
 using SkiaSharp;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Point = System.Windows.Point;
@@ -17,57 +16,21 @@ namespace DumbCad
     /// </summary>
     public partial class MainWindow : Window
     {
+        readonly CanvasPainter painter = new CanvasPainter();
+
         DrawMode mode = DrawMode.Ready;
         DrawMode previousMode = DrawMode.Ready;
         float zoomFactor = 1f;
-        PolylineViewCollection polylines = new PolylineViewCollection();
-        PolylineViewCollection lines = new PolylineViewCollection();
-        List<ImageView> images = new List<ImageView>();
-
-        List<Circle> Circles = new List<Circle>();
-        Circle circleStarting = new Circle();
-        SKPoint circleFinishingPoint = new SKPoint();
-        PolylineView polylineViewStarting = new PolylineView();
+        DrawingFile file = new DrawingFile();
+      
+        //Circle circleStarting = new Circle();
+        //SKPoint circleFinishingPoint = new SKPoint();
+        //PolylineView polylineViewStarting = new PolylineView();
         SKPoint panStart = new SKPoint();
         SKPoint panOffset = new SKPoint();
         string insertImagePath = string.Empty;
 
-        SKPaint paintCircleFinished = new SKPaint()
-        {
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = 1f,
-            Color = SKColors.Brown
-        };
-
-        SKPaint paintCircleStarting = new SKPaint()
-        {
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = 2f,
-            Color = SKColors.Blue
-        };
-
-        SKPaint paintIsSelected = new SKPaint()
-        {
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = 3f,
-            Color = SKColors.DarkBlue
-        };
-
-        SKPaint paintIsHovered = new SKPaint()
-        {
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = 5f,
-            Color = SKColors.CornflowerBlue
-        };
-
-        SKPaint paintIsHoveredAndSelected = new SKPaint()
-        {
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = 5f,
-            Color = SKColors.Magenta
-        };
-
-        public Entities.Point CursorPoint { get; private set; }
+        //public Entities.Point CursorPoint { get; private set; }
 
         public MainWindow()
         {
@@ -87,133 +50,7 @@ namespace DumbCad
             {
                 if (!string.IsNullOrWhiteSpace(dialog.FileName))
                 {
-                    //paper = PaperBuilder.GetPaper();
-                    //myViewport3D.Children.Clear();
-                    //myViewport3D.Children.Add(paper);
-
-
-
-                    var dxfFile = DxfFile.Load(dialog.FileName);
-
-                    this.polylines.Clear();
-                    this.images.Clear();
-                    
-                    foreach (DxfEntity entity in dxfFile.Entities)
-                    {
-                        //if (entity.Layer.ToUpper().StartsWith("PIPE"))
-                        {
-                            switch (entity.EntityType)
-                            {
-                                case DxfEntityType.Image:
-                                    var dxfImage = (DxfImage)entity;
-                                    // TODO: Load images
-                                    var location = new Entities.Point(
-                                        x: dxfImage.Location.X,
-                                        y: dxfImage.Location.Y);
-
-                                    var image = new Image
-                                    {
-                                        Location = location,
-                                        FilePath = dxfImage.ImageDefinition.FilePath
-                                    };
-
-                                    SKImage skImage = null;
-                                    using (var stream = new SKFileStream(image.FilePath))
-                                    {
-                                        stream.Seek(0);
-                                        var bitmap = SKBitmap.Decode(stream);
-                                        skImage = SKImage.FromBitmap(bitmap);
-                                    }
-
-                                    image.Width = skImage.Width;
-                                    image.Height = skImage.Height;
-
-                                    var imageView = new ImageView
-                                    {
-                                        Image = image,
-                                        SkImage = skImage
-                                    };
-
-                                    images.Add(imageView);
-                                    break;
-                                case DxfEntityType.Line:
-                                    var dxfLine = (DxfLine)entity;
-                                    var line = new Polyline
-                                    {
-                                        Color = Color.Green,
-                                        Width = 2f
-                                    };
-
-                                    var p1 = new Entities.Point(
-                                        dxfLine.P1.X,
-                                        dxfLine.P1.Y);
-
-                                    var p2 = new Entities.Point(
-                                        dxfLine.P2.X,
-                                        dxfLine.P2.Y);
-
-                                    line.Vertices.Add(p1);
-                                    line.Vertices.Add(p2);
-
-                                    var lineView = new PolylineView
-                                    {
-                                        Polyline = line,
-                                        Path = new SKPath()
-                                    };
-
-                                    lines.Add(lineView);
-                                    break;
-                                case DxfEntityType.Polyline:
-                                    var dxfPolyline = (DxfPolyline)entity;
-                                    var poly = new Polyline
-                                    {
-                                        Color = Color.Red,
-                                        Width = 2f
-                                    };
-
-                                    foreach(var v in dxfPolyline.Vertices)
-                                    {
-                                        var vertex = new Entities.Point(
-                                            v.Location.X,
-                                            v.Location.Y);
-
-                                        poly.Vertices.Add(vertex);
-                                    }
-
-                                    var polyView = new PolylineView
-                                    {
-                                         Polyline = poly,
-                                         Path = new SKPath()
-                                    };
-
-                                    polylines.Add(polyView);
-                                    break;
-                                case DxfEntityType.LwPolyline:
-                                    var dxfLwPolyline = (DxfLwPolyline)entity;
-                                    var poly2 = new Polyline
-                                    {
-                                        Color = Color.Red,
-                                        Width = 3f
-                                    };
-
-                                    foreach (var v in dxfLwPolyline.Vertices)
-                                    {
-                                        var vertex = new Entities.Point(v.X, v.Y);
-
-                                        poly2.Vertices.Add(vertex);
-                                    }
-
-                                    var polyView2 = new PolylineView
-                                    {
-                                        Polyline = poly2,
-                                        Path = new SKPath()
-                                    };
-
-                                    polylines.Add(polyView2);
-                                    break;
-                            }
-                        }
-                    }
+                    file.Open(dialog.FileName);
                 }
 
                 viewPort.InvalidateVisual();
@@ -224,165 +61,7 @@ namespace DumbCad
         {
             var surface = e.Surface;
             var canvas = surface.Canvas;
-
-            canvas.Clear(SKColors.Beige);
-            panOffsetLabel.Content = $"PanOffset: {panOffset.X:F3}, {panOffset.Y:F3}";
-
-            canvas.Scale(zoomFactor, -zoomFactor);
-            canvas.Translate(panOffset.X, panOffset.Y);
-
-            // Flip upside down 
-            canvas.Scale(1, -1);
-
-            foreach (var image in images)
-            {
-                var p = new SKPoint(
-                    x: (float)image.Image.Location.X,
-                    // Reverse the Y since the canvas is flipped
-                    y: (float)-image.Image.Location.Y);
-
-                //var rect = new SKRect(p.X, p.Y, image.SkImage.Width, image.SkImage.Height);
-                //canvas.DrawImage(image.SkImage, dest: rect);
-                canvas.DrawImage(image.SkImage, p);
-                //canvas.DrawImage()
-            }
-
-            // Flip back up
-            canvas.Scale(1, -1);
-
-            // Prevent entities from becoming invisible, smaller than a pixel
-            float pixelWidth = (float)(1 / (double)zoomFactor);
-            if(paintCircleFinished.StrokeWidth < pixelWidth)
-            {
-                paintCircleFinished.StrokeWidth = pixelWidth;
-                paintCircleStarting.StrokeWidth = pixelWidth;
-            }
-            else
-            {
-                paintCircleFinished.StrokeWidth = 1f;
-                paintCircleStarting.StrokeWidth = 1f;
-            }
-
-
-            foreach (var circle in Circles)
-            {
-                canvas.DrawCircle(circle.Location, circle.Radius, paintCircleFinished);
-            }
-
-            foreach (var polyline in polylines)
-            {
-                DrawPolylineToCanvas(canvas, pixelWidth, polyline);
-            }
-
-            foreach (var line in lines)
-            {
-                DrawPolylineToCanvas(canvas, pixelWidth*3, line);
-            }
-
-            if (mode == DrawMode.CircleFinish && circleStarting != null)
-            {
-                canvas.DrawCircle(circleStarting.Location, circleStarting.Radius, paintCircleStarting);
-                canvas.DrawRect(
-                    x: circleStarting.Location.X,
-                    y: circleStarting.Location.Y,
-                    w: 2f,
-                    h: 2f,
-                    paintCircleStarting);
-
-                canvas.DrawLine(
-                    circleStarting.Location,
-                    circleFinishingPoint,
-                    paintCircleStarting);
-            }
-            else if (mode == DrawMode.PolylineFinish)
-            {
-                var lastPoint = polylineViewStarting.Polyline.Vertices.Last();
-                var st = new SKPoint((float)lastPoint.X, (float)lastPoint.Y);
-                var en = new SKPoint((float)CursorPoint.X, (float)CursorPoint.Y);
-                canvas.DrawLine(p0: st, p1: en, paint: paintCircleStarting);
-
-                for (int i = 1; i < polylineViewStarting.Polyline.Vertices.Count; i++)
-                {
-                    var start = new SKPoint(
-                        x: (float)polylineViewStarting.Polyline.Vertices[i - 1].X,
-                        y: (float)polylineViewStarting.Polyline.Vertices[i - 1].Y);
-
-                    var end = new SKPoint(
-                        x: (float)polylineViewStarting.Polyline.Vertices[i].X,
-                        y: (float)polylineViewStarting.Polyline.Vertices[i].Y);
-
-                    canvas.DrawLine(
-                        p0: start,
-                        p1: end,
-                        paint: paintCircleStarting);
-                }
-            }
-
-            foreach (var image in images)
-            {
-                var p = new SKPoint(
-                    x: (float)image.Image.Location.X,
-                    y: (float)image.Image.Location.Y);
-
-                if (image.Image.IsSelected || image.Image.IsHovered)
-                {
-                    var topRight = new SKPoint(p.X + image.SkImage.Width, p.Y);
-                    var bottomRight = new SKPoint(p.X + image.SkImage.Width, p.Y - image.SkImage.Height);
-                    var bottomLeft = new SKPoint(p.X, p.Y - image.SkImage.Height);
-                    paintIsHovered.StrokeWidth = pixelWidth * 3;
-                    var paint = image.Image.IsSelected ? paintIsSelected : paintIsHovered;
-                    canvas.DrawLine(p, topRight, paint);
-                    canvas.DrawLine(topRight, bottomRight, paint);
-                    canvas.DrawLine(bottomRight, bottomLeft, paint);
-                    canvas.DrawLine(bottomLeft, p, paint);
-                }
-            }
-        }
-
-        private void DrawPolylineToCanvas(SKCanvas canvas, float pixelWidth, PolylineView polyline)
-        {
-            var color = new SKColor(
-                red: polyline.Polyline.Color.R,
-                green: polyline.Polyline.Color.G,
-                blue: polyline.Polyline.Color.B,
-                alpha: polyline.Polyline.Color.A);
-
-            var polylinePaint = new SKPaint()
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = pixelWidth,
-                Color = color
-            };
-
-            SKPaint polyPaint = polylinePaint;
-            if (polyline.Polyline.IsHovered && polyline.Polyline.IsSelected)
-            {
-                polyPaint = paintIsHoveredAndSelected;
-            }
-            else if (polyline.Polyline.IsHovered)
-            {
-                polyPaint = paintIsHovered;
-            }
-            else if (polyline.Polyline.IsSelected)
-            {
-                polyPaint = paintIsSelected;
-            }
-
-            for (int i = 1; i < polyline.Polyline.Vertices.Count; i++)
-            {
-                var start = new SKPoint(
-                    x: (float)polyline.Polyline.Vertices[i - 1].X,
-                    y: (float)polyline.Polyline.Vertices[i - 1].Y);
-
-                var end = new SKPoint(
-                    x: (float)polyline.Polyline.Vertices[i].X,
-                    y: (float)polyline.Polyline.Vertices[i].Y);
-
-                canvas.DrawLine(
-                    p0: start,
-                    p1: end,
-                    paint: polyPaint);
-            }
+            painter.Paint(canvas, file, panOffset, zoomFactor, mode);
         }
 
         private void viewPort_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -402,13 +81,13 @@ namespace DumbCad
                 x: worldPoint.X,
                 y: worldPoint.Y);
 
-            CursorPoint = wp;
+            painter.CursorPoint = wp;
 
             // 5f is five pixels at any zoom factor
             float near = 5f / zoomFactor;
             if (mode == DrawMode.Select)
             {
-                foreach (var polyline in polylines) 
+                foreach (var polyline in file.polylines) 
                 {
                     if(polyline.Polyline.IsNear(wp, near))
                     {
@@ -416,7 +95,7 @@ namespace DumbCad
                     }
                 }
 
-                foreach(var image in images)
+                foreach(var image in file.images)
                 {
                     if(image.Image.IsNear(wp, near))
                     {
@@ -428,7 +107,7 @@ namespace DumbCad
             }
             else if (mode == DrawMode.CircleStart)
             {
-                circleStarting = new Circle()
+                painter.circleStarting = new Circle()
                 {
                     Location = worldPoint
                 };
@@ -438,12 +117,12 @@ namespace DumbCad
             }
             else if (mode == DrawMode.CircleFinish)
             {
-                if (circleStarting.Radius > 0)
+                if (painter.circleStarting.Radius > 0)
                 {
-                    Circles.Add(circleStarting);
+                    file.Circles.Add(painter.circleStarting);
                 }
 
-                circleStarting = null;
+                painter.circleStarting = null;
 
                 SetMode(DrawMode.CircleStart);
                 viewPort.Cursor = Cursors.Cross;
@@ -451,7 +130,7 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineStart)
             {
-                polylineViewStarting = new PolylineView
+                painter.polylineViewStarting = new PolylineView
                 {
                     Path = new SKPath(),
                     Polyline = new Polyline()
@@ -461,7 +140,7 @@ namespace DumbCad
                     }
                 };
 
-                polylineViewStarting.Polyline.Vertices.Add(CursorPoint);
+                painter.polylineViewStarting.Polyline.Vertices.Add(painter.CursorPoint);
 
                 SetMode(DrawMode.PolylineFinish);
                 viewPort.Cursor = Cursors.Cross;
@@ -469,7 +148,7 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                polylineViewStarting.Polyline.Vertices.Add(CursorPoint);
+                painter.polylineViewStarting.Polyline.Vertices.Add(painter.CursorPoint);
 
                 viewPort.InvalidateVisual();
             }
@@ -494,7 +173,7 @@ namespace DumbCad
             {
                 var image = new Image
                 {
-                    Location = CursorPoint,
+                    Location = painter.CursorPoint,
                     FilePath = insertImagePath
                 };
 
@@ -515,7 +194,7 @@ namespace DumbCad
                     SkImage = skImage
                 };
 
-                images.Add(view);
+                file.images.Add(view);
                 SetMode(DrawMode.Ready);
 
                 viewPort.InvalidateVisual();
@@ -555,15 +234,15 @@ namespace DumbCad
         {
             var screenPoint = e.GetPosition(viewPort);
             var worldPoint = WorldPointFrom(screenPoint);
-            CursorPoint = new Entities.Point(
+            painter.CursorPoint = new Entities.Point(
                 x: worldPoint.X,
                 y: worldPoint.Y);
 
             if (mode == DrawMode.Select)
             {
-                foreach(var polyline in polylines)
+                foreach(var polyline in file.polylines)
                 {
-                    if(polyline.Polyline.IsNear(CursorPoint))
+                    if(polyline.Polyline.IsNear(painter.CursorPoint))
                     {
                         polyline.Polyline.IsHovered = true;
                     }
@@ -573,9 +252,9 @@ namespace DumbCad
                     }
                 }
 
-                foreach(var image in images)
+                foreach(var image in file.images)
                 {
-                    if(image.Image.IsNear(CursorPoint))
+                    if(image.Image.IsNear(painter.CursorPoint))
                     {
                         image.Image.IsHovered = true;
                     }
@@ -588,17 +267,17 @@ namespace DumbCad
                 viewPort.InvalidateVisual();
             }
 
-            if (mode == DrawMode.CircleFinish && circleStarting != null)
+            if (mode == DrawMode.CircleFinish && painter.circleStarting != null)
             {
-                circleFinishingPoint = worldPoint;
-                float radius = (float)Geometry.Distance(circleStarting.Location, circleFinishingPoint);
+                painter.circleFinishingPoint = worldPoint;
+                float radius = (float)Geometry.Distance(painter.circleStarting.Location, painter.circleFinishingPoint);
 
-                circleStarting.Radius = radius;
+                painter.circleStarting.Radius = radius;
                 viewPort.InvalidateVisual();
             }
             else if (mode == DrawMode.PolylineStart)
             {
-                coordinatesLabel.Content = $"Paths: {polylines.Count}";
+                coordinatesLabel.Content = $"Paths: {file.polylines.Count}";
             }
             else if (mode == DrawMode.PolylineFinish)
             {
@@ -632,7 +311,7 @@ namespace DumbCad
             }
 
             cursorLocationLabel.Content = $"Screen: {screenPoint.X:F3},{screenPoint.Y:F3}";
-            coordinatesLabel.Content = $"Coordinates: {CursorPoint.X:F3}, {CursorPoint.Y:F3}";
+            coordinatesLabel.Content = $"Coordinates: {painter.CursorPoint.X:F3}, {painter.CursorPoint.Y:F3}";
         }
 
         private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -649,9 +328,9 @@ namespace DumbCad
             }
             else if (mode == DrawMode.PolylineFinish)
             {
-                if (polylineViewStarting.Polyline.Vertices.Count > 0)
+                if (painter.polylineViewStarting.Polyline.Vertices.Count > 0)
                 {
-                    polylines.Add(polylineViewStarting);
+                    file.polylines.Add(painter.polylineViewStarting);
                 }
 
                 SetMode(DrawMode.PolylineStart);
@@ -764,7 +443,7 @@ namespace DumbCad
             double rightMostX = 0.0;
             double topMostY = 0.0;
             double bottomMostY = 0.0;
-            foreach (var polyline in polylines)
+            foreach (var polyline in file.polylines)
             {
                 foreach(var vertex in polyline.Polyline.Vertices)
                 {
@@ -816,7 +495,7 @@ namespace DumbCad
             dxfFile.Header.SetDefaults();
             dxfFile.Header.Version = DxfAcadVersion.R2000;
             dxfFile.Layers.Add(new DxfLayer("PIPES"));
-            foreach (var polyline in polylines)
+            foreach (var polyline in file.polylines)
             {
                 var vertices = new List<DxfLwPolylineVertex>();
                 foreach (var v in polyline.Polyline.Vertices)
@@ -836,7 +515,7 @@ namespace DumbCad
                 dxfFile.Entities.Add(dxfPolyline);
             }
 
-            foreach(var image in images)
+            foreach(var image in file.images)
             {
                 var dxfPoint = new DxfPoint(
                     x: image.Image.Location.X,

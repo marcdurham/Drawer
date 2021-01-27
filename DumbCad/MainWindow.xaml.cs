@@ -17,17 +17,18 @@ namespace DumbCad
     public partial class MainWindow : Window
     {
         readonly CanvasPainter painter = new CanvasPainter();
+        readonly Viewer viewer = new Viewer();
 
-        DrawMode mode = DrawMode.Ready;
-        DrawMode previousMode = DrawMode.Ready;
-        float zoomFactor = 1f;
+        ////DrawMode mode = DrawMode.Ready;
+        ////DrawMode previousMode = DrawMode.Ready;
+        ////float zoomFactor = 1f;
         DrawingFile file = new DrawingFile();
       
         //Circle circleStarting = new Circle();
         //SKPoint circleFinishingPoint = new SKPoint();
         //PolylineView polylineViewStarting = new PolylineView();
-        SKPoint panStart = new SKPoint();
-        SKPoint panOffset = new SKPoint();
+        ////SKPoint panStart = new SKPoint();
+        ////SKPoint panOffset = new SKPoint();
         string insertImagePath = string.Empty;
 
         //public Entities.Point CursorPoint { get; private set; }
@@ -61,7 +62,7 @@ namespace DumbCad
         {
             var surface = e.Surface;
             var canvas = surface.Canvas;
-            painter.Paint(canvas, file, panOffset, zoomFactor, mode);
+            painter.Paint(canvas, file, viewer.panOffset, viewer.zoomFactor, viewer.mode);
         }
 
         private void viewPort_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -84,8 +85,8 @@ namespace DumbCad
             painter.CursorPoint = wp;
 
             // 5f is five pixels at any zoom factor
-            float near = 5f / zoomFactor;
-            if (mode == DrawMode.Select)
+            float near = 5f / viewer.zoomFactor;
+            if (viewer.mode == DrawMode.Select)
             {
                 foreach (var polyline in file.polylines) 
                 {
@@ -105,7 +106,7 @@ namespace DumbCad
 
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.CircleStart)
+            else if (viewer.mode == DrawMode.CircleStart)
             {
                 painter.circleStarting = new Circle()
                 {
@@ -115,7 +116,7 @@ namespace DumbCad
                 SetMode(DrawMode.CircleFinish);
                 viewPort.Cursor = Cursors.Cross;
             }
-            else if (mode == DrawMode.CircleFinish)
+            else if (viewer.mode == DrawMode.CircleFinish)
             {
                 if (painter.circleStarting.Radius > 0)
                 {
@@ -128,7 +129,7 @@ namespace DumbCad
                 viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PolylineStart)
+            else if (viewer.mode == DrawMode.PolylineStart)
             {
                 painter.polylineViewStarting = new PolylineView
                 {
@@ -146,30 +147,30 @@ namespace DumbCad
                 viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PolylineFinish)
+            else if (viewer.mode == DrawMode.PolylineFinish)
             {
                 painter.polylineViewStarting.Polyline.Vertices.Add(painter.CursorPoint);
 
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PanStartLive)
+            else if (viewer.mode == DrawMode.PanStartLive)
             {
-                panStart = WorldOffsetFrom(point);
+                viewer.panStart = WorldOffsetFrom(point);
                 SetMode(DrawMode.PanFinishLive);
                 panOffsetLabel.Content = $"Move mouse";
-                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+                startPointLabel.Content = $"StPt: { viewer.panStart.X:F2}, { viewer.panStart.Y:F2}";
                 viewPort.Cursor = Cursors.Hand;
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PanFinishLive)
+            else if (viewer.mode == DrawMode.PanFinishLive)
             {
                 SetMode(DrawMode.PanStartLive);
                 panOffsetLabel.Content = $"Click start point";
-                startPointLabel.Content = $"StPt: {panStart.X:F2}, {panStart.Y:F2}";
+                startPointLabel.Content = $"StPt: { viewer.panStart.X:F2}, { viewer.panStart.Y:F2}";
                 viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.InsertImagePoint)
+            else if (viewer.mode == DrawMode.InsertImagePoint)
             {
                 var image = new Image
                 {
@@ -203,7 +204,7 @@ namespace DumbCad
 
         private SKPoint WorldOffsetFrom(Point screenPoint)
         {
-            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
+            float zoomFactorNoZero = viewer.zoomFactor == 0 ? 1f : viewer.zoomFactor;
 
             return new SKPoint(
                 x: (float)(screenPoint.X / zoomFactorNoZero),
@@ -212,11 +213,11 @@ namespace DumbCad
 
         private SKPoint WorldPointFrom(Point screenPoint)
         {
-            float zoomFactorNoZero = zoomFactor == 0 ? 1f : zoomFactor;
+            float zoomFactorNoZero = viewer.zoomFactor == 0 ? 1f : viewer.zoomFactor;
 
             return new SKPoint(
-                x: (float)(screenPoint.X / zoomFactorNoZero) - panOffset.X, 
-                y: (float)-(screenPoint.Y / zoomFactorNoZero) - panOffset.Y);
+                x: (float)(screenPoint.X / zoomFactorNoZero) - viewer.panOffset.X, 
+                y: (float)-(screenPoint.Y / zoomFactorNoZero) - viewer.panOffset.Y);
         }
 
         private void drawCircleButton_Click(object sender, RoutedEventArgs e)
@@ -226,7 +227,7 @@ namespace DumbCad
 
         void SetMode(DrawMode mode)
         {
-            this.mode = mode;
+            viewer.mode = mode;
             this.modeLabel.Content = mode.ToString();
         }
 
@@ -238,7 +239,7 @@ namespace DumbCad
                 x: worldPoint.X,
                 y: worldPoint.Y);
 
-            if (mode == DrawMode.Select)
+            if (viewer.mode == DrawMode.Select)
             {
                 foreach(var polyline in file.polylines)
                 {
@@ -267,7 +268,7 @@ namespace DumbCad
                 viewPort.InvalidateVisual();
             }
 
-            if (mode == DrawMode.CircleFinish && painter.circleStarting != null)
+            if (viewer.mode == DrawMode.CircleFinish && painter.circleStarting != null)
             {
                 painter.circleFinishingPoint = worldPoint;
                 float radius = (float)Geometry.Distance(painter.circleStarting.Location, painter.circleFinishingPoint);
@@ -275,38 +276,38 @@ namespace DumbCad
                 painter.circleStarting.Radius = radius;
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PolylineStart)
+            else if (viewer.mode == DrawMode.PolylineStart)
             {
                 coordinatesLabel.Content = $"Paths: {file.polylines.Count}";
             }
-            else if (mode == DrawMode.PolylineFinish)
+            else if (viewer.mode == DrawMode.PolylineFinish)
             {
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PanFinish)
+            else if (viewer.mode == DrawMode.PanFinish)
             {
                 viewPort.InvalidateVisual();
             }
-            else if((mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Pressed)
-                || (mode == DrawMode.PanFinishLiveLeft && e.LeftButton == MouseButtonState.Pressed))
+            else if((viewer.mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Pressed)
+                || (viewer.mode == DrawMode.PanFinishLiveLeft && e.LeftButton == MouseButtonState.Pressed))
             {
                 var p = WorldOffsetFrom(screenPoint);
                 var newOffset = new SKPoint(
-                   x: p.X - panStart.X,
-                   y: p.Y - panStart.Y);
+                   x: p.X - viewer.panStart.X,
+                   y: p.Y - viewer.panStart.Y);
 
-                panStart = p;
+                viewer.panStart = p;
 
-                panOffset = new SKPoint(
-                   x: panOffset.X + newOffset.X,
-                   y: panOffset.Y + newOffset.Y);
+                viewer.panOffset = new SKPoint(
+                   x: viewer.panOffset.X + newOffset.X,
+                   y: viewer.panOffset.Y + newOffset.Y);
 
                 viewPort.InvalidateVisual();
             }
-            else if ((mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Released)
-                || (mode == DrawMode.PanFinishLiveLeft && e.LeftButton == MouseButtonState.Released))
+            else if ((viewer.mode == DrawMode.PanFinishLive && e.MiddleButton == MouseButtonState.Released)
+                || (viewer.mode == DrawMode.PanFinishLiveLeft && e.LeftButton == MouseButtonState.Released))
             {
-                SetMode(previousMode);
+                SetMode(viewer.previousMode);
                 viewPort.InvalidateVisual();
             }
 
@@ -316,17 +317,17 @@ namespace DumbCad
 
         private void viewPort_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(mode == DrawMode.CircleFinish)
+            if (viewer.mode == DrawMode.CircleFinish)
             {
                 SetMode(DrawMode.CircleStart);
                 viewPort.InvalidateVisual();
             }
-            else if(mode == DrawMode.CircleStart)
+            else if (viewer.mode == DrawMode.CircleStart)
             {
                 SetMode(DrawMode.Ready);
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PolylineFinish)
+            else if (viewer.mode == DrawMode.PolylineFinish)
             {
                 if (painter.polylineViewStarting.Polyline.Vertices.Count > 0)
                 {
@@ -336,7 +337,7 @@ namespace DumbCad
                 SetMode(DrawMode.PolylineStart);
                 viewPort.InvalidateVisual();
             }
-            else if (mode == DrawMode.PolylineStart)
+            else if (viewer.mode == DrawMode.PolylineStart)
             {
                 SetMode(DrawMode.Ready);
                 viewPort.InvalidateVisual();
@@ -350,15 +351,15 @@ namespace DumbCad
 
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
         {
-            zoomFactor *= 2f;
-            zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
+            viewer.zoomFactor *= 2f;
+            zoomFactorLabel.Content = $"Z:{ viewer.zoomFactor:F4}";
             viewPort.InvalidateVisual();
         }
 
         private void zoomOutButton_Click(object sender, RoutedEventArgs e)
         {
-            zoomFactor *= 0.5f;
-            zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
+            viewer.zoomFactor *= 0.5f;
+            zoomFactorLabel.Content = $"Z:{ viewer.zoomFactor:F4}";
             viewPort.InvalidateVisual();
         }
 
@@ -378,17 +379,17 @@ namespace DumbCad
         {
             if(e.MiddleButton == MouseButtonState.Pressed)
             {
-                previousMode = mode;
+                viewer.previousMode = viewer.mode;
                 SetMode(DrawMode.PanFinishLive);
-                panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                viewer.panStart = WorldOffsetFrom(e.GetPosition(viewPort));
                 viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
-            else if (e.LeftButton == MouseButtonState.Pressed && mode == DrawMode.PanStart)
+            else if (e.LeftButton == MouseButtonState.Pressed && viewer.mode == DrawMode.PanStart)
             {
-                previousMode = mode;
+                viewer.previousMode = viewer.mode;
                 SetMode(DrawMode.PanFinishLiveLeft);
-                panStart = WorldOffsetFrom(e.GetPosition(viewPort));
+                viewer.panStart = WorldOffsetFrom(e.GetPosition(viewPort));
                 viewPort.Cursor = Cursors.SizeAll;
                 viewPort.InvalidateVisual();
             }
@@ -396,15 +397,15 @@ namespace DumbCad
 
         private void viewPort_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if(e.MiddleButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
+            if(e.MiddleButton == MouseButtonState.Released && viewer.mode == DrawMode.PanFinishLive)
             {
-                SetMode(previousMode);
+                SetMode(viewer.previousMode);
                 viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
-            else if (e.LeftButton == MouseButtonState.Released && mode == DrawMode.PanFinishLive)
+            else if (e.LeftButton == MouseButtonState.Released && viewer.mode == DrawMode.PanFinishLive)
             {
-                SetMode(previousMode);
+                SetMode(viewer.previousMode);
                 viewPort.Cursor = Cursors.Cross;
                 viewPort.InvalidateVisual();
             }
@@ -417,27 +418,27 @@ namespace DumbCad
 
             float multiplier = 0.75f;
             float adjustment = e.Delta < 0 ? multiplier : (1f/multiplier);
-            zoomFactor = zoomFactor * adjustment;
-            zoomFactorLabel.Content = $"Z:{zoomFactor:F4}";
+            viewer.zoomFactor = viewer.zoomFactor * adjustment;
+            zoomFactorLabel.Content = $"Z:{ viewer.zoomFactor:F4}";
 
-            panOffset = new SKPoint(
-                x: (float)(screenPoint.X / zoomFactor) - worldPoint.X,
-                y: (float)-(screenPoint.Y / zoomFactor) - worldPoint.Y);
+            viewer.panOffset = new SKPoint(
+                x: (float)(screenPoint.X / viewer.zoomFactor) - worldPoint.X,
+                y: (float)-(screenPoint.Y / viewer.zoomFactor) - worldPoint.Y);
 
             viewPort.InvalidateVisual();
         }
 
         private void zoomResetButton_Click(object sender, RoutedEventArgs e)
         {
-            zoomFactor = 1.0f;
-            panOffset = new SKPoint();
+            viewer.zoomFactor = 1.0f;
+            viewer.panOffset = new SKPoint();
             viewPort.InvalidateVisual();
         }
 
         private void zoomExtentsButton_Click(object sender, RoutedEventArgs e)
         {
-            var screenWorldWidth = viewPort.ActualWidth / zoomFactor;
-            var screenWorldHeight = viewPort.ActualHeight / zoomFactor;
+            var screenWorldWidth = viewPort.ActualWidth / viewer.zoomFactor;
+            var screenWorldHeight = viewPort.ActualHeight / viewer.zoomFactor;
 
             double leftMostX = 0.0;
             double rightMostX = 0.0;

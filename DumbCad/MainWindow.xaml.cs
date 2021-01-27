@@ -513,10 +513,4 @@ namespace DumbCad
             SetMode(DrawMode.InsertImagePoint);
         }
     }
-
-    public class Circle
-    {
-        public SKPoint Location { get; set; }
-        public float Radius { get; set; }
-    }
 }
